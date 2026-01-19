@@ -1,0 +1,53 @@
+name: dice_ce
+
+_target_: monai.losses.DiceCELoss
+include_background: false
+to_onehot_y: true
+softmax: true
+reduction: mean
+lambda_dice: 1.0
+lambda_ce: 1.0
+lambda_bce: 1.0  
+smooth_nr: 1e-5
+smooth_dr: 1e-5
+batch: true  # nnUNet: batch_dice=True
+
+# Class weights for CrossEntropy (30 classes)
+# 클래스 0: Background
+# 클래스 1-19: finger-1 ~ finger-19
+# 클래스 20-27: Trapezium, Trapezoid, Capitate, Hamate, Scaphoid, Lunate, Triquetrum, Pisiform (손목 뼈)
+# 클래스 28-29: Radius, Ulna
+weight:
+  - 1.0  # 0: Background
+  - 1.0  # 1: finger-1
+  - 1.0  # 2: finger-2
+  - 1.0  # 3: finger-3
+  - 1.0  # 4: finger-4
+  - 1.0  # 5: finger-5
+  - 1.0  # 6: finger-6
+  - 1.0  # 7: finger-7
+  - 1.0  # 8: finger-8
+  - 1.0  # 9: finger-9
+  - 1.0  # 10: finger-10
+  - 1.0  # 11: finger-11
+  - 1.0  # 12: finger-12
+  - 1.0  # 13: finger-13
+  - 1.0  # 14: finger-14
+  - 1.0  # 15: finger-15
+  - 1.0  # 16: finger-16
+  - 1.0  # 17: finger-17
+  - 1.0  # 18: finger-18
+  - 1.0  # 19: finger-19
+  - 1.0  # 20: Trapezium 
+  - 1.0  # 21: Trapezoid 
+  - 1.0  # 22: Capitate 
+  - 1.0  # 23: Hamate 
+  - 1.0  # 24: Scaphoid 
+  - 1.0  # 25: Lunate 
+  - 1.0  # 26: Triquetrum 
+  - 1.0  # 27: Pisiform 
+  - 1.0  # 28: Radius
+  - 1.0  # 29: Ulna
+
+# Boundary loss (0이면 사용 안 함)
+boundary_weight: 0.0

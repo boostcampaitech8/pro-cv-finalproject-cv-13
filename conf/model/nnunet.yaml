@@ -1,0 +1,12 @@
+# nnUNet-style model configuration
+# nnUNetPlans.json에서 구조를 읽어옴
+
+name: nnunet
+
+plans_path: ${data_dir}/nnUNet_preprocessed/Dataset001_HandBone/nnUNetPlans.json
+config_name: "2d"
+
+in_channels: 1
+num_classes: 30  # 29 classes + background
+spatial_dims: 2
+deep_supervision: true
