@@ -1,0 +1,6 @@
+name: SGD
+
+lr: 0.01
+momentum: 0.99
+weight_decay: 0.00003
+nesterov: true

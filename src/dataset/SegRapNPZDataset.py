@@ -11,10 +11,12 @@ class SegRapNPZDataset(Dataset):
         files: List[Path],
         patch_size: Tuple[int, int, int],
         is_train: bool,
+        oversample_foreground_percent: float = 0.0,
     ):
         self.files = files
         self.patch_size = patch_size
         self.is_train = is_train
+        self.oversample_foreground_percent = oversample_foreground_percent
 
     def __len__(self) -> int:
         return len(self.files)
@@ -26,7 +28,10 @@ class SegRapNPZDataset(Dataset):
             label = data["label"].astype(np.int64)
 
         if self.is_train:
-            image, label = _random_crop(image, label, self.patch_size)
+            if self.oversample_foreground_percent > 0 and random.random() < self.oversample_foreground_percent:
+                image, label = _foreground_crop(image, label, self.patch_size)
+            else:
+                image, label = _random_crop(image, label, self.patch_size)
         else:
             image, label = _center_crop(image, label, self.patch_size)
 
@@ -93,6 +98,35 @@ def _random_crop(
     sd = random.randint(0, d - patch_size[0])
     sh = random.randint(0, h - patch_size[1])
     sw = random.randint(0, w - patch_size[2])
+    crop = (
+        slice(sd, sd + patch_size[0]),
+        slice(sh, sh + patch_size[1]),
+        slice(sw, sw + patch_size[2]),
+    )
+    return image[:, crop[0], crop[1], crop[2]], label[crop[0], crop[1], crop[2]]
+
+
+def _foreground_crop(
+    image: np.ndarray,
+    label: np.ndarray,
+    patch_size: Tuple[int, int, int],
+) -> Tuple[np.ndarray, np.ndarray]:
+    image, label = _pad_to_patch(image, label, patch_size)
+    foreground = np.argwhere(label > 0)
+    if foreground.size == 0:
+        return _random_crop(image, label, patch_size)
+
+    center_d, center_h, center_w = foreground[random.randrange(len(foreground))]
+    _, d, h, w = image.shape
+
+    sd = int(center_d - patch_size[0] // 2)
+    sh = int(center_h - patch_size[1] // 2)
+    sw = int(center_w - patch_size[2] // 2)
+
+    sd = max(0, min(sd, d - patch_size[0]))
+    sh = max(0, min(sh, h - patch_size[1]))
+    sw = max(0, min(sw, w - patch_size[2]))
+
     crop = (
         slice(sd, sd + patch_size[0]),
         slice(sh, sh + patch_size[1]),

@@ -1,47 +1,29 @@
-# defaults:
-#   - optimizer: sgd_nnunet
-#   - scheduler: poly
-#   - loss: dice_ce
-#   - model: nnunet
-#   - _self_
+defaults:
+  - optimizer: sgd_nnunet
+  - scheduler: poly
+  - loss: dice_ce
+  - model: nnunet
+  - dataset: segrap_unified
+  - _self_
 
 seed: 42
 device: cuda
-
-data:
-  dataset_id: 1
-  dataset_name: SegRap2023
-  raw_dir: ./segrap/SegRap2023_Training_Set_120cases-002/SegRap2023_Training_Set_120cases
-  labels_dir: ./segrap/SegRap2023_Training_Set_120cases_OneHot_Labels/Task001
-  preprocessed_dir: ./preprocessed_segrap
-  nnunet_raw: ./nnUNet_raw
-  nnunet_preprocessed: ./nnUNet_preprocessed
-  nnunet_results: ./nnUNet_results
-  dataset_json_template: ./segrap/dataset_task001.json
 
 train:
   fold: 0
   num_folds: 5
   epochs: 1000
-  batch_size: 3
-  patch_size: [128, 128, 128]
-  num_workers: 4
-  num_iterations_per_epoch: 250
-  num_val_iterations: 50
+  batch_size: 2
+  val_batch_size: 1
+  test_batch_size: 1
+  patch_size: [40, 196, 196]
+  num_workers: 2
+  num_iterations_per_epoch: 1
+  num_val_iterations: 25
   oversample_foreground_percent: 0.33
-  lr: 0.01
-  weight_decay: 3e-5
+  val_sliding_window: true
+  val_overlap: 0.1
   use_amp: true
   deep_supervision: true
   save_every: 50
   output_dir: ./jm/result
-
-model:
-  name: nnunet
-  plans_path: ./nnUNet_preprocessed/Dataset001_SegRap2023/nnUNetPlans.json
-  config_name: 3d_fullres
-  in_channels: 2
-  num_classes: 55
-  deep_supervision: false
-  use_checkpoint: false
-  compile: false

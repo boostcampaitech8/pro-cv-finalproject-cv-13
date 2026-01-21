@@ -1,0 +1,9 @@
+dataset_id: 2
+dataset_name: SegRapUnified
+raw_dir: ./segrap/SegRap2023_Training_Set_120cases-002/SegRap2023_Training_Set_120cases
+labels_dir: ./segrap_unified/labelsTr
+preprocessed_dir: ./preprocessed_segrap
+nnunet_raw: ./nnUNet_raw
+nnunet_preprocessed: ./nnUNet_preprocessed
+nnunet_results: ./nnUNet_results
+dataset_json_template: ./segrap/dataset_unified.json
