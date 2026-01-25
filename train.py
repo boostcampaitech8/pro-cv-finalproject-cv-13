@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import itertools
 from pathlib import Path
 
 import hydra
@@ -251,6 +252,11 @@ def train(cfg: DictConfig) -> None:
 
     train_iter = infinite(train_loader)
     val_iter = infinite(val_loader) if val_loader is not None else None
+    if val_sliding_window:
+        if use_ram_cache and not use_preprocessed:
+            val_index_iter = itertools.cycle(range(len(val_dataset)))
+        else:
+            val_index_iter = itertools.cycle(range(len(val_files)))
 
     for epoch in range(cfg["train"]["epochs"]):
         model.train()
@@ -288,28 +294,27 @@ def train(cfg: DictConfig) -> None:
         val_losses = []
         val_dices = []
         if val_sliding_window:
-            if use_ram_cache:
-                for idx in tqdm(range(len(val_dataset)), desc=f"Epoch {epoch + 1} val", unit="case"):
+            for _ in tqdm(
+                range(cfg["train"]["num_val_iterations"]),
+                desc=f"Epoch {epoch + 1} val",
+                unit="case",
+            ):
+                idx = next(val_index_iter)
+                if use_ram_cache and not use_preprocessed:
                     image_np, target_np = val_dataset.get_full_case(idx)
                     image = torch.from_numpy(np.ascontiguousarray(image_np)).float()
                     target = torch.from_numpy(np.ascontiguousarray(target_np)).long()
-                    logits = sliding_window_inference(
-                        image, model, patch_size=patch_size, overlap=val_overlap, device=device
-                    )
-                    loss = _compute_loss(loss_fn, logits.unsqueeze(0), target.unsqueeze(0))
-                    val_losses.append(float(loss.detach().cpu()))
-                    val_dices.append(dice_score(logits.unsqueeze(0), target.unsqueeze(0), num_classes))
-            else:
-                for val_path in tqdm(val_files, desc=f"Epoch {epoch + 1} val", unit="case"):
+                else:
+                    val_path = val_files[idx]
                     with np.load(val_path) as data:
                         image = torch.from_numpy(data["image"].astype(np.float32))
                         target = torch.from_numpy(data["label"].astype(np.int64))
-                    logits = sliding_window_inference(
-                        image, model, patch_size=patch_size, overlap=val_overlap, device=device
-                    )
-                    loss = _compute_loss(loss_fn, logits.unsqueeze(0), target.unsqueeze(0))
-                    val_losses.append(float(loss.detach().cpu()))
-                    val_dices.append(dice_score(logits.unsqueeze(0), target.unsqueeze(0), num_classes))
+                logits = sliding_window_inference(
+                    image, model, patch_size=patch_size, overlap=val_overlap, device=device
+                )
+                loss = _compute_loss(loss_fn, logits.unsqueeze(0), target.unsqueeze(0))
+                val_losses.append(float(loss.detach().cpu()))
+                val_dices.append(dice_score(logits.unsqueeze(0), target.unsqueeze(0), num_classes))
         else:
             with torch.no_grad():
                 for _ in tqdm( 
