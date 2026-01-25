@@ -7,3 +7,4 @@ pandas
 tqdm
 batchgenerators==0.25.1
 batchgeneratorsv2==0.3.0
+monai==1.5.1

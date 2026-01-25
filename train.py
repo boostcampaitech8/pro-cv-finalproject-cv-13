@@ -1,50 +1,24 @@
 from __future__ import annotations
 
-import json
 import inspect
-import math
-import random
 from pathlib import Path
-from typing import List, Tuple
 
 import hydra
 import numpy as np
 import torch
-from hydra.utils import get_original_cwd, instantiate
+from hydra.utils import get_original_cwd
 from omegaconf import DictConfig, OmegaConf, open_dict
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+
+from src.augment.nnunet_augmentation import AugmentConfig, NnUNetAugment3D
+from src.dataset.SegRapNPZDataset import SegRapNPZDataset, SegRapRAMDataset
 from src.models.build_model import build_model as pro_build_model
-from src.dataset.SegRapNPZDataset import SegRapNPZDataset
-
-
-def set_seed(seed: int):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-
-def _split_by_case(
-    files: List[Path],
-    num_folds: int,
-    fold: int,
-    seed: int,
-) -> Tuple[List[Path], List[Path]]:
-    case_ids = sorted({p.parent.name for p in files})
-    rng = random.Random(seed)
-    rng.shuffle(case_ids)
-
-    num_folds = max(1, num_folds)
-    fold = max(0, min(fold, num_folds - 1))
-    fold_size = math.ceil(len(case_ids) / num_folds)
-    start = fold * fold_size
-    end = min(len(case_ids), start + fold_size)
-    val_cases = set(case_ids[start:end])
-
-    train_files = [p for p in files if p.parent.name not in val_cases]
-    val_files = [p for p in files if p.parent.name in val_cases]
-    return train_files, val_files
+from src.training.inference import sliding_window_inference
+from src.training.metrics import dice_score, pick_highest_res_output
+from src.training.targets import prepare_targets
+from src.training.utils import infer_num_classes, load_plans_patch_size, set_seed, split_by_case
 
 
 def build_model(cfg: DictConfig, in_channels: int, num_classes: int, device: torch.device) -> nn.Module:
@@ -58,154 +32,6 @@ def build_model(cfg: DictConfig, in_channels: int, num_classes: int, device: tor
         device=str(device),
         use_checkpoint=bool(cfg["model"]["use_checkpoint"]),
     )
-
-
-def _infer_num_classes(cfg: DictConfig, fallback_label: np.ndarray) -> int:
-    model_cfg = cfg["model"]
-    if "num_classes" in model_cfg:
-        return int(model_cfg["num_classes"])
-
-
-    dataset_json = cfg["dataset"]["dataset_json_template"]
-    path = Path(dataset_json)
-    if not path.is_absolute():
-        path = Path(get_original_cwd()) / path
-    if path.exists():
-        with path.open("r", encoding="utf-8") as f:
-            dataset = json.load(f)
-        labels = dataset.get("labels", {})
-        if "background" in labels:
-            return max(int(v) for v in labels.values()) + 1
-        if all(str(k).isdigit() for k in labels.keys()):
-            return max(int(k) for k in labels.keys()) + 1
-
-    return int(fallback_label.max()) + 1
-
-
-def _dice_score(pred: torch.Tensor, target: torch.Tensor, num_classes: int) -> float:
-    if isinstance(pred, (list, tuple)):
-        pred = pred[0]
-    if isinstance(target, (list, tuple)):
-        target = target[0]
-    pred = pred.argmax(1)
-    dice_scores = []
-    for cls in range(1, num_classes):
-        pred_c = pred == cls
-        target_c = target == cls
-        inter = (pred_c & target_c).sum().item()
-        denom = pred_c.sum().item() + target_c.sum().item()
-        if denom == 0:
-            continue
-        dice_scores.append(2.0 * inter / (denom + 1e-6))
-    if not dice_scores:
-        return 0.0
-    return float(sum(dice_scores) / len(dice_scores))
-
-
-def _resize_target(target: torch.Tensor, shape: Tuple[int, int, int]) -> torch.Tensor:
-    resized = torch.nn.functional.interpolate(target[:, None].float(), size=shape, mode="nearest")
-    return resized[:, 0].long()
-
-
-def _prepare_targets(outputs, target):
-    if not isinstance(outputs, (list, tuple)):
-        return target
-    targets = []
-    for out in outputs:
-        if out.shape[2:] == target.shape[1:]:
-            targets.append(target)
-        else:
-            targets.append(_resize_target(target, out.shape[2:]))
-    return targets
-
-
-def _load_plans_patch_size(cfg: DictConfig) -> Tuple[int, int, int]:
-    plans_path = Path(cfg["model"]["plans_path"])
-    if not plans_path.is_absolute():
-        plans_path = Path(get_original_cwd()) / plans_path
-    with plans_path.open("r", encoding="utf-8") as f:
-        plans = json.load(f)
-
-    config_name = cfg["model"]["config_name"]
-    config = plans["configurations"][config_name]
-    patch_size = config.get("patch_size")
-    if patch_size is None:
-        raise KeyError(f"No patch_size found in plans for config {config_name}")
-    return tuple(patch_size)
-
-
-def _get_sliding_window_starts(size: int, patch: int, stride: int) -> List[int]:
-    if size <= patch:
-        return [0]
-    starts = list(range(0, size - patch + 1, stride))
-    if starts[-1] != size - patch:
-        starts.append(size - patch)
-    return starts
-
-
-def _sliding_window_inference(
-    volume: torch.Tensor,
-    model: nn.Module,
-    patch_size: Tuple[int, int, int],
-    overlap: float,
-    device: torch.device,
-) -> torch.Tensor:
-    _, d, h, w = volume.shape
-    pd = max(0, patch_size[0] - d)
-    ph = max(0, patch_size[1] - h)
-    pw = max(0, patch_size[2] - w)
-
-    if pd or ph or pw:
-        volume = torch.nn.functional.pad(volume, (0, pw, 0, ph, 0, pd))
-
-    _, d_p, h_p, w_p = volume.shape
-    stride_d = max(1, int(patch_size[0] * (1 - overlap)))
-    stride_h = max(1, int(patch_size[1] * (1 - overlap)))
-    stride_w = max(1, int(patch_size[2] * (1 - overlap)))
-
-    starts_d = _get_sliding_window_starts(d_p, patch_size[0], stride_d)
-    starts_h = _get_sliding_window_starts(h_p, patch_size[1], stride_h)
-    starts_w = _get_sliding_window_starts(w_p, patch_size[2], stride_w)
-
-    output_sum = None
-    count = torch.zeros((1, d_p, h_p, w_p), dtype=torch.float32)
-
-    for sd in starts_d:
-        for sh in starts_h:
-            for sw in starts_w:
-                patch = volume[
-                    :,
-                    sd : sd + patch_size[0],
-                    sh : sh + patch_size[1],
-                    sw : sw + patch_size[2],
-                ]
-                patch = patch.unsqueeze(0).to(device=device, dtype=torch.float32)
-                with torch.no_grad():
-                    logits = model(patch)
-                if isinstance(logits, (list, tuple)):
-                    logits = logits[0]
-                logits = logits.detach().cpu()[0]
-
-                if output_sum is None:
-                    output_sum = torch.zeros(
-                        (logits.shape[0], d_p, h_p, w_p),
-                        dtype=torch.float32,
-                    )
-                output_sum[
-                    :,
-                    sd : sd + patch_size[0],
-                    sh : sh + patch_size[1],
-                    sw : sw + patch_size[2],
-                ] += logits
-                count[
-                    :,
-                    sd : sd + patch_size[0],
-                    sh : sh + patch_size[1],
-                    sw : sw + patch_size[2],
-                ] += 1
-
-    output_sum = output_sum / count
-    return output_sum[:, :d, :h, :w]
 
 
 def _compute_loss(loss_fn, outputs, targets) -> torch.Tensor:
@@ -225,7 +51,7 @@ def _compute_loss(loss_fn, outputs, targets) -> torch.Tensor:
     return loss
 
 
-def _save_checkpoint(output_dir: Path, epoch: int, model: nn.Module, optimizer, best_dice: float):
+def _save_checkpoint(output_dir: Path, epoch: int, model: nn.Module, optimizer, best_dice: float) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     save_path = output_dir / "checkpoint_best.pth"
     torch.save(
@@ -240,47 +66,104 @@ def _save_checkpoint(output_dir: Path, epoch: int, model: nn.Module, optimizer, 
 
 
 @hydra.main(config_path="conf", config_name="config", version_base="1.3")
-def train(cfg: DictConfig):
+def train(cfg: DictConfig) -> None:
     set_seed(cfg["seed"])
     device = torch.device(cfg["device"] if torch.cuda.is_available() else "cpu")
 
-    preprocessed_dir = Path(cfg["dataset"]["preprocessed_dir"])
-    if not preprocessed_dir.is_absolute():
-        preprocessed_dir = Path(get_original_cwd()) / preprocessed_dir
-    files = sorted(preprocessed_dir.glob("*/*.npz"))
-    if not files:
-        raise FileNotFoundError(f"No .npz files found under {preprocessed_dir}")
-
-    if "patch_size" in cfg["train"] and cfg["train"]["patch_size"] is not None:
-        patch_size = tuple(cfg["train"]["patch_size"])
-    else:
-        patch_size = _load_plans_patch_size(cfg)
+    use_ram_cache = bool(cfg["dataset"].get("use_ram_cache", False))
+    patch_size = tuple(cfg["train"]["patch_size"])
     num_workers = int(cfg["train"]["num_workers"])
     val_sliding_window = bool(cfg["train"]["val_sliding_window"])
     val_overlap = float(cfg["train"]["val_overlap"])
 
-    train_files, val_files = _split_by_case(
-        files,
-        num_folds=int(cfg["train"]["num_folds"]),
-        fold=int(cfg["train"]["fold"]),
-        seed=int(cfg["seed"]),
-    )
+    if use_ram_cache:
+        raw_dir = Path(cfg["dataset"]["raw_dir"])
+        labels_dir = Path(cfg["dataset"]["labels_dir"])
+        if not raw_dir.is_absolute():
+            raw_dir = Path(get_original_cwd()) / raw_dir
+        if not labels_dir.is_absolute():
+            labels_dir = Path(get_original_cwd()) / labels_dir
 
-    sample = np.load(train_files[0])
-    in_channels = int(sample["image"].shape[0])
-    num_classes = _infer_num_classes(cfg, sample["label"])
-    sample.close()
+        modalities = list(cfg["dataset"].get("modalities", ["image.nii.gz", "image_contrast.nii.gz"]))
+        case_dirs = sorted([p for p in raw_dir.iterdir() if p.is_dir()])
+        if not case_dirs:
+            raise FileNotFoundError(f"No case directories found under {raw_dir}")
+
+        case_paths = []
+        for case_dir in case_dirs:
+            img_path = case_dir / modalities[0]
+            if not img_path.exists():
+                raise FileNotFoundError(f"Missing modality file: {img_path}")
+            case_paths.append(img_path)
+
+        train_files, val_files = split_by_case(
+            case_paths,
+            num_folds=int(cfg["train"]["num_folds"]),
+            fold=int(cfg["train"]["fold"]),
+            seed=int(cfg["seed"]),
+        )
+        train_cases = [p.parent for p in train_files]
+        val_cases = [p.parent for p in val_files]
+
+        cache_in_ram = bool(cfg["dataset"].get("cache_in_ram", True))
+        cached_cases = (
+            SegRapRAMDataset.cache_cases(case_dirs, labels_dir, modalities) if cache_in_ram else None
+        )
+
+        train_dataset = SegRapRAMDataset(
+            train_cases,
+            labels_dir=labels_dir,
+            modalities=modalities,
+            patch_size=patch_size,
+            is_train=True,
+            oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
+            cache_in_ram=cache_in_ram,
+            cached_cases=cached_cases,
+        )
+        val_dataset = SegRapRAMDataset(
+            val_cases,
+            labels_dir=labels_dir,
+            modalities=modalities,
+            patch_size=patch_size,
+            is_train=False,
+            cache_in_ram=cache_in_ram,
+            cached_cases=cached_cases,
+        )
+
+        sample_image, sample_label = train_dataset.get_full_case(0)
+        in_channels = int(sample_image.shape[0])
+        num_classes = infer_num_classes(cfg, sample_label)
+    else:
+        preprocessed_dir = Path(cfg["dataset"]["preprocessed_dir"])
+        if not preprocessed_dir.is_absolute():
+            preprocessed_dir = Path(get_original_cwd()) / preprocessed_dir
+        files = sorted(preprocessed_dir.glob("*/*.npz"))
+        if not files:
+            raise FileNotFoundError(f"No .npz files found under {preprocessed_dir}")
+
+        train_files, val_files = split_by_case(
+            files,
+            num_folds=int(cfg["train"]["num_folds"]),
+            fold=int(cfg["train"]["fold"]),
+            seed=int(cfg["seed"]),
+        )
+
+        sample = np.load(train_files[0])
+        in_channels = int(sample["image"].shape[0])
+        num_classes = infer_num_classes(cfg, sample["label"])
+        sample.close()
 
     train_batch_size = int(cfg["train"]["batch_size"])
     val_batch_size = int(cfg["train"].get("val_batch_size", train_batch_size))
 
-    train_dataset = SegRapNPZDataset(
-        train_files,
-        patch_size=patch_size,
-        is_train=True,
-        oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
-    )
-    val_dataset = SegRapNPZDataset(val_files, patch_size=patch_size, is_train=False)
+    if not use_ram_cache:
+        train_dataset = SegRapNPZDataset(
+            train_files,
+            patch_size=patch_size,
+            is_train=True,
+            oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
+        )
+        val_dataset = SegRapNPZDataset(val_files, patch_size=patch_size, is_train=False)
 
     train_loader = DataLoader(
         train_dataset,
@@ -324,7 +207,7 @@ def train(cfg: DictConfig):
     else:
         loss_name = loss_cfg["name"]
         raise ValueError(f"Unsupported loss config: {loss_name}")
-    
+
     scheduler_cfg = cfg["scheduler"]
     if scheduler_cfg["name"] == "poly":
         max_epochs = int(cfg["train"]["epochs"])
@@ -341,6 +224,12 @@ def train(cfg: DictConfig):
     output_dir = Path(cfg["train"]["output_dir"])
     if not output_dir.is_absolute():
         output_dir = Path(get_original_cwd()) / output_dir
+
+    augmenter = None
+    if bool(cfg["train"].get("use_augmentation", False)):
+        aug_cfg = cfg.get("augmentation", {})
+        aug_kwargs = {k: v for k, v in aug_cfg.items() if k in AugmentConfig.__annotations__}
+        augmenter = NnUNetAugment3D(AugmentConfig(**aug_kwargs))
 
     def infinite(loader):
         while True:
@@ -361,19 +250,22 @@ def train(cfg: DictConfig):
             data, target = next(train_iter)
             data = data.to(device=device, dtype=torch.float32)
             target = target.to(device=device, dtype=torch.long)
+            if augmenter is not None:
+                with torch.no_grad():
+                    data, target = augmenter(data, target)
 
             optimizer.zero_grad(set_to_none=True)
             if scaler is not None:
                 with torch.autocast(device_type=device.type, enabled=True):
                     logits = model(data)
-                    prepared_target = _prepare_targets(logits, target)
+                    prepared_target = prepare_targets(logits, target)
                     loss = _compute_loss(loss_fn, logits, prepared_target)
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
                 scaler.update()
             else:
                 logits = model(data)
-                prepared_target = _prepare_targets(logits, target)
+                prepared_target = prepare_targets(logits, target)
                 loss = _compute_loss(loss_fn, logits, prepared_target)
                 loss.backward()
                 optimizer.step()
@@ -383,19 +275,31 @@ def train(cfg: DictConfig):
         val_losses = []
         val_dices = []
         if val_sliding_window:
-            for val_path in tqdm(val_files, desc=f"Epoch {epoch + 1} val", unit="case"):
-                with np.load(val_path) as data:
-                    image = torch.from_numpy(data["image"].astype(np.float32))
-                    target = torch.from_numpy(data["label"].astype(np.int64))
-                logits = _sliding_window_inference(
-                    image, model, patch_size=patch_size, overlap=val_overlap, device=device
-                )
-                loss = _compute_loss(loss_fn, logits.unsqueeze(0), target.unsqueeze(0))
-                val_losses.append(float(loss.detach().cpu()))
-                val_dices.append(_dice_score(logits.unsqueeze(0), target.unsqueeze(0), num_classes))
+            if use_ram_cache:
+                for idx in tqdm(range(len(val_dataset)), desc=f"Epoch {epoch + 1} val", unit="case"):
+                    image_np, target_np = val_dataset.get_full_case(idx)
+                    image = torch.from_numpy(np.ascontiguousarray(image_np)).float()
+                    target = torch.from_numpy(np.ascontiguousarray(target_np)).long()
+                    logits = sliding_window_inference(
+                        image, model, patch_size=patch_size, overlap=val_overlap, device=device
+                    )
+                    loss = _compute_loss(loss_fn, logits.unsqueeze(0), target.unsqueeze(0))
+                    val_losses.append(float(loss.detach().cpu()))
+                    val_dices.append(dice_score(logits.unsqueeze(0), target.unsqueeze(0), num_classes))
+            else:
+                for val_path in tqdm(val_files, desc=f"Epoch {epoch + 1} val", unit="case"):
+                    with np.load(val_path) as data:
+                        image = torch.from_numpy(data["image"].astype(np.float32))
+                        target = torch.from_numpy(data["label"].astype(np.int64))
+                    logits = sliding_window_inference(
+                        image, model, patch_size=patch_size, overlap=val_overlap, device=device
+                    )
+                    loss = _compute_loss(loss_fn, logits.unsqueeze(0), target.unsqueeze(0))
+                    val_losses.append(float(loss.detach().cpu()))
+                    val_dices.append(dice_score(logits.unsqueeze(0), target.unsqueeze(0), num_classes))
         else:
             with torch.no_grad():
-                for _ in tqdm(
+                for _ in tqdm( 
                     range(cfg["train"]["num_val_iterations"]),
                     desc=f"Epoch {epoch + 1} val",
                     unit="batch",
@@ -404,10 +308,11 @@ def train(cfg: DictConfig):
                     data = data.to(device=device, dtype=torch.float32)
                     target = target.to(device=device, dtype=torch.long)
                     logits = model(data)
-                    prepared_target = _prepare_targets(logits, target)
+                    prepared_target = prepare_targets(logits, target)
                     loss = _compute_loss(loss_fn, logits, prepared_target)
                     val_losses.append(float(loss.detach().cpu()))
-                    val_dices.append(_dice_score(logits, prepared_target, num_classes))
+                    dice_logits, dice_target = pick_highest_res_output(logits, prepared_target)
+                    val_dices.append(dice_score(dice_logits, dice_target, num_classes))
 
         mean_train_loss = float(np.mean(train_losses))
         mean_val_loss = float(np.mean(val_losses))

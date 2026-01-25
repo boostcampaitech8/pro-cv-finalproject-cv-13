@@ -7,3 +7,8 @@ nnunet_raw: ./nnUNet_raw
 nnunet_preprocessed: ./nnUNet_preprocessed
 nnunet_results: ./nnUNet_results
 dataset_json_template: ./segrap/dataset_unified.json
+modalities:
+  - image.nii.gz
+  - image_contrast.nii.gz
+use_ram_cache: true
+cache_in_ram: true

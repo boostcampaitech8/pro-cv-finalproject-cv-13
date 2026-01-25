@@ -5,25 +5,53 @@ defaults:
   - model: nnunet
   - dataset: segrap_unified
   - _self_
-
+  
 seed: 42
 device: cuda
 
 train:
   fold: 0
   num_folds: 5
-  epochs: 1000
+  epochs: 100
   batch_size: 2
   val_batch_size: 1
   test_batch_size: 1
-  patch_size: [40, 196, 196]
-  num_workers: 2
-  num_iterations_per_epoch: 1
+  patch_size: [28, 256, 224]
+  num_workers: 0
+  num_iterations_per_epoch: 100
   num_val_iterations: 25
   oversample_foreground_percent: 0.33
-  val_sliding_window: true
+  val_sliding_window: false
   val_overlap: 0.1
+  use_augmentation: true
   use_amp: true
   deep_supervision: true
-  save_every: 50
+  save_every: 50  
   output_dir: ./jm/result
+  compile: false
+
+augmentation:
+  p_flip: 0.5
+  flip_axes: [0, 1, 2]
+  p_rotation: 0.2
+  rotation_range: [-3.14159, 3.14159]
+  p_scale: 0.2
+  scale_range: [0.7, 1.4]
+  p_elastic: 0.2
+  elastic_alpha: 90.0
+  elastic_sigma: 9.0
+  p_noise: 0.1
+  noise_variance: [0.0, 0.1]
+  per_channel_noise: true
+  p_blur: 0.2
+  blur_sigma: [0.5, 1.0]
+  p_brightness: 0.15
+  brightness_range: [0.75, 1.25]
+  p_brightness_add: 0.1
+  brightness_add_range: [-0.1, 0.1]
+  p_contrast: 0.15
+  contrast_range: [0.75, 1.25]
+  p_gamma: 0.3
+  gamma_range: [0.7, 1.5]
+  p_lowres: 0.25
+  lowres_scale: [0.5, 1.0]
