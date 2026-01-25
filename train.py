@@ -71,12 +71,21 @@ def train(cfg: DictConfig) -> None:
     device = torch.device(cfg["device"] if torch.cuda.is_available() else "cpu")
 
     use_ram_cache = bool(cfg["dataset"].get("use_ram_cache", False))
+    use_preprocessed = False
     patch_size = tuple(cfg["train"]["patch_size"])
     num_workers = int(cfg["train"]["num_workers"])
     val_sliding_window = bool(cfg["train"]["val_sliding_window"])
     val_overlap = float(cfg["train"]["val_overlap"])
 
     if use_ram_cache:
+        preprocessed_dir = Path(cfg["dataset"]["preprocessed_dir"])
+        if not preprocessed_dir.is_absolute():
+            preprocessed_dir = Path(get_original_cwd()) / preprocessed_dir
+        files = sorted(preprocessed_dir.glob("*/*.npz"))
+        if files:
+            use_preprocessed = True
+
+    if use_ram_cache and not use_preprocessed:
         raw_dir = Path(cfg["dataset"]["raw_dir"])
         labels_dir = Path(cfg["dataset"]["labels_dir"])
         if not raw_dir.is_absolute():

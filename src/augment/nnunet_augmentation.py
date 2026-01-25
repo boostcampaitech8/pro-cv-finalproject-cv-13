@@ -71,13 +71,15 @@ class NnUNetAugment3D:
     def _random_flip(self, image: torch.Tensor, label: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         if torch.rand(1).item() > self.cfg.p_flip:
             return image, label
-        dims = []
+        img_dims = []
+        lbl_dims = []
         for axis in self.cfg.flip_axes:
             if torch.rand(1).item() < 0.5:
-                dims.append(axis + 1)
-        if dims:
-            image = torch.flip(image, dims=dims)
-            label = torch.flip(label, dims=dims)
+                img_dims.append(axis + 1)
+                lbl_dims.append(axis)
+        if img_dims:
+            image = torch.flip(image, dims=img_dims)
+            label = torch.flip(label, dims=lbl_dims)
         return image, label
 
     def _random_spatial(self, image: torch.Tensor, label: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
