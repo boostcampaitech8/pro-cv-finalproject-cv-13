@@ -165,7 +165,8 @@ def train(cfg: DictConfig) -> None:
     train_batch_size = int(cfg["train"]["batch_size"])
     val_batch_size = int(cfg["train"].get("val_batch_size", train_batch_size))
 
-    if not use_ram_cache:
+    use_npz = use_preprocessed or not use_ram_cache
+    if use_npz:
         train_dataset = SegRapNPZDataset(
             train_files,
             patch_size=patch_size,
@@ -244,6 +245,9 @@ def train(cfg: DictConfig) -> None:
         while True:
             for batch in loader:
                 yield batch
+
+    def log(message: str) -> None:
+        tqdm.write(message)
 
     train_iter = infinite(train_loader)
     val_iter = infinite(val_loader) if val_loader is not None else None
@@ -329,7 +333,7 @@ def train(cfg: DictConfig) -> None:
 
         scheduler.step()
 
-        print(
+        log(
             f"Epoch {epoch + 1}/{cfg['train']['epochs']} | "
             f"train_loss: {mean_train_loss:.4f} | "
             f"val_loss: {mean_val_loss:.4f} | "
@@ -340,7 +344,7 @@ def train(cfg: DictConfig) -> None:
             best_dice = mean_val_dice
             _save_checkpoint(output_dir, epoch, model, optimizer, best_dice)
 
-    print(f"Training done. Best val dice: {best_dice:.4f}")
+    log(f"Training done. Best val dice: {best_dice:.4f}")
 
 
 if __name__ == "__main__":
