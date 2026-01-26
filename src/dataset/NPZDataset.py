@@ -54,6 +54,14 @@ def _zscore(volume: np.ndarray) -> np.ndarray:
     return (volume - mean) / (std + 1e-8)
 
 
+def _resolve_modality_path(case_dir: Path, modality: str) -> Path:
+    if "{case_id}" in modality:
+        return case_dir / modality.format(case_id=case_dir.name)
+    if modality.startswith("__"):
+        return case_dir / f"{case_dir.name}{modality}"
+    return case_dir / modality
+
+
 class RAMDataset(Dataset):
     def __init__(
         self,
@@ -104,7 +112,7 @@ class RAMDataset(Dataset):
     ) -> Tuple[np.ndarray, np.ndarray]:
         images = []
         for modality in modalities:
-            img_path = case_dir / modality
+            img_path = _resolve_modality_path(case_dir, modality)
             if not img_path.exists():
                 raise FileNotFoundError(f"Missing modality file: {img_path}")
             img = _load_nifti(img_path)
@@ -177,7 +185,7 @@ class RawDataset(Dataset):
     ) -> Tuple[np.ndarray, np.ndarray]:
         images = []
         for modality in modalities:
-            img_path = case_dir / modality
+            img_path = _resolve_modality_path(case_dir, modality)
             if not img_path.exists():
                 raise FileNotFoundError(f"Missing modality file: {img_path}")
             img = _load_nifti(img_path)

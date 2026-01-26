@@ -67,6 +67,14 @@ def _save_checkpoint(output_dir: Path, epoch: int, model: nn.Module, optimizer, 
     )
 
 
+def _resolve_modality_path(case_dir: Path, modality: str) -> Path:
+    if "{case_id}" in modality:
+        return case_dir / modality.format(case_id=case_dir.name)
+    if modality.startswith("__"):
+        return case_dir / f"{case_dir.name}{modality}"
+    return case_dir / modality
+
+
 def _align_label_to_image(label: torch.Tensor, image_shape: tuple[int, int, int]) -> torch.Tensor:
     if tuple(label.shape) == image_shape:
         return label
@@ -102,7 +110,7 @@ def train(cfg: DictConfig) -> None:
 
     use_ram_cache = bool(cfg["dataset"].get("use_ram_cache", False))
     use_preprocessed = False
-    force_raw = bool(cfg["dataset"].get("force_raw", False))
+    force_raw = bool(cfg["dataset"].get("force_raw", True))
     patch_size = tuple(cfg["train"]["patch_size"])
     num_workers = int(cfg["train"]["num_workers"])
     val_sliding_window = bool(cfg["train"]["val_sliding_window"])
@@ -138,7 +146,7 @@ def train(cfg: DictConfig) -> None:
 
         case_paths = []
         for case_dir in case_dirs:
-            img_path = case_dir / modalities[0]
+            img_path = _resolve_modality_path(case_dir, modalities[0])
             if not img_path.exists():
                 raise FileNotFoundError(f"Missing modality file: {img_path}")
             case_paths.append(img_path)
