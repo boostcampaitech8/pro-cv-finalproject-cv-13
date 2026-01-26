@@ -10,11 +10,12 @@ import torch
 from hydra.utils import get_original_cwd
 from omegaconf import DictConfig, OmegaConf, open_dict
 from torch import nn
+from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from src.augment.nnunet_augmentation import AugmentConfig, NnUNetAugment3D
-from src.dataset.SegRapNPZDataset import SegRapNPZDataset, SegRapRAMDataset
+from src.dataset.NPZDataset import NPZDataset, RAMDataset, RawDataset
 from src.models.build_model import build_model as pro_build_model
 from src.training.inference import sliding_window_inference
 from src.training.metrics import dice_score, pick_highest_res_output
@@ -66,6 +67,34 @@ def _save_checkpoint(output_dir: Path, epoch: int, model: nn.Module, optimizer, 
     )
 
 
+def _align_label_to_image(label: torch.Tensor, image_shape: tuple[int, int, int]) -> torch.Tensor:
+    if tuple(label.shape) == image_shape:
+        return label
+
+    d, h, w = label.shape
+    td, th, tw = image_shape
+
+    pad_d = max(0, td - d)
+    pad_h = max(0, th - h)
+    pad_w = max(0, tw - w)
+    if pad_d or pad_h or pad_w:
+        pad = (
+            pad_w // 2,
+            pad_w - pad_w // 2,
+            pad_h // 2,
+            pad_h - pad_h // 2,
+            pad_d // 2,
+            pad_d - pad_d // 2,
+        )
+        label = F.pad(label, pad, mode="constant", value=0)
+        d, h, w = label.shape
+
+    sd = max(0, (d - td) // 2)
+    sh = max(0, (h - th) // 2)
+    sw = max(0, (w - tw) // 2)
+    return label[sd : sd + td, sh : sh + th, sw : sw + tw]
+
+
 @hydra.main(config_path="conf", config_name="config", version_base="1.3")
 def train(cfg: DictConfig) -> None:
     set_seed(cfg["seed"])
@@ -73,12 +102,17 @@ def train(cfg: DictConfig) -> None:
 
     use_ram_cache = bool(cfg["dataset"].get("use_ram_cache", False))
     use_preprocessed = False
+    force_raw = bool(cfg["dataset"].get("force_raw", False))
     patch_size = tuple(cfg["train"]["patch_size"])
     num_workers = int(cfg["train"]["num_workers"])
     val_sliding_window = bool(cfg["train"]["val_sliding_window"])
     val_overlap = float(cfg["train"]["val_overlap"])
 
-    if use_ram_cache:
+    use_raw_dataset = force_raw
+    if use_raw_dataset:
+        use_ram_cache = False
+        use_preprocessed = False
+    elif use_ram_cache:
         preprocessed_dir = Path(cfg["dataset"]["preprocessed_dir"])
         if not preprocessed_dir.is_absolute():
             preprocessed_dir = Path(get_original_cwd()) / preprocessed_dir
@@ -86,13 +120,16 @@ def train(cfg: DictConfig) -> None:
         if files:
             use_preprocessed = True
 
-    if use_ram_cache and not use_preprocessed:
+    if use_raw_dataset or (use_ram_cache and not use_preprocessed):
         raw_dir = Path(cfg["dataset"]["raw_dir"])
-        labels_dir = Path(cfg["dataset"]["labels_dir"])
+        labels_dir = Path(cfg["dataset"].get("labels_dir", raw_dir))
         if not raw_dir.is_absolute():
             raw_dir = Path(get_original_cwd()) / raw_dir
         if not labels_dir.is_absolute():
             labels_dir = Path(get_original_cwd()) / labels_dir
+        task_dir = raw_dir / "Task 1"
+        if task_dir.exists():
+            raw_dir = task_dir
 
         modalities = list(cfg["dataset"].get("modalities", ["image.nii.gz", "image_contrast.nii.gz"]))
         case_dirs = sorted([p for p in raw_dir.iterdir() if p.is_dir()])
@@ -115,30 +152,46 @@ def train(cfg: DictConfig) -> None:
         train_cases = [p.parent for p in train_files]
         val_cases = [p.parent for p in val_files]
 
-        cache_in_ram = bool(cfg["dataset"].get("cache_in_ram", True))
-        cached_cases = (
-            SegRapRAMDataset.cache_cases(case_dirs, labels_dir, modalities) if cache_in_ram else None
-        )
-
-        train_dataset = SegRapRAMDataset(
-            train_cases,
-            labels_dir=labels_dir,
-            modalities=modalities,
-            patch_size=patch_size,
-            is_train=True,
-            oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
-            cache_in_ram=cache_in_ram,
-            cached_cases=cached_cases,
-        )
-        val_dataset = SegRapRAMDataset(
-            val_cases,
-            labels_dir=labels_dir,
-            modalities=modalities,
-            patch_size=patch_size,
-            is_train=False,
-            cache_in_ram=cache_in_ram,
-            cached_cases=cached_cases,
-        )
+        if use_raw_dataset:
+            train_dataset = RawDataset(
+                train_cases,
+                labels_dir=labels_dir,
+                modalities=modalities,
+                patch_size=patch_size,
+                is_train=True,
+                oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
+            )
+            val_dataset = RawDataset(
+                val_cases,
+                labels_dir=labels_dir,
+                modalities=modalities,
+                patch_size=patch_size,
+                is_train=False,
+            )
+        else:
+            cache_in_ram = bool(cfg["dataset"].get("cache_in_ram", True))
+            cached_cases = (
+                RAMDataset.cache_cases(case_dirs, labels_dir, modalities) if cache_in_ram else None
+            )
+            train_dataset = RAMDataset(
+                train_cases,
+                labels_dir=labels_dir,
+                modalities=modalities,
+                patch_size=patch_size,
+                is_train=True,
+                oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
+                cache_in_ram=cache_in_ram,
+                cached_cases=cached_cases,
+            )
+            val_dataset = RAMDataset(
+                val_cases,
+                labels_dir=labels_dir,
+                modalities=modalities,
+                patch_size=patch_size,
+                is_train=False,
+                cache_in_ram=cache_in_ram,
+                cached_cases=cached_cases,
+            )
 
         sample_image, sample_label = train_dataset.get_full_case(0)
         in_channels = int(sample_image.shape[0])
@@ -166,15 +219,15 @@ def train(cfg: DictConfig) -> None:
     train_batch_size = int(cfg["train"]["batch_size"])
     val_batch_size = int(cfg["train"].get("val_batch_size", train_batch_size))
 
-    use_npz = use_preprocessed or not use_ram_cache
+    use_npz = use_preprocessed or (not use_ram_cache and not use_raw_dataset)
     if use_npz:
-        train_dataset = SegRapNPZDataset(
+        train_dataset = NPZDataset(
             train_files,
             patch_size=patch_size,
             is_train=True,
             oversample_foreground_percent=float(cfg["train"]["oversample_foreground_percent"]),
         )
-        val_dataset = SegRapNPZDataset(val_files, patch_size=patch_size, is_train=False)
+        val_dataset = NPZDataset(val_files, patch_size=patch_size, is_train=False)
 
     train_loader = DataLoader(
         train_dataset,
@@ -253,10 +306,10 @@ def train(cfg: DictConfig) -> None:
     train_iter = infinite(train_loader)
     val_iter = infinite(val_loader) if val_loader is not None else None
     if val_sliding_window:
-        if use_ram_cache and not use_preprocessed:
-            val_index_iter = itertools.cycle(range(len(val_dataset)))
-        else:
-            val_index_iter = itertools.cycle(range(len(val_files)))
+            if use_raw_dataset or (use_ram_cache and not use_preprocessed):
+                val_index_iter = itertools.cycle(range(len(val_dataset)))
+            else:
+                val_index_iter = itertools.cycle(range(len(val_files)))
 
     for epoch in range(cfg["train"]["epochs"]):
         model.train()
@@ -300,7 +353,7 @@ def train(cfg: DictConfig) -> None:
                 unit="case",
             ):
                 idx = next(val_index_iter)
-                if use_ram_cache and not use_preprocessed:
+                if use_raw_dataset or (use_ram_cache and not use_preprocessed):
                     image_np, target_np = val_dataset.get_full_case(idx)
                     image = torch.from_numpy(np.ascontiguousarray(image_np)).float()
                     target = torch.from_numpy(np.ascontiguousarray(target_np)).long()
@@ -309,6 +362,7 @@ def train(cfg: DictConfig) -> None:
                     with np.load(val_path) as data:
                         image = torch.from_numpy(data["image"].astype(np.float32))
                         target = torch.from_numpy(data["label"].astype(np.int64))
+                target = _align_label_to_image(target, image.shape[1:])
                 logits = sliding_window_inference(
                     image, model, patch_size=patch_size, overlap=val_overlap, device=device
                 )

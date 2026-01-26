@@ -2,10 +2,10 @@
 # nnUNetPlans.json에서 구조를 읽어옴
 
 name: nnunet
-plans_path: ./nnUNet_preprocessed/Dataset001_SegRap2023/nnUNetPlans.json
+plans_path: ./nnUNet_preprocessed/hecktor25/nnUNetPlans.json
 config_name: 3d_fullres
-in_channels: 2
-num_classes: 57
-deep_supervision: false
+in_channels: 1
+num_classes: 3
+deep_supervision: true
 use_checkpoint: false
 compile: false

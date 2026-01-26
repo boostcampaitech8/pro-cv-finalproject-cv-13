@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import random
 
-class SegRapNPZDataset(Dataset):
+class NPZDataset(Dataset):
     def __init__(
         self,
         files: List[Path],
@@ -54,7 +54,7 @@ def _zscore(volume: np.ndarray) -> np.ndarray:
     return (volume - mean) / (std + 1e-8)
 
 
-class SegRapRAMDataset(Dataset):
+class RAMDataset(Dataset):
     def __init__(
         self,
         case_dirs: List[Path],
@@ -89,11 +89,11 @@ class SegRapRAMDataset(Dataset):
         total_bytes = 0
         for case_dir in case_dirs:
             case_id = case_dir.name
-            image, label = SegRapRAMDataset._load_case(case_dir, labels_dir, modalities)
+            image, label = RAMDataset._load_case(case_dir, labels_dir, modalities)
             total_bytes += image.nbytes + label.nbytes
             cached[case_id] = {"image": image, "label": label}
         total_gb = total_bytes / (1024 ** 3)
-        print(f"SegRapRAMDataset: cached {len(cached)} cases in RAM ({total_gb:.2f} GB)")
+        print(f"RAMDataset: cached {len(cached)} cases in RAM ({total_gb:.2f} GB)")
         return cached
 
     @staticmethod
@@ -137,6 +137,70 @@ class SegRapRAMDataset(Dataset):
     def __getitem__(self, idx: int):
         case_id = self.case_ids[idx]
         image, label = self._get_case(case_id)
+
+        if self.is_train:
+            if self.oversample_foreground_percent > 0 and random.random() < self.oversample_foreground_percent:
+                image, label = _foreground_crop(image, label, self.patch_size)
+            else:
+                image, label = _random_crop(image, label, self.patch_size)
+        else:
+            image, label = _center_crop(image, label, self.patch_size)
+
+        image = np.ascontiguousarray(image)
+        label = np.ascontiguousarray(label)
+        return torch.from_numpy(image), torch.from_numpy(label)
+
+
+class RawDataset(Dataset):
+    def __init__(
+        self,
+        case_dirs: List[Path],
+        labels_dir: Path,
+        modalities: List[str],
+        patch_size: Tuple[int, int, int],
+        is_train: bool,
+        oversample_foreground_percent: float = 0.0,
+    ):
+        self.case_dirs = case_dirs
+        self.case_ids = [p.name for p in case_dirs]
+        self.labels_dir = labels_dir
+        self.modalities = modalities
+        self.patch_size = patch_size
+        self.is_train = is_train
+        self.oversample_foreground_percent = oversample_foreground_percent
+
+    @staticmethod
+    def _load_case(
+        case_dir: Path,
+        labels_dir: Path,
+        modalities: List[str],
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        images = []
+        for modality in modalities:
+            img_path = case_dir / modality
+            if not img_path.exists():
+                raise FileNotFoundError(f"Missing modality file: {img_path}")
+            img = _load_nifti(img_path)
+            images.append(_zscore(img))
+
+        image = np.stack(images, axis=0).astype(np.float32)
+
+        label_path = labels_dir / f"{case_dir.name}.nii.gz"
+        if not label_path.exists():
+            raise FileNotFoundError(f"Missing label file: {label_path}")
+        label = _load_nifti(label_path).astype(np.int16)
+        return image, label
+
+    def get_full_case(self, idx: int) -> Tuple[np.ndarray, np.ndarray]:
+        case_dir = self.case_dirs[idx]
+        return self._load_case(case_dir, self.labels_dir, self.modalities)
+
+    def __len__(self) -> int:
+        return len(self.case_ids)
+
+    def __getitem__(self, idx: int):
+        case_dir = self.case_dirs[idx]
+        image, label = self._load_case(case_dir, self.labels_dir, self.modalities)
 
         if self.is_train:
             if self.oversample_foreground_percent > 0 and random.random() < self.oversample_foreground_percent:

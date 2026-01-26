@@ -1,0 +1,13 @@
+dataset_id: 3
+dataset_name: Hecktor25
+raw_dir: ./hecktor25
+labels_dir: ./hecktor25
+preprocessed_dir: ./preprocessed_hector25
+nnunet_raw: ./nnUNet_raw
+nnunet_preprocessed: ./nnUNet_preprocessed
+nnunet_results: ./nnUNet_results
+dataset_json_template: ./hecktor25/dataset.json
+modalities:
+  - __CT.nii.gz
+use_ram_cache: false
+cache_in_ram: false

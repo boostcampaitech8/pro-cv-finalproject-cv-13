@@ -1,4 +1,4 @@
-from .SegRapNPZDataset import SegRapNPZDataset
+from .NPZDataset import NPZDataset, RAMDataset, RawDataset
 
 
-__all__ = ["SegRapNPZDataset"]
+__all__ = ["NPZDataset", "RAMDataset", "RawDataset"]
