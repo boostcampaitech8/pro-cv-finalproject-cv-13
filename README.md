@@ -1,0 +1,77 @@
+# Normal Structure Segmentation
+
+Neck CT에서 정상 해부학적 구조물을 자동으로 분할하는 추론 파이프라인입니다.
+**nnU-Net**과 **TotalSegmentator V2(TSv2)** 두 모델의 결과를 결합하여 최종 세그멘테이션을 생성합니다.
+
+## 프로젝트 구조
+
+```
+.
+├── requirements.sh            # 환경 설정 및 패키지 설치
+├── inference.sh               # 추론 파이프라인 실행 스크립트
+├── merge_tsv2_to_nnunet.py    # TSv2 결과를 nnUNet 결과에 병합
+├── structure_list.yaml        # TSv2에서 가져올 구조물 목록
+├── input_folder/              # 입력 CT 이미지 (.nii.gz)
+├── output_folder/             # 출력 세그멘테이션 결과
+├── normal_structure_model/    # 학습된 nnUNet 모델 가중치
+└── nnUNet/                    # nnU-Net 프레임워크 (v2.6.3)
+```
+
+### nnU-Net 가중치 경로
+
+```
+normal_structure_model/
+└── Dataset001_NeckCT/
+    └── nnUNetTrainer__nnUNetPlans__3d_fullres/
+        ├── fold_0/
+        │   └── checkpoint_final.pth    # 학습된 모델 가중치
+        ├── plans.json                  # 모델 구성 (네트워크 구조, 패치 크기 등)
+        └── dataset.json                # 라벨 정의 (18 클래스 매핑)
+```
+
+`inference.sh`에서 `nnUNet_results` 환경변수를 `./normal_structure_model`로 설정하여 해당 가중치를 참조합니다.
+
+
+## 세그멘테이션 대상 (18 구조물)
+
+| 카테고리 | 구조물 |
+|---------|--------|
+| 혈관 | IJV (좌/우), 총경동맥 (좌/우) |
+| 근육 | 전사각근 (좌/우) |
+| 골격 | 설골, 경추 C1–C7, 흉추 T1 |
+| 장기 | 식도, 갑상선, 기관 |
+
+이 중 **5개 구조물**(설골, IJV 좌/우, 전사각근 좌/우)은 TSv2 결과로 덮어씁니다.
+
+## 환경 설정
+
+```bash
+bash requirements.sh
+```
+
+- Python 3.10 가상환경 생성
+- PyTorch 2.8.0 (CUDA 12.8) 설치
+- nnU-Net, TotalSegmentator 설치
+
+## 추론 실행
+
+```bash
+bash inference.sh
+```
+
+### 파이프라인 단계
+
+1. **TotalSegmentator V2** — `headneck_bones_vessels`, `headneck_muscles` 태스크 추론 (GPU)
+2. **nnU-Net** — 3D full resolution 모델로 전체 구조물 추론 (`Dataset001_NeckCT`, fold 0)
+3. **병합** — `structure_list.yaml`에 정의된 5개 구조물을 TSv2 결과로 nnUNet 결과에 덮어쓰기
+
+### 입출력
+
+- **입력**: `input_folder/` 내 `.nii.gz` CT 이미지
+- **출력**: `output_folder/{case_name}.nii.gz` (18-class 라벨맵)
+
+## 모델 정보
+
+- **nnU-Net**: 3D Full Resolution PlainConvUNet, 패치 크기 128³, 학습 데이터 48건
+- **TotalSegmentator V2**: 사전학습된 head & neck 모델
+- **복셀 간격**: 1.5mm × 1.5mm × 1.5mm

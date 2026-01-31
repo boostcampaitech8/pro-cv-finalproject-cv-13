@@ -49,7 +49,9 @@ def main():
             continue
 
         case_name = case_dir.name
-        nnunet_file = out_dir / f"{case_name}.nii.gz"
+        # nnUNet은 _0000 채널 접미사를 제거하므로, 매칭을 위해 _0000 제거
+        nnunet_name = case_name.rsplit("_", 1)[0] if case_name.endswith("_0000") else case_name
+        nnunet_file = out_dir / f"{nnunet_name}.nii.gz"
         if not nnunet_file.exists():
             print(f"[SKIP] nnUNet 결과 없음: {nnunet_file}")
             continue
