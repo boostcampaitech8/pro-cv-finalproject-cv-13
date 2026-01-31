@@ -3,8 +3,8 @@ VENV_DIR="/data/ephemeral/home/testvenv" # 경로 설정 필요
 source $VENV_DIR/bin/activate
 
 ## 2. 입출력 파일 설정
-IN_DIR="/data/ephemeral/home/nnunet_inference_pipeline/input_folder" # 경로 설정 필요
-OUT_DIR="/data/ephemeral/home/nnunet_inference_pipeline/output_folder" # 경로 설정 필요
+IN_DIR="/data/ephemeral/home/normal_structure_segmentation/input_folder" # 경로 설정 필요
+OUT_DIR="/data/ephemeral/home/normal_structure_segmentation/output_folder" # 경로 설정 필요
 
 
 ## 3. Totalsegmentator V2
@@ -14,7 +14,7 @@ TASKS=("headneck_bones_vessels" "headneck_muscles") # head&neck
 
 # 실행 바이너리/디바이스
 TS_BIN="${TS_BIN:-TotalSegmentator}"
-FALLBACK_TS_BIN="/data/ephemeral/home/testvenv/bin/TotalSegmentator"
+FALLBACK_TS_BIN="${VENV_DIR}/bin/TotalSegmentator"
 DEVICE="${DEVICE:-gpu}"
 
 if ! command -v "${TS_BIN}" >/dev/null 2>&1; then
@@ -65,4 +65,3 @@ python "${SCRIPT_DIR}/merge_tsv2_to_nnunet.py" \
   --out_dir "${OUT_DIR}" \
   --structure_list "${SCRIPT_DIR}/structure_list.yaml" \
   --dataset_json "${OUT_DIR}/dataset.json"
-
