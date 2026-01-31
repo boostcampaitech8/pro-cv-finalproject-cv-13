@@ -1,0 +1,30 @@
+{
+    "channel_names": {
+        "0": "CT"
+    },
+    "labels": {
+        "background": 0,
+        "IJV_left": 1,
+        "IJV_right": 2,
+        "Anterior_scalene_left": 3,
+        "Anterior_scalene_right": 4,
+        "hyoid": 5,
+        "common_carotid_artery_left": 6,
+        "common_carotid_artery_right": 7,
+        "esophagus": 8,
+        "thyroid_gland": 9,
+        "trachea": 10,
+        "vertebrae_C1": 11,
+        "vertebrae_C2": 12,
+        "vertebrae_C3": 13,
+        "vertebrae_C4": 14,
+        "vertebrae_C5": 15,
+        "vertebrae_C6": 16,
+        "vertebrae_C7": 17,
+        "vertebrae_T1": 18
+    },
+    "numTraining": 48,
+    "file_ending": ".nii.gz",
+    "description": "Neck CT segmentation - 18 structures (dataset1)",
+    "tensorImageSize": "3D"
+}
