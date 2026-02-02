@@ -17,6 +17,10 @@ Neck CT에서 정상 해부학적 구조물을 자동으로 분할하는 추론 
 └── nnUNet/                    # nnU-Net 프레임워크 (v2.6.3)
 ```
 
+**주의**
+1. input_folder와 output_folder를 생성해야 합니다.(github에는 빈 폴더가 push되지 않습니다.)
+2. input_folder에 .nii.gz 형식의 입력할 CT 이미지를 넣어야 합니다.
+
 ### nnU-Net 가중치 경로
 
 ```
@@ -31,6 +35,8 @@ normal_structure_model/
 
 `inference.sh`에서 `nnUNet_results` 환경변수를 `./normal_structure_model`로 설정하여 해당 가중치를 참조합니다.
 
+**주의**
+1. fold_0 폴더를 생성 후 해당 폴더에 가중치를 집어 넣어야 합니다.
 
 ## 세그멘테이션 대상 (18 구조물)
 
@@ -53,7 +59,8 @@ bash requirements.sh
 - PyTorch 2.8.0 (CUDA 12.8) 설치
 - nnU-Net, TotalSegmentator 설치
 
-* 원격 서버를 이용하지 않는 경우 경로 설정이 필요한 부분이 있습니다.(1. 가상 환경 생성 ~ 3. 임시 디렉토리 설정)
+**주의**
+1. 원격 서버를 이용하지 않는 경우 경로 설정이 필요한 부분이 있습니다.(1. 가상 환경 생성 ~ 3. 임시 디렉토리 설정)
 
 ## 추론 실행
 
@@ -61,7 +68,8 @@ bash requirements.sh
 bash inference.sh
 ```
 
-* 원격 서버를 이용하지 않는 경우 경로 설정이 필요한 부분이 있습니다.(1. 가상 환경 활성화)
+**주의**
+1. 원격 서버를 이용하지 않는 경우 경로 설정이 필요한 부분이 있습니다.(1. 가상 환경 활성화)
 
 ### 파이프라인 단계
 
