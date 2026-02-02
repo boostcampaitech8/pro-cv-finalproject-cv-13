@@ -1,0 +1,38 @@
+services:
+  tumor-seg:
+    build:
+      context: ./tumor_segmentation
+      dockerfile: Dockerfile
+    image: next-ct/tumor-seg
+    container_name: tumor-seg
+    runtime: nvidia
+    shm_size: "8gb"
+    volumes:
+      - ../test_dir:/test_dir
+      - ./outputs/tumor:/data/outputs
+
+    command: >
+      inference.py
+      /test_dir/CHUM-001/CHUM-001__0000.nii.gz
+      /data/outputs
+      --model-folder plans
+      --checkpoint checkpoint_best.pth
+      --pt-path /test_dir/CHUM-001/CHUM-001__0001.nii.gz
+
+  normal-seg:
+    build:
+      context: ./normal_structure_segmentation
+      dockerfile: Dockerfile
+    image: next-ct/normal-structure-seg
+    container_name: normal-seg
+    runtime: nvidia
+    shm_size: "8gb"
+    volumes:
+      - ../test_dir/CHUM-001:/data/input
+      - ./outputs/normal:/data/output
+      - ./normal_structure_segmentation/ts_cache:/root/.totalsegmentator
+    command: >
+      /app/inference.sh
+      /data/input
+      /data/output
+      --only-ct
