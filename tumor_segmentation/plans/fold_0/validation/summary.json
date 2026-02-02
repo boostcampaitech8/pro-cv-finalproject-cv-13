@@ -1,0 +1,3572 @@
+{
+    "foreground_mean": {
+        "Dice": 0.6913593648286653,
+        "FN": 3406.900735294118,
+        "FP": 2510.327205882353,
+        "IoU": 0.5678539886933605,
+        "TN": 12303177.290441176,
+        "TP": 11199.599264705881,
+        "n_pred": 13709.926470588234,
+        "n_ref": 14606.5
+    },
+    "mean": {
+        "1": {
+            "Dice": 0.7335070899616075,
+            "FN": 3180.544117647059,
+            "FP": 1792.5220588235295,
+            "IoU": 0.608104191131063,
+            "TN": 12304851.602941176,
+            "TP": 10469.448529411764,
+            "n_pred": 12261.970588235294,
+            "n_ref": 13649.992647058823
+        },
+        "2": {
+            "Dice": 0.649211639695723,
+            "FN": 3633.2573529411766,
+            "FP": 3228.1323529411766,
+            "IoU": 0.5276037862556581,
+            "TN": 12301502.977941176,
+            "TP": 11929.75,
+            "n_pred": 15157.882352941177,
+            "n_ref": 15563.007352941177
+        }
+    },
+    "metric_per_case": [
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8189995265898691,
+                    "FN": 1088,
+                    "FP": 1206,
+                    "IoU": 0.693479422768573,
+                    "TN": 11912516,
+                    "TP": 5190,
+                    "n_pred": 6396,
+                    "n_ref": 6278
+                },
+                "2": {
+                    "Dice": 0.7971941105549669,
+                    "FN": 1899,
+                    "FP": 3652,
+                    "IoU": 0.6627786890225381,
+                    "TN": 11903539,
+                    "TP": 10910,
+                    "n_pred": 14562,
+                    "n_ref": 12809
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-001.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-001.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.846440732933355,
+                    "FN": 1790,
+                    "FP": 104,
+                    "IoU": 0.733764408209165,
+                    "TN": 12392886,
+                    "TP": 5220,
+                    "n_pred": 5324,
+                    "n_ref": 7010
+                },
+                "2": {
+                    "Dice": 0.781423123965753,
+                    "FN": 4115,
+                    "FP": 1961,
+                    "IoU": 0.6412587825470862,
+                    "TN": 12383063,
+                    "TP": 10861,
+                    "n_pred": 12822,
+                    "n_ref": 14976
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-008.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-008.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9057218309859155,
+                    "FN": 5233,
+                    "FP": 1193,
+                    "IoU": 0.8276888424101038,
+                    "TN": 12362707,
+                    "TP": 30867,
+                    "n_pred": 32060,
+                    "n_ref": 36100
+                },
+                "2": {
+                    "Dice": 0.881087324397647,
+                    "FN": 1825,
+                    "FP": 2602,
+                    "IoU": 0.7874495870942961,
+                    "TN": 12379172,
+                    "TP": 16401,
+                    "n_pred": 19003,
+                    "n_ref": 18226
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-011.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-011.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5359150530918176,
+                    "FN": 4436,
+                    "FP": 22,
+                    "IoU": 0.3660409556313993,
+                    "TN": 12392968,
+                    "TP": 2574,
+                    "n_pred": 2596,
+                    "n_ref": 7010
+                },
+                "2": {
+                    "Dice": 0.8202998846597462,
+                    "FN": 1224,
+                    "FP": 334,
+                    "IoU": 0.6953461087211577,
+                    "TN": 12394886,
+                    "TP": 3556,
+                    "n_pred": 3890,
+                    "n_ref": 4780
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-015.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-015.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8407589599437807,
+                    "FN": 131,
+                    "FP": 1002,
+                    "IoU": 0.725266731328807,
+                    "TN": 12395876,
+                    "TP": 2991,
+                    "n_pred": 3993,
+                    "n_ref": 3122
+                },
+                "2": {
+                    "Dice": 0.7816091954022989,
+                    "FN": 693,
+                    "FP": 2556,
+                    "IoU": 0.6415094339622641,
+                    "TN": 12390937,
+                    "TP": 5814,
+                    "n_pred": 8370,
+                    "n_ref": 6507
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-016.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-016.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9545875467644553,
+                    "FN": 722,
+                    "FP": 1730,
+                    "IoU": 0.9131205045530242,
+                    "TN": 12371777,
+                    "TP": 25771,
+                    "n_pred": 27501,
+                    "n_ref": 26493
+                },
+                "2": {
+                    "Dice": 0.8808273739476781,
+                    "FN": 3784,
+                    "FP": 1482,
+                    "IoU": 0.7870344158207627,
+                    "TN": 12375273,
+                    "TP": 19461,
+                    "n_pred": 20943,
+                    "n_ref": 23245
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-030.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-030.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8728904080324716,
+                    "FN": 107,
+                    "FP": 2868,
+                    "IoU": 0.7744503411675512,
+                    "TN": 12386810,
+                    "TP": 10215,
+                    "n_pred": 13083,
+                    "n_ref": 10322
+                },
+                "2": {
+                    "Dice": 0.6174872852666551,
+                    "FN": 24141,
+                    "FP": 152,
+                    "IoU": 0.44664130657615997,
+                    "TN": 12356099,
+                    "TP": 19608,
+                    "n_pred": 19760,
+                    "n_ref": 43749
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-042.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-042.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8296143250688706,
+                    "FN": 415,
+                    "FP": 2059,
+                    "IoU": 0.7088384135577263,
+                    "TN": 12391503,
+                    "TP": 6023,
+                    "n_pred": 8082,
+                    "n_ref": 6438
+                },
+                "2": {
+                    "Dice": 0.7876625822605304,
+                    "FN": 9224,
+                    "FP": 359,
+                    "IoU": 0.6497057425887341,
+                    "TN": 12372643,
+                    "TP": 17774,
+                    "n_pred": 18133,
+                    "n_ref": 26998
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-056.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-056.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6293308648505687,
+                    "FN": 59,
+                    "FP": 5547,
+                    "IoU": 0.459141341051616,
+                    "TN": 12389635,
+                    "TP": 4759,
+                    "n_pred": 10306,
+                    "n_ref": 4818
+                },
+                "2": {
+                    "Dice": 0.0923331387429461,
+                    "FN": 17261,
+                    "FP": 1397,
+                    "IoU": 0.0484010812464936,
+                    "TN": 12380393,
+                    "TP": 949,
+                    "n_pred": 2346,
+                    "n_ref": 18210
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUM-065.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUM-065.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.727831094049904,
+                    "FN": 1523,
+                    "FP": 1313,
+                    "IoU": 0.572118286059143,
+                    "TN": 12393372,
+                    "TP": 3792,
+                    "n_pred": 5105,
+                    "n_ref": 5315
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-000.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-000.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7677790276215473,
+                    "FN": 219,
+                    "FP": 3497,
+                    "IoU": 0.6230855056293741,
+                    "TN": 12390141,
+                    "TP": 6143,
+                    "n_pred": 9640,
+                    "n_ref": 6362
+                },
+                "2": {
+                    "Dice": 0.02939796716184519,
+                    "FN": 160,
+                    "FP": 6047,
+                    "IoU": 0.014918266941755277,
+                    "TN": 12393699,
+                    "TP": 94,
+                    "n_pred": 6141,
+                    "n_ref": 254
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-001.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-001.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8674939530970659,
+                    "FN": 2309,
+                    "FP": 211,
+                    "IoU": 0.7659949856068344,
+                    "TN": 12389231,
+                    "TP": 8249,
+                    "n_pred": 8460,
+                    "n_ref": 10558
+                },
+                "2": {
+                    "Dice": 0.7405073554963512,
+                    "FN": 2587,
+                    "FP": 19815,
+                    "IoU": 0.5879409925320973,
+                    "TN": 12345634,
+                    "TP": 31964,
+                    "n_pred": 51779,
+                    "n_ref": 34551
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-011.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-011.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.769316441598218,
+                    "FN": 9,
+                    "FP": 3305,
+                    "IoU": 0.6251131221719457,
+                    "TN": 12391160,
+                    "TP": 5526,
+                    "n_pred": 8831,
+                    "n_ref": 5535
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 388,
+                    "IoU": 0.0,
+                    "TN": 12399612,
+                    "TP": 0,
+                    "n_pred": 388,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-034.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-034.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7682103232030874,
+                    "FN": 4510,
+                    "FP": 1256,
+                    "IoU": 0.6236538084981398,
+                    "TN": 12384679,
+                    "TP": 9555,
+                    "n_pred": 10811,
+                    "n_ref": 14065
+                },
+                "2": {
+                    "Dice": 0.8518764806117783,
+                    "FN": 12310,
+                    "FP": 1946,
+                    "IoU": 0.7419728506787331,
+                    "TN": 12344750,
+                    "TP": 40994,
+                    "n_pred": 42940,
+                    "n_ref": 53304
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-037.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-037.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8455084574432239,
+                    "FN": 820,
+                    "FP": 8350,
+                    "IoU": 0.7323643580538773,
+                    "TN": 12365737,
+                    "TP": 25093,
+                    "n_pred": 33443,
+                    "n_ref": 25913
+                },
+                "2": {
+                    "Dice": 0.6836027713625866,
+                    "FN": 438,
+                    "FP": 384,
+                    "IoU": 0.519298245614035,
+                    "TN": 12398290,
+                    "TP": 888,
+                    "n_pred": 1272,
+                    "n_ref": 1326
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-059.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-059.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7603249168134665,
+                    "FN": 14,
+                    "FP": 4884,
+                    "IoU": 0.6133259651061814,
+                    "TN": 12387333,
+                    "TP": 7769,
+                    "n_pred": 12653,
+                    "n_ref": 7783
+                },
+                "2": {
+                    "Dice": 0.4714699768715051,
+                    "FN": 987,
+                    "FP": 17066,
+                    "IoU": 0.3084466577284045,
+                    "TN": 12373895,
+                    "TP": 8052,
+                    "n_pred": 25118,
+                    "n_ref": 9039
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-063.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-063.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7255569056298097,
+                    "FN": 24,
+                    "FP": 6752,
+                    "IoU": 0.5693129091718044,
+                    "TN": 12384267,
+                    "TP": 8957,
+                    "n_pred": 15709,
+                    "n_ref": 8981
+                },
+                "2": {
+                    "Dice": 0.7242757242757243,
+                    "FN": 104,
+                    "FP": 1552,
+                    "IoU": 0.5677368833202819,
+                    "TN": 12396169,
+                    "TP": 2175,
+                    "n_pred": 3727,
+                    "n_ref": 2279
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-067.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-067.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7776211644801041,
+                    "FN": 333,
+                    "FP": 5820,
+                    "IoU": 0.6361539826148661,
+                    "TN": 12383089,
+                    "TP": 10758,
+                    "n_pred": 16578,
+                    "n_ref": 11091
+                },
+                "2": {
+                    "Dice": 0.7473600453141647,
+                    "FN": 9056,
+                    "FP": 9677,
+                    "IoU": 0.5966279795870029,
+                    "TN": 12353559,
+                    "TP": 27708,
+                    "n_pred": 37385,
+                    "n_ref": 36764
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUP-071.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUP-071.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7282182282638445,
+                    "FN": 77,
+                    "FP": 2902,
+                    "IoU": 0.572596843615495,
+                    "TN": 12393030,
+                    "TP": 3991,
+                    "n_pred": 6893,
+                    "n_ref": 4068
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-008.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-008.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8222208933803743,
+                    "FN": 2905,
+                    "FP": 68,
+                    "IoU": 0.6981112916328188,
+                    "TN": 12390152,
+                    "TP": 6875,
+                    "n_pred": 6943,
+                    "n_ref": 9780
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 424,
+                    "IoU": 0.0,
+                    "TN": 12399576,
+                    "TP": 0,
+                    "n_pred": 424,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-009.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-009.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6839086678930851,
+                    "FN": 2722,
+                    "FP": 199,
+                    "IoU": 0.5196513731294196,
+                    "TN": 12393919,
+                    "TP": 3160,
+                    "n_pred": 3359,
+                    "n_ref": 5882
+                },
+                "2": {
+                    "Dice": 0.8009933826881062,
+                    "FN": 10314,
+                    "FP": 2347,
+                    "IoU": 0.6680475079310978,
+                    "TN": 12361859,
+                    "TP": 25480,
+                    "n_pred": 27827,
+                    "n_ref": 35794
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-010.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-010.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9153346080305927,
+                    "FN": 1970,
+                    "FP": 244,
+                    "IoU": 0.8438866168382456,
+                    "TN": 12385818,
+                    "TP": 11968,
+                    "n_pred": 12212,
+                    "n_ref": 13938
+                },
+                "2": {
+                    "Dice": 0.6958831341301461,
+                    "FN": 682,
+                    "FP": 234,
+                    "IoU": 0.5336048879837068,
+                    "TN": 12398036,
+                    "TP": 1048,
+                    "n_pred": 1282,
+                    "n_ref": 1730
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-013.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-013.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9016104844493708,
+                    "FN": 612,
+                    "FP": 897,
+                    "IoU": 0.8208476789742372,
+                    "TN": 12391577,
+                    "TP": 6914,
+                    "n_pred": 7811,
+                    "n_ref": 7526
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-016.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-016.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9083607155896313,
+                    "FN": 1580,
+                    "FP": 679,
+                    "IoU": 0.8321070234113712,
+                    "TN": 12386545,
+                    "TP": 11196,
+                    "n_pred": 11875,
+                    "n_ref": 12776
+                },
+                "2": {
+                    "Dice": 0.44420165444045573,
+                    "FN": 3391,
+                    "FP": 170,
+                    "IoU": 0.2855136436597111,
+                    "TN": 12395016,
+                    "TP": 1423,
+                    "n_pred": 1593,
+                    "n_ref": 4814
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-019.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-019.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9467294287110631,
+                    "FN": 2772,
+                    "FP": 1370,
+                    "IoU": 0.8988473185503566,
+                    "TN": 12359052,
+                    "TP": 36806,
+                    "n_pred": 38176,
+                    "n_ref": 39578
+                },
+                "2": {
+                    "Dice": 0.5724828858655355,
+                    "FN": 23390,
+                    "FP": 1403,
+                    "IoU": 0.40103399125455996,
+                    "TN": 12358607,
+                    "TP": 16600,
+                    "n_pred": 18003,
+                    "n_ref": 39990
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-027.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-027.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6026372059871703,
+                    "FN": 6090,
+                    "FP": 600,
+                    "IoU": 0.4312675337923999,
+                    "TN": 12388237,
+                    "TP": 5073,
+                    "n_pred": 5673,
+                    "n_ref": 11163
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-036.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-036.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8340652872730565,
+                    "FN": 7177,
+                    "FP": 153,
+                    "IoU": 0.7153619136377757,
+                    "TN": 12374248,
+                    "TP": 18422,
+                    "n_pred": 18575,
+                    "n_ref": 25599
+                },
+                "2": {
+                    "Dice": 0.8788436568069289,
+                    "FN": 2660,
+                    "FP": 5831,
+                    "IoU": 0.7838725278081808,
+                    "TN": 12360713,
+                    "TP": 30796,
+                    "n_pred": 36627,
+                    "n_ref": 33456
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-041.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-041.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8155021834061136,
+                    "FN": 54,
+                    "FP": 1298,
+                    "IoU": 0.688479262672811,
+                    "TN": 12395660,
+                    "TP": 2988,
+                    "n_pred": 4286,
+                    "n_ref": 3042
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-046.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-046.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.40180690605619784,
+                    "FN": 7423,
+                    "FP": 390,
+                    "IoU": 0.2514132413528792,
+                    "TN": 12389563,
+                    "TP": 2624,
+                    "n_pred": 3014,
+                    "n_ref": 10047
+                },
+                "2": {
+                    "Dice": 0.44490216271884653,
+                    "FN": 1608,
+                    "FP": 9,
+                    "IoU": 0.2860927152317881,
+                    "TN": 12397735,
+                    "TP": 648,
+                    "n_pred": 657,
+                    "n_ref": 2256
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-051.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-051.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9443412783373022,
+                    "FN": 2575,
+                    "FP": 5068,
+                    "IoU": 0.8945516756115396,
+                    "TN": 12327519,
+                    "TP": 64838,
+                    "n_pred": 69906,
+                    "n_ref": 67413
+                },
+                "2": {
+                    "Dice": 0.660698118901519,
+                    "FN": 1655,
+                    "FP": 5091,
+                    "IoU": 0.4933153071954334,
+                    "TN": 12386686,
+                    "TP": 6568,
+                    "n_pred": 11659,
+                    "n_ref": 8223
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-052.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-052.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8138569604086845,
+                    "FN": 166,
+                    "FP": 1000,
+                    "IoU": 0.6861372812920592,
+                    "TN": 12396285,
+                    "TP": 2549,
+                    "n_pred": 3549,
+                    "n_ref": 2715
+                },
+                "2": {
+                    "Dice": 0.6841254445522147,
+                    "FN": 8077,
+                    "FP": 10486,
+                    "IoU": 0.5199017199017198,
+                    "TN": 12361335,
+                    "TP": 20102,
+                    "n_pred": 30588,
+                    "n_ref": 28179
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-057.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-057.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9016356892393133,
+                    "FN": 1692,
+                    "FP": 3161,
+                    "IoU": 0.8208894630005537,
+                    "TN": 12372905,
+                    "TP": 22242,
+                    "n_pred": 25403,
+                    "n_ref": 23934
+                },
+                "2": {
+                    "Dice": 0.677298097733227,
+                    "FN": 1815,
+                    "FP": 3851,
+                    "IoU": 0.5120564932828109,
+                    "TN": 12388388,
+                    "TP": 5946,
+                    "n_pred": 9797,
+                    "n_ref": 7761
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-077.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-077.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9284046539917986,
+                    "FN": 3110,
+                    "FP": 539,
+                    "IoU": 0.8663761535081295,
+                    "TN": 12372692,
+                    "TP": 23659,
+                    "n_pred": 24198,
+                    "n_ref": 26769
+                },
+                "2": {
+                    "Dice": 0.5678463094034378,
+                    "FN": 1125,
+                    "FP": 1012,
+                    "IoU": 0.3964981643603502,
+                    "TN": 12396459,
+                    "TP": 1404,
+                    "n_pred": 2416,
+                    "n_ref": 2529
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-081.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-081.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.911080309139785,
+                    "FN": 12066,
+                    "FP": 636,
+                    "IoU": 0.8366827386692381,
+                    "TN": 12322225,
+                    "TP": 65073,
+                    "n_pred": 65709,
+                    "n_ref": 77139
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 810,
+                    "IoU": 0.0,
+                    "TN": 12399190,
+                    "TP": 0,
+                    "n_pred": 810,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-087.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-087.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.688082235785416,
+                    "FN": 942,
+                    "FP": 29,
+                    "IoU": 0.5244857982370226,
+                    "TN": 12397958,
+                    "TP": 1071,
+                    "n_pred": 1100,
+                    "n_ref": 2013
+                },
+                "2": {
+                    "Dice": 0.8790973096470369,
+                    "FN": 986,
+                    "FP": 1607,
+                    "IoU": 0.7842762063227954,
+                    "TN": 12387980,
+                    "TP": 9427,
+                    "n_pred": 11034,
+                    "n_ref": 10413
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-089.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-089.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8614349775784753,
+                    "FN": 892,
+                    "FP": 344,
+                    "IoU": 0.7565970854667192,
+                    "TN": 12394922,
+                    "TP": 3842,
+                    "n_pred": 4186,
+                    "n_ref": 4734
+                },
+                "2": {
+                    "Dice": 0.7469270420301348,
+                    "FN": 4954,
+                    "FP": 152,
+                    "IoU": 0.5960762597895736,
+                    "TN": 12387359,
+                    "TP": 7535,
+                    "n_pred": 7687,
+                    "n_ref": 12489
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-090.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-090.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8713351822503962,
+                    "FN": 56,
+                    "FP": 2542,
+                    "IoU": 0.7720052654673102,
+                    "TN": 12388605,
+                    "TP": 8797,
+                    "n_pred": 11339,
+                    "n_ref": 8853
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-094.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-094.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5753551218385495,
+                    "FN": 2,
+                    "FP": 3675,
+                    "IoU": 0.4038586251621271,
+                    "TN": 12393832,
+                    "TP": 2491,
+                    "n_pred": 6166,
+                    "n_ref": 2493
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 2244,
+                    "FP": 0,
+                    "IoU": 0.0,
+                    "TN": 12397756,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 2244
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-096.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-096.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8285869848258883,
+                    "FN": 6865,
+                    "FP": 376,
+                    "IoU": 0.7073397461805836,
+                    "TN": 12375258,
+                    "TP": 17501,
+                    "n_pred": 17877,
+                    "n_ref": 24366
+                },
+                "2": {
+                    "Dice": 0.7737474768776549,
+                    "FN": 13359,
+                    "FP": 1661,
+                    "IoU": 0.6309854310493084,
+                    "TN": 12359297,
+                    "TP": 25683,
+                    "n_pred": 27344,
+                    "n_ref": 39042
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-097.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-097.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8723871492476617,
+                    "FN": 340,
+                    "FP": 1229,
+                    "IoU": 0.7736583958453549,
+                    "TN": 12393068,
+                    "TP": 5363,
+                    "n_pred": 6592,
+                    "n_ref": 5703
+                },
+                "2": {
+                    "Dice": 0.8010547866243515,
+                    "FN": 3718,
+                    "FP": 26309,
+                    "IoU": 0.6681329369245902,
+                    "TN": 12309521,
+                    "TP": 60452,
+                    "n_pred": 86761,
+                    "n_ref": 64170
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-098.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-098.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8443674812784551,
+                    "FN": 10907,
+                    "FP": 2664,
+                    "IoU": 0.7306539644735537,
+                    "TN": 12349615,
+                    "TP": 36814,
+                    "n_pred": 39478,
+                    "n_ref": 47721
+                },
+                "2": {
+                    "Dice": 0.7695027835519557,
+                    "FN": 1777,
+                    "FP": 7870,
+                    "IoU": 0.6253592233009708,
+                    "TN": 12374250,
+                    "TP": 16103,
+                    "n_pred": 23973,
+                    "n_ref": 17880
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-100.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-100.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8539166025631721,
+                    "FN": 8618,
+                    "FP": 1447,
+                    "IoU": 0.7450737044729244,
+                    "TN": 12360518,
+                    "TP": 29417,
+                    "n_pred": 30864,
+                    "n_ref": 38035
+                },
+                "2": {
+                    "Dice": 0.3694577006507592,
+                    "FN": 16,
+                    "FP": 7251,
+                    "IoU": 0.22658578118348233,
+                    "TN": 12390604,
+                    "TP": 2129,
+                    "n_pred": 9380,
+                    "n_ref": 2145
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\CHUS-101.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\CHUS-101.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8936426365835443,
+                    "FN": 2130,
+                    "FP": 7411,
+                    "IoU": 0.807734160889892,
+                    "TN": 11870376,
+                    "TP": 40083,
+                    "n_pred": 47494,
+                    "n_ref": 42213
+                },
+                "2": {
+                    "Dice": 0.4228949858088931,
+                    "FN": 960,
+                    "FP": 260,
+                    "IoU": 0.26814637072585484,
+                    "TN": 11918333,
+                    "TP": 447,
+                    "n_pred": 707,
+                    "n_ref": 1407
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HGJ-017.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HGJ-017.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8701535494175971,
+                    "FN": 5448,
+                    "FP": 3169,
+                    "IoU": 0.7701520405441451,
+                    "TN": 11882510,
+                    "TP": 28873,
+                    "n_pred": 32042,
+                    "n_ref": 34321
+                },
+                "2": {
+                    "Dice": 0.7245491564863292,
+                    "FN": 1066,
+                    "FP": 4616,
+                    "IoU": 0.5680729760547321,
+                    "TN": 11906845,
+                    "TP": 7473,
+                    "n_pred": 12089,
+                    "n_ref": 8539
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HGJ-031.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HGJ-031.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9149994127089778,
+                    "FN": 1734,
+                    "FP": 437,
+                    "IoU": 0.843316974595843,
+                    "TN": 11906144,
+                    "TP": 11685,
+                    "n_pred": 12122,
+                    "n_ref": 13419
+                },
+                "2": {
+                    "Dice": 0.7524752475247525,
+                    "FN": 1423,
+                    "FP": 3027,
+                    "IoU": 0.6031746031746031,
+                    "TN": 11908786,
+                    "TP": 6764,
+                    "n_pred": 9791,
+                    "n_ref": 8187
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HGJ-035.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HGJ-035.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9048824593128391,
+                    "FN": 2677,
+                    "FP": 742,
+                    "IoU": 0.8262879788639366,
+                    "TN": 12380318,
+                    "TP": 16263,
+                    "n_pred": 17005,
+                    "n_ref": 18940
+                },
+                "2": {
+                    "Dice": 0.5608952116585705,
+                    "FN": 2922,
+                    "FP": 2140,
+                    "IoU": 0.38975286317058466,
+                    "TN": 12391705,
+                    "TP": 3233,
+                    "n_pred": 5373,
+                    "n_ref": 6155
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HGJ-043.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HGJ-043.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8166587600808969,
+                    "FN": 77,
+                    "FP": 7266,
+                    "IoU": 0.6901295522639996,
+                    "TN": 11896303,
+                    "TP": 16354,
+                    "n_pred": 23620,
+                    "n_ref": 16431
+                },
+                "2": {
+                    "Dice": 0.880847794256223,
+                    "FN": 2960,
+                    "FP": 5259,
+                    "IoU": 0.7870670224617218,
+                    "TN": 11881401,
+                    "TP": 30380,
+                    "n_pred": 35639,
+                    "n_ref": 33340
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HGJ-073.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HGJ-073.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9040139035565498,
+                    "FN": 342,
+                    "FP": 11201,
+                    "IoU": 0.8248406676783004,
+                    "TN": 11854100,
+                    "TP": 54357,
+                    "n_pred": 65558,
+                    "n_ref": 54699
+                },
+                "2": {
+                    "Dice": 0.4120747484427408,
+                    "FN": 2281,
+                    "FP": 173,
+                    "IoU": 0.2595051297525649,
+                    "TN": 11916686,
+                    "TP": 860,
+                    "n_pred": 1033,
+                    "n_ref": 3141
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HGJ-091.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HGJ-091.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8971766618023576,
+                    "FN": 9457,
+                    "FP": 2310,
+                    "IoU": 0.8135270906296056,
+                    "TN": 11856897,
+                    "TP": 51336,
+                    "n_pred": 53646,
+                    "n_ref": 60793
+                },
+                "2": {
+                    "Dice": 0.7229453328374861,
+                    "FN": 1196,
+                    "FP": 1039,
+                    "IoU": 0.5661036691904484,
+                    "TN": 11914849,
+                    "TP": 2916,
+                    "n_pred": 3955,
+                    "n_ref": 4112
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HMR-005.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HMR-005.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7688970827459061,
+                    "FN": 651,
+                    "FP": 3611,
+                    "IoU": 0.6245595489781536,
+                    "TN": 11908648,
+                    "TP": 7090,
+                    "n_pred": 10701,
+                    "n_ref": 7741
+                },
+                "2": {
+                    "Dice": 0.7895288992014613,
+                    "FN": 13479,
+                    "FP": 3574,
+                    "IoU": 0.652249276071618,
+                    "TN": 11870962,
+                    "TP": 31985,
+                    "n_pred": 35559,
+                    "n_ref": 45464
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HMR-011.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HMR-011.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7096087120821739,
+                    "FN": 8333,
+                    "FP": 120,
+                    "IoU": 0.5499174697832916,
+                    "TN": 11901219,
+                    "TP": 10328,
+                    "n_pred": 10448,
+                    "n_ref": 18661
+                },
+                "2": {
+                    "Dice": 0.7970276592816843,
+                    "FN": 2209,
+                    "FP": 3691,
+                    "IoU": 0.6625486158773736,
+                    "TN": 11902516,
+                    "TP": 11584,
+                    "n_pred": 15275,
+                    "n_ref": 13793
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HMR-024.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HMR-024.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5601128880526811,
+                    "FN": 4265,
+                    "FP": 411,
+                    "IoU": 0.38899777864889584,
+                    "TN": 11912347,
+                    "TP": 2977,
+                    "n_pred": 3388,
+                    "n_ref": 7242
+                },
+                "2": {
+                    "Dice": 0.851292870280212,
+                    "FN": 3955,
+                    "FP": 1543,
+                    "IoU": 0.7410878267012009,
+                    "TN": 11898765,
+                    "TP": 15737,
+                    "n_pred": 17280,
+                    "n_ref": 19692
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\HMR-030.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\HMR-030.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6774200412827442,
+                    "FN": 7739,
+                    "FP": 7420,
+                    "IoU": 0.5121959068091131,
+                    "TN": 12368924,
+                    "TP": 15917,
+                    "n_pred": 23337,
+                    "n_ref": 23656
+                },
+                "2": {
+                    "Dice": 0.6306715063520871,
+                    "FN": 434,
+                    "FP": 380,
+                    "IoU": 0.46056991385023194,
+                    "TN": 12398491,
+                    "TP": 695,
+                    "n_pred": 1075,
+                    "n_ref": 1129
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-004.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-004.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6542759675332314,
+                    "FN": 1458,
+                    "FP": 1481,
+                    "IoU": 0.4861888111888112,
+                    "TN": 11914280,
+                    "TP": 2781,
+                    "n_pred": 4262,
+                    "n_ref": 4239
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 1499,
+                    "IoU": 0.0,
+                    "TN": 11918501,
+                    "TP": 0,
+                    "n_pred": 1499,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-011.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-011.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9252446393241003,
+                    "FN": 1207,
+                    "FP": 1589,
+                    "IoU": 0.8608886014229563,
+                    "TN": 11899901,
+                    "TP": 17303,
+                    "n_pred": 18892,
+                    "n_ref": 18510
+                },
+                "2": {
+                    "Dice": 0.7828529079065413,
+                    "FN": 1670,
+                    "FP": 3897,
+                    "IoU": 0.6431867709268042,
+                    "TN": 11904398,
+                    "TP": 10035,
+                    "n_pred": 13932,
+                    "n_ref": 11705
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-012.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-012.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7905053711838754,
+                    "FN": 5566,
+                    "FP": 109,
+                    "IoU": 0.6535832010743499,
+                    "TN": 12383618,
+                    "TP": 10707,
+                    "n_pred": 10816,
+                    "n_ref": 16273
+                },
+                "2": {
+                    "Dice": 0.8652633303300844,
+                    "FN": 1623,
+                    "FP": 3312,
+                    "IoU": 0.7625234589288292,
+                    "TN": 12379219,
+                    "TP": 15846,
+                    "n_pred": 19158,
+                    "n_ref": 17469
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-020.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-020.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6297376093294461,
+                    "FN": 243,
+                    "FP": 519,
+                    "IoU": 0.4595744680851064,
+                    "TN": 12398590,
+                    "TP": 648,
+                    "n_pred": 1167,
+                    "n_ref": 891
+                },
+                "2": {
+                    "Dice": 0.8290407625228149,
+                    "FN": 366,
+                    "FP": 3006,
+                    "IoU": 0.7080013855213024,
+                    "TN": 12388452,
+                    "TP": 8176,
+                    "n_pred": 11182,
+                    "n_ref": 8542
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-023.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-023.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6763242610477027,
+                    "FN": 1582,
+                    "FP": 630,
+                    "IoU": 0.5109440636745523,
+                    "TN": 12395477,
+                    "TP": 2311,
+                    "n_pred": 2941,
+                    "n_ref": 3893
+                },
+                "2": {
+                    "Dice": 0.8367651600947185,
+                    "FN": 1962,
+                    "FP": 4380,
+                    "IoU": 0.7193432756560605,
+                    "TN": 12377403,
+                    "TP": 16255,
+                    "n_pred": 20635,
+                    "n_ref": 18217
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-027.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-027.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7968178202068417,
+                    "FN": 937,
+                    "FP": 1617,
+                    "IoU": 0.6622586617297012,
+                    "TN": 12392438,
+                    "TP": 5008,
+                    "n_pred": 6625,
+                    "n_ref": 5945
+                },
+                "2": {
+                    "Dice": 0.2584963954685891,
+                    "FN": 1432,
+                    "FP": 8,
+                    "IoU": 0.14843287995269072,
+                    "TN": 12398309,
+                    "TP": 251,
+                    "n_pred": 259,
+                    "n_ref": 1683
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-030.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-030.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.44367593958195595,
+                    "FN": 10410,
+                    "FP": 529,
+                    "IoU": 0.2850794065747337,
+                    "TN": 10904699,
+                    "TP": 4362,
+                    "n_pred": 4891,
+                    "n_ref": 14772
+                },
+                "2": {
+                    "Dice": 0.7061825835306498,
+                    "FN": 7309,
+                    "FP": 3859,
+                    "IoU": 0.5458131684899752,
+                    "TN": 10895411,
+                    "TP": 13421,
+                    "n_pred": 17280,
+                    "n_ref": 20730
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-031.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-031.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5217686497496393,
+                    "FN": 4674,
+                    "FP": 961,
+                    "IoU": 0.3529681938224825,
+                    "TN": 12391291,
+                    "TP": 3074,
+                    "n_pred": 4035,
+                    "n_ref": 7748
+                },
+                "2": {
+                    "Dice": 0.8546842163477492,
+                    "FN": 2638,
+                    "FP": 3931,
+                    "IoU": 0.7462432881369027,
+                    "TN": 12374113,
+                    "TP": 19318,
+                    "n_pred": 23249,
+                    "n_ref": 21956
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-039.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-039.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.25431916809956606,
+                    "FN": 8547,
+                    "FP": 560,
+                    "IoU": 0.14568480300187617,
+                    "TN": 12389340,
+                    "TP": 1553,
+                    "n_pred": 2113,
+                    "n_ref": 10100
+                },
+                "2": {
+                    "Dice": 0.8479926504363804,
+                    "FN": 1678,
+                    "FP": 6595,
+                    "IoU": 0.7361000350888386,
+                    "TN": 12368651,
+                    "TP": 23076,
+                    "n_pred": 29671,
+                    "n_ref": 24754
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-041.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-041.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6438232642019838,
+                    "FN": 977,
+                    "FP": 603,
+                    "IoU": 0.4747340425531915,
+                    "TN": 12396992,
+                    "TP": 1428,
+                    "n_pred": 2031,
+                    "n_ref": 2405
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-042.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-042.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.4961112420457224,
+                    "FN": 1,
+                    "FP": 4275,
+                    "IoU": 0.3298855978686726,
+                    "TN": 12393619,
+                    "TP": 2105,
+                    "n_pred": 6380,
+                    "n_ref": 2106
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-060.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-060.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9317174876205369,
+                    "FN": 617,
+                    "FP": 2003,
+                    "IoU": 0.8721639424249817,
+                    "TN": 12379505,
+                    "TP": 17875,
+                    "n_pred": 19878,
+                    "n_ref": 18492
+                },
+                "2": {
+                    "Dice": 0.8476524629518489,
+                    "FN": 787,
+                    "FP": 5813,
+                    "IoU": 0.7355875165257802,
+                    "TN": 12375039,
+                    "TP": 18361,
+                    "n_pred": 24174,
+                    "n_ref": 19148
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-065.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-065.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9376557981852628,
+                    "FN": 3445,
+                    "FP": 1557,
+                    "IoU": 0.8826289978177723,
+                    "TN": 12357383,
+                    "TP": 37615,
+                    "n_pred": 39172,
+                    "n_ref": 41060
+                },
+                "2": {
+                    "Dice": 0.8558189590744671,
+                    "FN": 807,
+                    "FP": 4016,
+                    "IoU": 0.7479751267178764,
+                    "TN": 12380863,
+                    "TP": 14314,
+                    "n_pred": 18330,
+                    "n_ref": 15121
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-073.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-073.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5742887249736565,
+                    "FN": 74,
+                    "FP": 1542,
+                    "IoU": 0.4028085735402809,
+                    "TN": 12397294,
+                    "TP": 1090,
+                    "n_pred": 2632,
+                    "n_ref": 1164
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-081.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-081.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.588550641393835,
+                    "FN": 3676,
+                    "FP": 622,
+                    "IoU": 0.41698317959848075,
+                    "TN": 12392628,
+                    "TP": 3074,
+                    "n_pred": 3696,
+                    "n_ref": 6750
+                },
+                "2": {
+                    "Dice": 0.8196435574534838,
+                    "FN": 2079,
+                    "FP": 2060,
+                    "IoU": 0.6944034258712345,
+                    "TN": 12386456,
+                    "TP": 9405,
+                    "n_pred": 11465,
+                    "n_ref": 11484
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-086.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-086.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8297872340425532,
+                    "FN": 4513,
+                    "FP": 975,
+                    "IoU": 0.7090909090909091,
+                    "TN": 12381135,
+                    "TP": 13377,
+                    "n_pred": 14352,
+                    "n_ref": 17890
+                },
+                "2": {
+                    "Dice": 0.9084358776529665,
+                    "FN": 6391,
+                    "FP": 7613,
+                    "IoU": 0.8322331771950211,
+                    "TN": 12316527,
+                    "TP": 69469,
+                    "n_pred": 77082,
+                    "n_ref": 75860
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-092.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-092.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7557940961210051,
+                    "FN": 234,
+                    "FP": 767,
+                    "IoU": 0.6074509803921568,
+                    "TN": 12397450,
+                    "TP": 1549,
+                    "n_pred": 2316,
+                    "n_ref": 1783
+                },
+                "2": {
+                    "Dice": 0.7595580466665472,
+                    "FN": 4504,
+                    "FP": 8923,
+                    "IoU": 0.612328569366248,
+                    "TN": 12365365,
+                    "TP": 21208,
+                    "n_pred": 30131,
+                    "n_ref": 25712
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-094.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-094.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9017996727867661,
+                    "FN": 1955,
+                    "FP": 746,
+                    "IoU": 0.8211613586704628,
+                    "TN": 12384897,
+                    "TP": 12402,
+                    "n_pred": 13148,
+                    "n_ref": 14357
+                },
+                "2": {
+                    "Dice": 0.7218104399936919,
+                    "FN": 5283,
+                    "FP": 5301,
+                    "IoU": 0.5647131400370142,
+                    "TN": 12375685,
+                    "TP": 13731,
+                    "n_pred": 19032,
+                    "n_ref": 19014
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-098.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-098.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5134957208689928,
+                    "FN": 205,
+                    "FP": 2012,
+                    "IoU": 0.3454384410983171,
+                    "TN": 12396613,
+                    "TP": 1170,
+                    "n_pred": 3182,
+                    "n_ref": 1375
+                },
+                "2": {
+                    "Dice": 0.8253674274106823,
+                    "FN": 1125,
+                    "FP": 4721,
+                    "IoU": 0.7026600885000763,
+                    "TN": 12380339,
+                    "TP": 13815,
+                    "n_pred": 18536,
+                    "n_ref": 14940
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-108.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-108.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.648776637726914,
+                    "FN": 3027,
+                    "FP": 88,
+                    "IoU": 0.48014018691588783,
+                    "TN": 12394008,
+                    "TP": 2877,
+                    "n_pred": 2965,
+                    "n_ref": 5904
+                },
+                "2": {
+                    "Dice": 0.5697839178179241,
+                    "FN": 1525,
+                    "FP": 3333,
+                    "IoU": 0.398390092879257,
+                    "TN": 12391925,
+                    "TP": 3217,
+                    "n_pred": 6550,
+                    "n_ref": 4742
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-116.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-116.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.836346538145057,
+                    "FN": 509,
+                    "FP": 6452,
+                    "IoU": 0.7187247454339745,
+                    "TN": 12375252,
+                    "TP": 17787,
+                    "n_pred": 24239,
+                    "n_ref": 18296
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-122.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-122.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.43868645530299294,
+                    "FN": 22762,
+                    "FP": 6,
+                    "IoU": 0.28097268277277754,
+                    "TN": 12368335,
+                    "TP": 8897,
+                    "n_pred": 8903,
+                    "n_ref": 31659
+                },
+                "2": {
+                    "Dice": 0.6085304224782696,
+                    "FN": 9378,
+                    "FP": 305,
+                    "IoU": 0.43732930443372653,
+                    "TN": 12382791,
+                    "TP": 7526,
+                    "n_pred": 7831,
+                    "n_ref": 16904
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-126.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-126.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6225120109814688,
+                    "FN": 2375,
+                    "FP": 925,
+                    "IoU": 0.45191828599900347,
+                    "TN": 12393979,
+                    "TP": 2721,
+                    "n_pred": 3646,
+                    "n_ref": 5096
+                },
+                "2": {
+                    "Dice": 0.8671709339494256,
+                    "FN": 1103,
+                    "FP": 3094,
+                    "IoU": 0.7654914231435436,
+                    "TN": 12382103,
+                    "TP": 13700,
+                    "n_pred": 16794,
+                    "n_ref": 14803
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-135.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-135.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8249857712009107,
+                    "FN": 127,
+                    "FP": 1103,
+                    "IoU": 0.7021070477113103,
+                    "TN": 12395871,
+                    "TP": 2899,
+                    "n_pred": 4002,
+                    "n_ref": 3026
+                },
+                "2": {
+                    "Dice": 0.8878217153147745,
+                    "FN": 2798,
+                    "FP": 1687,
+                    "IoU": 0.7982728376737283,
+                    "TN": 12377767,
+                    "TP": 17748,
+                    "n_pred": 19435,
+                    "n_ref": 20546
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-142.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-142.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8469785575048733,
+                    "FN": 1391,
+                    "FP": 179,
+                    "IoU": 0.7345731191885038,
+                    "TN": 12394085,
+                    "TP": 4345,
+                    "n_pred": 4524,
+                    "n_ref": 5736
+                },
+                "2": {
+                    "Dice": 0.744567579313342,
+                    "FN": 4147,
+                    "FP": 555,
+                    "IoU": 0.5930765902206837,
+                    "TN": 12388445,
+                    "TP": 6853,
+                    "n_pred": 7408,
+                    "n_ref": 11000
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-147.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-147.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7332597498160413,
+                    "FN": 1244,
+                    "FP": 206,
+                    "IoU": 0.5788556491431891,
+                    "TN": 12396557,
+                    "TP": 1993,
+                    "n_pred": 2199,
+                    "n_ref": 3237
+                },
+                "2": {
+                    "Dice": 0.8644552258452743,
+                    "FN": 6212,
+                    "FP": 996,
+                    "IoU": 0.7612691683502799,
+                    "TN": 12369807,
+                    "TP": 22985,
+                    "n_pred": 23981,
+                    "n_ref": 29197
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-148.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-148.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8586344439230408,
+                    "FN": 1606,
+                    "FP": 804,
+                    "IoU": 0.7522869770788365,
+                    "TN": 12390271,
+                    "TP": 7319,
+                    "n_pred": 8123,
+                    "n_ref": 8925
+                },
+                "2": {
+                    "Dice": 0.6885989790130459,
+                    "FN": 694,
+                    "FP": 404,
+                    "IoU": 0.5250865051903114,
+                    "TN": 12397688,
+                    "TP": 1214,
+                    "n_pred": 1618,
+                    "n_ref": 1908
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-155.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-155.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8562242539937707,
+                    "FN": 1035,
+                    "FP": 396,
+                    "IoU": 0.7485945186226283,
+                    "TN": 11914308,
+                    "TP": 4261,
+                    "n_pred": 4657,
+                    "n_ref": 5296
+                },
+                "2": {
+                    "Dice": 0.9067383184693956,
+                    "FN": 3107,
+                    "FP": 1787,
+                    "IoU": 0.8293881819766429,
+                    "TN": 11891315,
+                    "TP": 23791,
+                    "n_pred": 25578,
+                    "n_ref": 26898
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-167.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-167.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8218319886093972,
+                    "FN": 1661,
+                    "FP": 216,
+                    "IoU": 0.6975507573316145,
+                    "TN": 11913794,
+                    "TP": 4329,
+                    "n_pred": 4545,
+                    "n_ref": 5990
+                },
+                "2": {
+                    "Dice": 0.37280701754385964,
+                    "FN": 555,
+                    "FP": 875,
+                    "IoU": 0.22911051212938005,
+                    "TN": 11918145,
+                    "TP": 425,
+                    "n_pred": 1300,
+                    "n_ref": 980
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-171.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-171.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6770384775663286,
+                    "FN": 4320,
+                    "FP": 330,
+                    "IoU": 0.5117597648047039,
+                    "TN": 11910476,
+                    "TP": 4874,
+                    "n_pred": 5204,
+                    "n_ref": 9194
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 2671,
+                    "IoU": 0.0,
+                    "TN": 11917329,
+                    "TP": 0,
+                    "n_pred": 2671,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-173.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-173.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6053811033076891,
+                    "FN": 27255,
+                    "FP": 1008,
+                    "IoU": 0.43408353690280727,
+                    "TN": 12350058,
+                    "TP": 21679,
+                    "n_pred": 22687,
+                    "n_ref": 48934
+                },
+                "2": {
+                    "Dice": 0.4671836344358745,
+                    "FN": 25445,
+                    "FP": 184,
+                    "IoU": 0.30478773904787737,
+                    "TN": 12363135,
+                    "TP": 11236,
+                    "n_pred": 11420,
+                    "n_ref": 36681
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-176.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-176.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8419791541871331,
+                    "FN": 958,
+                    "FP": 361,
+                    "IoU": 0.7270846265259673,
+                    "TN": 12395167,
+                    "TP": 3514,
+                    "n_pred": 3875,
+                    "n_ref": 4472
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 1399,
+                    "IoU": 0.0,
+                    "TN": 12398601,
+                    "TP": 0,
+                    "n_pred": 1399,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-177.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-177.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7279821627647715,
+                    "FN": 1727,
+                    "FP": 1201,
+                    "IoU": 0.5723049956178791,
+                    "TN": 12393154,
+                    "TP": 3918,
+                    "n_pred": 5119,
+                    "n_ref": 5645
+                },
+                "2": {
+                    "Dice": 0.8224521861624317,
+                    "FN": 4431,
+                    "FP": 2123,
+                    "IoU": 0.6984448329805835,
+                    "TN": 12378266,
+                    "TP": 15180,
+                    "n_pred": 17303,
+                    "n_ref": 19611
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-181.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-181.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8195527821112845,
+                    "FN": 75,
+                    "FP": 619,
+                    "IoU": 0.694273127753304,
+                    "TN": 12397730,
+                    "TP": 1576,
+                    "n_pred": 2195,
+                    "n_ref": 1651
+                },
+                "2": {
+                    "Dice": 0.8488483712476215,
+                    "FN": 18591,
+                    "FP": 8020,
+                    "IoU": 0.7373905835216563,
+                    "TN": 12298667,
+                    "TP": 74722,
+                    "n_pred": 82742,
+                    "n_ref": 93313
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-183.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-183.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7250421913540179,
+                    "FN": 157,
+                    "FP": 4079,
+                    "IoU": 0.5686793605539151,
+                    "TN": 12390179,
+                    "TP": 5585,
+                    "n_pred": 9664,
+                    "n_ref": 5742
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-188.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-188.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.74596366739272,
+                    "FN": 9458,
+                    "FP": 1855,
+                    "IoU": 0.5948501235540594,
+                    "TN": 12372077,
+                    "TP": 16610,
+                    "n_pred": 18465,
+                    "n_ref": 26068
+                },
+                "2": {
+                    "Dice": 0.7136854741896759,
+                    "FN": 2107,
+                    "FP": 755,
+                    "IoU": 0.5548296780214652,
+                    "TN": 12393571,
+                    "TP": 3567,
+                    "n_pred": 4322,
+                    "n_ref": 5674
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-193.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-193.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8734602463605823,
+                    "FN": 1597,
+                    "FP": 663,
+                    "IoU": 0.7753479125248509,
+                    "TN": 12389940,
+                    "TP": 7800,
+                    "n_pred": 8463,
+                    "n_ref": 9397
+                },
+                "2": {
+                    "Dice": 0.8878193740107885,
+                    "FN": 4444,
+                    "FP": 2502,
+                    "IoU": 0.7982690520446096,
+                    "TN": 12365568,
+                    "TP": 27486,
+                    "n_pred": 29988,
+                    "n_ref": 31930
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-198.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-198.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8865970858737212,
+                    "FN": 3716,
+                    "FP": 1771,
+                    "IoU": 0.7962949212949213,
+                    "TN": 11893064,
+                    "TP": 21449,
+                    "n_pred": 23220,
+                    "n_ref": 25165
+                },
+                "2": {
+                    "Dice": 0.694828722002635,
+                    "FN": 2492,
+                    "FP": 4920,
+                    "IoU": 0.5323659305993691,
+                    "TN": 11904150,
+                    "TP": 8438,
+                    "n_pred": 13358,
+                    "n_ref": 10930
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-205.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-205.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.864467096929851,
+                    "FN": 3427,
+                    "FP": 3314,
+                    "IoU": 0.761287581004993,
+                    "TN": 11331761,
+                    "TP": 21498,
+                    "n_pred": 24812,
+                    "n_ref": 24925
+                },
+                "2": {
+                    "Dice": 0.5713907635305016,
+                    "FN": 4254,
+                    "FP": 2224,
+                    "IoU": 0.39996294924045944,
+                    "TN": 11349204,
+                    "TP": 4318,
+                    "n_pred": 6542,
+                    "n_ref": 8572
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-210.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-210.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7984386678847272,
+                    "FN": 3947,
+                    "FP": 907,
+                    "IoU": 0.6645009676527509,
+                    "TN": 12385532,
+                    "TP": 9614,
+                    "n_pred": 10521,
+                    "n_ref": 13561
+                },
+                "2": {
+                    "Dice": 0.6115916955017301,
+                    "FN": 51,
+                    "FP": 847,
+                    "IoU": 0.4404984423676013,
+                    "TN": 12398395,
+                    "TP": 707,
+                    "n_pred": 1554,
+                    "n_ref": 758
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-214.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-214.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8511893785727457,
+                    "FN": 1204,
+                    "FP": 2831,
+                    "IoU": 0.7409309791332264,
+                    "TN": 12384425,
+                    "TP": 11540,
+                    "n_pred": 14371,
+                    "n_ref": 12744
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 1682,
+                    "IoU": 0.0,
+                    "TN": 12398318,
+                    "TP": 0,
+                    "n_pred": 1682,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-217.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-217.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7256761833208114,
+                    "FN": 4722,
+                    "FP": 1120,
+                    "IoU": 0.5694597980691282,
+                    "TN": 12386431,
+                    "TP": 7727,
+                    "n_pred": 8847,
+                    "n_ref": 12449
+                },
+                "2": {
+                    "Dice": 0.8131599741397888,
+                    "FN": 2627,
+                    "FP": 2575,
+                    "IoU": 0.6851470766251059,
+                    "TN": 12383478,
+                    "TP": 11320,
+                    "n_pred": 13895,
+                    "n_ref": 13947
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-221.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-221.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.0813239062644725,
+                    "FN": 23701,
+                    "FP": 6054,
+                    "IoU": 0.04238542739443872,
+                    "TN": 12368928,
+                    "TP": 1317,
+                    "n_pred": 7371,
+                    "n_ref": 25018
+                },
+                "2": {
+                    "Dice": 0.8854428508058554,
+                    "FN": 2411,
+                    "FP": 3787,
+                    "IoU": 0.7944346787834566,
+                    "TN": 12369849,
+                    "TP": 23953,
+                    "n_pred": 27740,
+                    "n_ref": 26364
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-222.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-222.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.3660647359454855,
+                    "FN": 9254,
+                    "FP": 49,
+                    "IoU": 0.22403870214363167,
+                    "TN": 12388011,
+                    "TP": 2686,
+                    "n_pred": 2735,
+                    "n_ref": 11940
+                },
+                "2": {
+                    "Dice": 0.7967120381827824,
+                    "FN": 476,
+                    "FP": 4124,
+                    "IoU": 0.662112531217864,
+                    "TN": 12386386,
+                    "TP": 9014,
+                    "n_pred": 13138,
+                    "n_ref": 9490
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-224.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-224.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.775201037613489,
+                    "FN": 2941,
+                    "FP": 1392,
+                    "IoU": 0.6329210437139953,
+                    "TN": 12388196,
+                    "TP": 7471,
+                    "n_pred": 8863,
+                    "n_ref": 10412
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 1837,
+                    "IoU": 0.0,
+                    "TN": 12398163,
+                    "TP": 0,
+                    "n_pred": 1837,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-227.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-227.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.702034303948943,
+                    "FN": 1084,
+                    "FP": 1904,
+                    "IoU": 0.5408727719729564,
+                    "TN": 12393492,
+                    "TP": 3520,
+                    "n_pred": 5424,
+                    "n_ref": 4604
+                },
+                "2": {
+                    "Dice": 0.5915197967959716,
+                    "FN": 1327,
+                    "FP": 17006,
+                    "IoU": 0.41997025975258645,
+                    "TN": 12368393,
+                    "TP": 13274,
+                    "n_pred": 30280,
+                    "n_ref": 14601
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-230.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-230.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.0,
+                    "FN": 2056,
+                    "FP": 0,
+                    "IoU": 0.0,
+                    "TN": 12397944,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 2056
+                },
+                "2": {
+                    "Dice": 0.8131219245489338,
+                    "FN": 909,
+                    "FP": 800,
+                    "IoU": 0.6850930532522572,
+                    "TN": 12394573,
+                    "TP": 3718,
+                    "n_pred": 4518,
+                    "n_ref": 4627
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-231.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-231.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8744454159784967,
+                    "FN": 2486,
+                    "FP": 1391,
+                    "IoU": 0.7769018298998734,
+                    "TN": 12382622,
+                    "TP": 13501,
+                    "n_pred": 14892,
+                    "n_ref": 15987
+                },
+                "2": {
+                    "Dice": 0.670186554030271,
+                    "FN": 1679,
+                    "FP": 195,
+                    "IoU": 0.5039703546850185,
+                    "TN": 12396222,
+                    "TP": 1904,
+                    "n_pred": 2099,
+                    "n_ref": 3583
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-233.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-233.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7401064740702133,
+                    "FN": 2924,
+                    "FP": 4057,
+                    "IoU": 0.5874357307487738,
+                    "TN": 11743079,
+                    "TP": 9940,
+                    "n_pred": 13997,
+                    "n_ref": 12864
+                },
+                "2": {
+                    "Dice": 0.7871383893666928,
+                    "FN": 1850,
+                    "FP": 4684,
+                    "IoU": 0.6489927477840451,
+                    "TN": 11741385,
+                    "TP": 12081,
+                    "n_pred": 16765,
+                    "n_ref": 13931
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-247.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-247.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.0,
+                    "FN": 7357,
+                    "FP": 0,
+                    "IoU": 0.0,
+                    "TN": 12392643,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 7357
+                },
+                "2": {
+                    "Dice": 0.6942755535161179,
+                    "FN": 1756,
+                    "FP": 909,
+                    "IoU": 0.5317167457388859,
+                    "TN": 12394309,
+                    "TP": 3026,
+                    "n_pred": 3935,
+                    "n_ref": 4782
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-248.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-248.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.4566084023305734,
+                    "FN": 2700,
+                    "FP": 844,
+                    "IoU": 0.29584740711305385,
+                    "TN": 12394967,
+                    "TP": 1489,
+                    "n_pred": 2333,
+                    "n_ref": 4189
+                },
+                "2": {
+                    "Dice": 0.7943869777884692,
+                    "FN": 1522,
+                    "FP": 11299,
+                    "IoU": 0.6589070980100032,
+                    "TN": 12362412,
+                    "TP": 24767,
+                    "n_pred": 36066,
+                    "n_ref": 26289
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-250.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-250.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6906200317965023,
+                    "FN": 404,
+                    "FP": 3488,
+                    "IoU": 0.5274405050995629,
+                    "TN": 12391764,
+                    "TP": 4344,
+                    "n_pred": 7832,
+                    "n_ref": 4748
+                },
+                "2": {
+                    "Dice": 0.3665270950907215,
+                    "FN": 8791,
+                    "FP": 1648,
+                    "IoU": 0.22438516977487183,
+                    "TN": 12386541,
+                    "TP": 3020,
+                    "n_pred": 4668,
+                    "n_ref": 11811
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-251.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-251.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6244486452425961,
+                    "FN": 2255,
+                    "FP": 129,
+                    "IoU": 0.4539624370132845,
+                    "TN": 12395634,
+                    "TP": 1982,
+                    "n_pred": 2111,
+                    "n_ref": 4237
+                },
+                "2": {
+                    "Dice": 0.8191370444891571,
+                    "FN": 2037,
+                    "FP": 14143,
+                    "IoU": 0.6936766376372586,
+                    "TN": 12347180,
+                    "TP": 36640,
+                    "n_pred": 50783,
+                    "n_ref": 38677
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-253.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-253.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7159510394404508,
+                    "FN": 146,
+                    "FP": 5702,
+                    "IoU": 0.5575730065062793,
+                    "TN": 12386782,
+                    "TP": 7370,
+                    "n_pred": 13072,
+                    "n_ref": 7516
+                },
+                "2": {
+                    "Dice": 0.830307178227787,
+                    "FN": 827,
+                    "FP": 3388,
+                    "IoU": 0.7098506229779032,
+                    "TN": 12385473,
+                    "TP": 10312,
+                    "n_pred": 13700,
+                    "n_ref": 11139
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-254.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-254.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6769275446493394,
+                    "FN": 37,
+                    "FP": 2188,
+                    "IoU": 0.5116330114135206,
+                    "TN": 12395444,
+                    "TP": 2331,
+                    "n_pred": 4519,
+                    "n_ref": 2368
+                },
+                "2": {
+                    "Dice": 0.8019851116625311,
+                    "FN": 599,
+                    "FP": 1795,
+                    "IoU": 0.6694283347141674,
+                    "TN": 12392758,
+                    "TP": 4848,
+                    "n_pred": 6643,
+                    "n_ref": 5447
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-258.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-258.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.81648675171737,
+                    "FN": 1284,
+                    "FP": 960,
+                    "IoU": 0.6898839137645107,
+                    "TN": 12392764,
+                    "TP": 4992,
+                    "n_pred": 5952,
+                    "n_ref": 6276
+                },
+                "2": {
+                    "Dice": 0.7806971448589946,
+                    "FN": 3824,
+                    "FP": 21216,
+                    "IoU": 0.6402815687401235,
+                    "TN": 12330390,
+                    "TP": 44570,
+                    "n_pred": 65786,
+                    "n_ref": 48394
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-259.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-259.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8423959951665804,
+                    "FN": 722,
+                    "FP": 191,
+                    "IoU": 0.7277065314643603,
+                    "TN": 12396647,
+                    "TP": 2440,
+                    "n_pred": 2631,
+                    "n_ref": 3162
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 5599,
+                    "FP": 0,
+                    "IoU": 0.0,
+                    "TN": 12394401,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 5599
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-260.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-260.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8598002781987668,
+                    "FN": 5395,
+                    "FP": 1358,
+                    "IoU": 0.7540786598689002,
+                    "TN": 12372540,
+                    "TP": 20707,
+                    "n_pred": 22065,
+                    "n_ref": 26102
+                },
+                "2": {
+                    "Dice": 0.631486076647367,
+                    "FN": 6369,
+                    "FP": 314,
+                    "IoU": 0.46143927794342815,
+                    "TN": 12387591,
+                    "TP": 5726,
+                    "n_pred": 6040,
+                    "n_ref": 12095
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-263.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-263.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7583621683967705,
+                    "FN": 2264,
+                    "FP": 250,
+                    "IoU": 0.6107756618671621,
+                    "TN": 12393541,
+                    "TP": 3945,
+                    "n_pred": 4195,
+                    "n_ref": 6209
+                },
+                "2": {
+                    "Dice": 0.9096047022348533,
+                    "FN": 1708,
+                    "FP": 3890,
+                    "IoU": 0.8341971981162811,
+                    "TN": 12366237,
+                    "TP": 28165,
+                    "n_pred": 32055,
+                    "n_ref": 29873
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-266.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-266.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8962606837606838,
+                    "FN": 629,
+                    "FP": 1313,
+                    "IoU": 0.8120220694995645,
+                    "TN": 12389669,
+                    "TP": 8389,
+                    "n_pred": 9702,
+                    "n_ref": 9018
+                },
+                "2": {
+                    "Dice": 0.7072979847387987,
+                    "FN": 13952,
+                    "FP": 1008,
+                    "IoU": 0.5471469653397911,
+                    "TN": 12366965,
+                    "TP": 18075,
+                    "n_pred": 19083,
+                    "n_ref": 32027
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-280.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-280.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7782187355791417,
+                    "FN": 89,
+                    "FP": 2314,
+                    "IoU": 0.6369542226922495,
+                    "TN": 12393381,
+                    "TP": 4216,
+                    "n_pred": 6530,
+                    "n_ref": 4305
+                },
+                "2": {
+                    "Dice": 0.8027363926447969,
+                    "FN": 2496,
+                    "FP": 6097,
+                    "IoU": 0.6704758983011849,
+                    "TN": 12373923,
+                    "TP": 17484,
+                    "n_pred": 23581,
+                    "n_ref": 19980
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-284.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-284.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8616204498238641,
+                    "FN": 2823,
+                    "FP": 241,
+                    "IoU": 0.7568832817583115,
+                    "TN": 12387397,
+                    "TP": 9539,
+                    "n_pred": 9780,
+                    "n_ref": 12362
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-294.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-294.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.45094086021505375,
+                    "FN": 2132,
+                    "FP": 1136,
+                    "IoU": 0.2911062906724512,
+                    "TN": 12395390,
+                    "TP": 1342,
+                    "n_pred": 2478,
+                    "n_ref": 3474
+                },
+                "2": {
+                    "Dice": 0.5721212121212121,
+                    "FN": 1478,
+                    "FP": 5582,
+                    "IoU": 0.400679117147708,
+                    "TN": 12388220,
+                    "TP": 4720,
+                    "n_pred": 10302,
+                    "n_ref": 6198
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-297.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-297.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6590133702166897,
+                    "FN": 7063,
+                    "FP": 333,
+                    "IoU": 0.49143918036168605,
+                    "TN": 12385457,
+                    "TP": 7147,
+                    "n_pred": 7480,
+                    "n_ref": 14210
+                },
+                "2": {
+                    "Dice": 0.6070835639180963,
+                    "FN": 5587,
+                    "FP": 8613,
+                    "IoU": 0.4358363130711164,
+                    "TN": 12374830,
+                    "TP": 10970,
+                    "n_pred": 19583,
+                    "n_ref": 16557
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-305.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-305.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.761090458488228,
+                    "FN": 3823,
+                    "FP": 33,
+                    "IoU": 0.6143228645729146,
+                    "TN": 12390002,
+                    "TP": 6142,
+                    "n_pred": 6175,
+                    "n_ref": 9965
+                },
+                "2": {
+                    "Dice": 0.8345213459032728,
+                    "FN": 905,
+                    "FP": 1254,
+                    "IoU": 0.7160331448112587,
+                    "TN": 12392397,
+                    "TP": 5444,
+                    "n_pred": 6698,
+                    "n_ref": 6349
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-312.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-312.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8174102740340077,
+                    "FN": 11579,
+                    "FP": 641,
+                    "IoU": 0.6912035984130595,
+                    "TN": 12360427,
+                    "TP": 27353,
+                    "n_pred": 27994,
+                    "n_ref": 38932
+                },
+                "2": {
+                    "Dice": 0.5772112784859019,
+                    "FN": 4586,
+                    "FP": 887,
+                    "IoU": 0.40569008578564447,
+                    "TN": 12390791,
+                    "TP": 3736,
+                    "n_pred": 4623,
+                    "n_ref": 8322
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-318.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-318.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5478737997256515,
+                    "FN": 370,
+                    "FP": 2926,
+                    "IoU": 0.37729076138295864,
+                    "TN": 12394707,
+                    "TP": 1997,
+                    "n_pred": 4923,
+                    "n_ref": 2367
+                },
+                "2": {
+                    "Dice": 0.9117685994175272,
+                    "FN": 488,
+                    "FP": 2178,
+                    "IoU": 0.8378444133568518,
+                    "TN": 12383559,
+                    "TP": 13775,
+                    "n_pred": 15953,
+                    "n_ref": 14263
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-323.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-323.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.5863414634146341,
+                    "FN": 1313,
+                    "FP": 1231,
+                    "IoU": 0.4147688060731539,
+                    "TN": 12395653,
+                    "TP": 1803,
+                    "n_pred": 3034,
+                    "n_ref": 3116
+                },
+                "2": {
+                    "Dice": 0.8371061395552083,
+                    "FN": 10002,
+                    "FP": 14601,
+                    "IoU": 0.7198474151673878,
+                    "TN": 12312180,
+                    "TP": 63217,
+                    "n_pred": 77818,
+                    "n_ref": 73219
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-339.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-339.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.515850144092219,
+                    "FN": 3658,
+                    "FP": 710,
+                    "IoU": 0.34757281553398056,
+                    "TN": 12393305,
+                    "TP": 2327,
+                    "n_pred": 3037,
+                    "n_ref": 5985
+                },
+                "2": {
+                    "Dice": 0.5071471887724162,
+                    "FN": 11036,
+                    "FP": 342,
+                    "IoU": 0.3397168059424327,
+                    "TN": 12382768,
+                    "TP": 5854,
+                    "n_pred": 6196,
+                    "n_ref": 16890
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-345.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-345.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.6924637228896864,
+                    "FN": 1210,
+                    "FP": 761,
+                    "IoU": 0.5295942720763723,
+                    "TN": 12395810,
+                    "TP": 2219,
+                    "n_pred": 2980,
+                    "n_ref": 3429
+                },
+                "2": {
+                    "Dice": 0.7098370506521509,
+                    "FN": 4693,
+                    "FP": 3516,
+                    "IoU": 0.5501917808219178,
+                    "TN": 12381750,
+                    "TP": 10041,
+                    "n_pred": 13557,
+                    "n_ref": 14734
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-346.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-346.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8568268497330283,
+                    "FN": 3288,
+                    "FP": 466,
+                    "IoU": 0.7495162474144258,
+                    "TN": 12385013,
+                    "TP": 11233,
+                    "n_pred": 11699,
+                    "n_ref": 14521
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 3033,
+                    "IoU": 0.0,
+                    "TN": 12396967,
+                    "TP": 0,
+                    "n_pred": 3033,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-350.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-350.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8469216243696955,
+                    "FN": 5719,
+                    "FP": 1658,
+                    "IoU": 0.7344874748056436,
+                    "TN": 12372216,
+                    "TP": 20407,
+                    "n_pred": 22065,
+                    "n_ref": 26126
+                },
+                "2": {
+                    "Dice": 0.7038432554634514,
+                    "FN": 8434,
+                    "FP": 1391,
+                    "IoU": 0.5430232558139535,
+                    "TN": 12378500,
+                    "TP": 11675,
+                    "n_pred": 13066,
+                    "n_ref": 20109
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-353.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-353.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8680561253795027,
+                    "FN": 890,
+                    "FP": 2326,
+                    "IoU": 0.7668720550924248,
+                    "TN": 12386205,
+                    "TP": 10579,
+                    "n_pred": 12905,
+                    "n_ref": 11469
+                },
+                "2": {
+                    "Dice": 0.8363894307501331,
+                    "FN": 3679,
+                    "FP": 934,
+                    "IoU": 0.7187881004633017,
+                    "TN": 12383596,
+                    "TP": 11791,
+                    "n_pred": 12725,
+                    "n_ref": 15470
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-356.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-356.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7765993510581626,
+                    "FN": 4116,
+                    "FP": 497,
+                    "IoU": 0.6347874277571055,
+                    "TN": 12387369,
+                    "TP": 8018,
+                    "n_pred": 8515,
+                    "n_ref": 12134
+                },
+                "2": {
+                    "Dice": 0.8273769033540893,
+                    "FN": 5743,
+                    "FP": 855,
+                    "IoU": 0.7055778670236501,
+                    "TN": 12377590,
+                    "TP": 15812,
+                    "n_pred": 16667,
+                    "n_ref": 21555
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-359.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-359.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7582917840884457,
+                    "FN": 880,
+                    "FP": 235,
+                    "IoU": 0.6106843575418994,
+                    "TN": 12397136,
+                    "TP": 1749,
+                    "n_pred": 1984,
+                    "n_ref": 2629
+                },
+                "2": {
+                    "Dice": 0.8572947116662237,
+                    "FN": 1186,
+                    "FP": 962,
+                    "IoU": 0.7502325581395349,
+                    "TN": 12391400,
+                    "TP": 6452,
+                    "n_pred": 7414,
+                    "n_ref": 7638
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-370.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-370.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 7057,
+                    "IoU": 0.0,
+                    "TN": 12392943,
+                    "TP": 0,
+                    "n_pred": 7057,
+                    "n_ref": 0
+                },
+                "2": {
+                    "Dice": 0.6692086277148518,
+                    "FN": 8539,
+                    "FP": 310,
+                    "IoU": 0.5028651685393258,
+                    "TN": 12382200,
+                    "TP": 8951,
+                    "n_pred": 9261,
+                    "n_ref": 17490
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-382.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-382.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.83480251860332,
+                    "FN": 183,
+                    "FP": 1260,
+                    "IoU": 0.7164472391432501,
+                    "TN": 12394911,
+                    "TP": 3646,
+                    "n_pred": 4906,
+                    "n_ref": 3829
+                },
+                "2": {
+                    "Dice": NaN,
+                    "FN": 0,
+                    "FP": 0,
+                    "IoU": NaN,
+                    "TN": 12400000,
+                    "TP": 0,
+                    "n_pred": 0,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-385.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-385.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.4142295194116641,
+                    "FN": 655,
+                    "FP": 2770,
+                    "IoU": 0.2612165660051769,
+                    "TN": 12395364,
+                    "TP": 1211,
+                    "n_pred": 3981,
+                    "n_ref": 1866
+                },
+                "2": {
+                    "Dice": 0.9033326659507471,
+                    "FN": 3938,
+                    "FP": 1373,
+                    "IoU": 0.8237070968598553,
+                    "TN": 12369874,
+                    "TP": 24815,
+                    "n_pred": 26188,
+                    "n_ref": 28753
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-391.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-391.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.9146076776357618,
+                    "FN": 2169,
+                    "FP": 1726,
+                    "IoU": 0.8426516926557324,
+                    "TN": 12375246,
+                    "TP": 20859,
+                    "n_pred": 22585,
+                    "n_ref": 23028
+                },
+                "2": {
+                    "Dice": 0.6616064348023111,
+                    "FN": 2697,
+                    "FP": 290,
+                    "IoU": 0.4943287624851871,
+                    "TN": 12394093,
+                    "TP": 2920,
+                    "n_pred": 3210,
+                    "n_ref": 5617
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-394.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-394.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.8137612232198418,
+                    "FN": 654,
+                    "FP": 1441,
+                    "IoU": 0.6860011990407674,
+                    "TN": 12393328,
+                    "TP": 4577,
+                    "n_pred": 6018,
+                    "n_ref": 5231
+                },
+                "2": {
+                    "Dice": 0.8905863018771845,
+                    "FN": 3543,
+                    "FP": 1184,
+                    "IoU": 0.8027540162737326,
+                    "TN": 12376035,
+                    "TP": 19238,
+                    "n_pred": 20422,
+                    "n_ref": 22781
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-395.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-395.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7413701540095592,
+                    "FN": 1674,
+                    "FP": 761,
+                    "IoU": 0.5890295358649789,
+                    "TN": 12394075,
+                    "TP": 3490,
+                    "n_pred": 4251,
+                    "n_ref": 5164
+                },
+                "2": {
+                    "Dice": 0.808012826159728,
+                    "FN": 17747,
+                    "FP": 4047,
+                    "IoU": 0.6778704032162706,
+                    "TN": 12332344,
+                    "TP": 45862,
+                    "n_pred": 49909,
+                    "n_ref": 63609
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\MDA-399.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\MDA-399.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.7966023166023166,
+                    "FN": 4582,
+                    "FP": 686,
+                    "IoU": 0.6619609856262834,
+                    "TN": 12384416,
+                    "TP": 10316,
+                    "n_pred": 11002,
+                    "n_ref": 14898
+                },
+                "2": {
+                    "Dice": 0.7943425485268167,
+                    "FN": 3631,
+                    "FP": 4061,
+                    "IoU": 0.6588459662039295,
+                    "TN": 12377453,
+                    "TP": 14855,
+                    "n_pred": 18916,
+                    "n_ref": 18486
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\USZ-002.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\USZ-002.nii.gz"
+        },
+        {
+            "metrics": {
+                "1": {
+                    "Dice": 0.4736896091906862,
+                    "FN": 9216,
+                    "FP": 1046,
+                    "IoU": 0.3103494623655914,
+                    "TN": 12385120,
+                    "TP": 4618,
+                    "n_pred": 5664,
+                    "n_ref": 13834
+                },
+                "2": {
+                    "Dice": 0.0,
+                    "FN": 0,
+                    "FP": 11,
+                    "IoU": 0.0,
+                    "TN": 12399989,
+                    "TP": 0,
+                    "n_pred": 11,
+                    "n_ref": 0
+                }
+            },
+            "prediction_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_results\\Dataset004_Hecktor25\\STUNetTrainer_small__nnUNetPlans__3d_fullres\\fold_0\\validation\\USZ-003.nii.gz",
+            "reference_file": "C:\\Users\\jaemi\\projects\\AI_TECH\\final_proj\\nnUNet_preprocessed\\Dataset004_Hecktor25\\gt_segmentations\\USZ-003.nii.gz"
+        }
+    ]
+}
