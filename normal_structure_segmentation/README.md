@@ -6,15 +6,15 @@ Neck CT에서 정상 해부학적 구조물을 자동으로 분할하는 추론 
 ## 프로젝트 구조
 
 ```
-.
-├── requirements.sh            # 환경 설정 및 패키지 설치
-├── inference.sh               # 추론 파이프라인 실행 스크립트
-├── merge_tsv2_to_nnunet.py    # TSv2 결과를 nnUNet 결과에 병합
-├── structure_list.yaml        # TSv2에서 가져올 구조물 목록
-├── input_folder/              # 입력 CT 이미지 (.nii.gz)
-├── output_folder/             # 출력 세그멘테이션 결과
-├── normal_structure_model/    # 학습된 nnUNet 모델 가중치
-└── nnUNet/                    # nnU-Net 프레임워크 (v2.6.3)
+normal_structure_segmentation/     # 프로젝트 루트 폴더
+├── requirements.sh                # 환경 설정 및 패키지 설치
+├── inference.sh                   # 추론 파이프라인 실행 스크립트
+├── merge_tsv2_to_nnunet.py        # TSv2 결과를 nnUNet 결과에 병합
+├── structure_list.yaml            # TSv2에서 가져올 구조물 목록
+├── input_folder/                  # 입력 CT 이미지 (.nii.gz)
+├── output_folder/                 # 출력 세그멘테이션 결과
+├── normal_structure_model/        # 학습된 nnUNet 모델 가중치
+└── nnUNet/                        # nnU-Net 프레임워크 (v2.6.3)
 ```
 
 **주의**
@@ -52,7 +52,7 @@ normal_structure_model/
 ## 환경 설정
 
 ```bash
-bash requirements.sh
+bash ./normal_stucture_segmentation/requirements.sh
 ```
 
 - Python 3.10 가상환경 생성
@@ -65,7 +65,7 @@ bash requirements.sh
 ## 추론 실행
 
 ```bash
-bash inference.sh
+bash ./normal_stucture_segmentation/inference.sh
 ```
 
 **주의**
