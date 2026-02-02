@@ -80,7 +80,7 @@ bash inference.sh
 ### 입출력
 
 - **입력**: `input_folder/` 내 `.nii.gz` CT 이미지
-- **출력**: `output_folder/{case_name}.nii.gz` (18-class 라벨맵)
+- **출력**: `output_folder/` 내 `.nii.gz` (18-class 라벨맵)
 
 ## 모델 정보
 

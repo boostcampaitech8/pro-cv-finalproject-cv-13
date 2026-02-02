@@ -89,6 +89,11 @@ def main():
         shutil.rmtree(case_dir)
         print(f"  [DEL] {case_dir}")
 
+    # JSON 파일 삭제
+    for json_file in out_dir.glob("*.json"):
+        json_file.unlink()
+        print(f"[DEL JSON] {json_file}")
+
     print("Done.")
 
 
