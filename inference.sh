@@ -2,9 +2,25 @@
 VENV_DIR="/data/ephemeral/home/testvenv" # 경로 설정 필요
 source $VENV_DIR/bin/activate
 
-## 2. 입출력 파일 설정
-IN_DIR="/data/ephemeral/home/normal_structure_segmentation/input_folder" # 경로 설정 필요
-OUT_DIR="/data/ephemeral/home/normal_structure_segmentation/output_folder" # 경로 설정 필요
+## 2. 입출력 파일 설정 및 파일 이름 설정
+IN_DIR="./input_folder"
+OUT_DIR="./output_folder"
+
+
+cd $IN_DIR
+for f in *.nii.gz; do
+    # 이미 _0000.nii.gz 형태면 스킵
+    if [[ "$f" == *"_0000.nii.gz" ]]; then
+        echo "이미 _0000 있음: $f (스킵)"
+        continue
+    fi
+    
+    # _0000 추가
+    new_name="${f%.nii.gz}_0000.nii.gz"
+    mv "$f" "$new_name"
+    echo "변경: $f → $new_name"
+done
+cd ..
 
 
 ## 3. Totalsegmentator V2
@@ -60,8 +76,7 @@ export nnUNet_results="./normal_structure_model"
 nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 1 -c 3d_fullres -f 0
 
 ## 5. TSv2 결과를 nnUNet 결과에 병합
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-python "${SCRIPT_DIR}/merge_tsv2_to_nnunet.py" \
+python ./merge_tsv2_to_nnunet.py \
   --out_dir "${OUT_DIR}" \
-  --structure_list "${SCRIPT_DIR}/structure_list.yaml" \
+  --structure_list "./structure_list.yaml" \
   --dataset_json "${OUT_DIR}/dataset.json"

@@ -53,11 +53,15 @@ bash requirements.sh
 - PyTorch 2.8.0 (CUDA 12.8) 설치
 - nnU-Net, TotalSegmentator 설치
 
+* 원격 서버를 이용하지 않는 경우 경로 설정이 필요한 부분이 있습니다.(1. 가상 환경 생성 ~ 3. 임시 디렉토리 설정)
+
 ## 추론 실행
 
 ```bash
 bash inference.sh
 ```
+
+* 원격 서버를 이용하지 않는 경우 경로 설정이 필요한 부분이 있습니다.(1. 가상 환경 활성화)
 
 ### 파이프라인 단계
 
