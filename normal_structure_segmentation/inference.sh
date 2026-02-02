@@ -3,8 +3,8 @@ VENV_DIR="/data/ephemeral/home/testvenv" # 경로 설정 필요
 source $VENV_DIR/bin/activate
 
 ## 2. 입출력 파일 설정 및 파일 이름 설정
-IN_DIR="./input_folder"
-OUT_DIR="./output_folder"
+IN_DIR="./normal_structure_segmentation/input_folder"
+OUT_DIR="./normal_structure_segmentation/output_folder"
 
 
 cd $IN_DIR
@@ -20,6 +20,7 @@ for f in *.nii.gz; do
     mv "$f" "$new_name"
     echo "변경: $f → $new_name"
 done
+cd ..
 cd ..
 
 
@@ -70,13 +71,13 @@ echo "Done."
 ## 4. nnUNet
 
 # nnunet 환경 설정
-export nnUNet_results="./normal_structure_model"
+export nnUNet_results="./normal_structure_segmentation/normal_structure_model"
 
 # 모델 선정 및 추론
 nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 1 -c 3d_fullres -f 0
 
 ## 5. TSv2 결과를 nnUNet 결과에 병합
-python ./merge_tsv2_to_nnunet.py \
+python ./normal_structure_segmentation/merge_tsv2_to_nnunet.py \
   --out_dir "${OUT_DIR}" \
-  --structure_list "./structure_list.yaml" \
+  --structure_list "./normal_structure_segmentation/structure_list.yaml" \
   --dataset_json "${OUT_DIR}/dataset.json"
