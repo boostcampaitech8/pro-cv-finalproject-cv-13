@@ -17,24 +17,26 @@ except ImportError as exc:
 
 def _infer_case_id(ct_path: Path) -> str:
     name = ct_path.name
-    if name.endswith("__CT.nii.gz"):
-        return name[: -len("__CT.nii.gz")]
     if name.endswith(".nii.gz"):
         stem = name[: -len(".nii.gz")]
-        if stem.endswith("_0000"):
-            stem = stem[: -len("_0000")]
-        return stem
-    return ct_path.stem
+    else:
+        stem = ct_path.stem
+    if stem.endswith("_0000") or stem.endswith("_0001"):
+        return stem[:-5]
+    if stem.endswith("__CT") or stem.endswith("__PT"):
+        return stem[:-4]
+    return stem
 
 
 def _find_ct_pt(input_path: Path, pt_path: Path | None) -> tuple[Path, Path | None]:
     if input_path.is_dir():
-        ct_candidates = sorted(input_path.glob("*__CT.nii.gz"))
+        ct_candidates = sorted(input_path.glob("*_0000.nii.gz"))
         if len(ct_candidates) != 1:
             raise FileNotFoundError(f"Expected 1 CT file in {input_path}, found {len(ct_candidates)}")
         ct_path = ct_candidates[0]
+        case_id = _infer_case_id(ct_path)
         if pt_path is None:
-            pt_candidates = sorted(input_path.glob("*__PT.nii.gz"))
+            pt_candidates = sorted(input_path.glob(f"{case_id}_0001.nii.gz"))
             if len(pt_candidates) == 1:
                 pt_path = pt_candidates[0]
         return ct_path, pt_path
@@ -43,19 +45,23 @@ def _find_ct_pt(input_path: Path, pt_path: Path | None) -> tuple[Path, Path | No
         raise FileNotFoundError(f"Input path not found: {input_path}")
 
     ct_path = input_path
+    case_id = _infer_case_id(ct_path)
     if pt_path is None:
-        pt_candidates = sorted(ct_path.parent.glob("*__PT.nii.gz"))
+        pt_candidates = sorted(ct_path.parent.glob(f"{case_id}_0001.nii.gz"))
         if len(pt_candidates) == 1:
             pt_path = pt_candidates[0]
     return ct_path, pt_path
 
 
-def _find_label(input_path: Path) -> Path | None:
+def _find_label(input_path: Path, case_id: str) -> Path | None:
     folder = input_path if input_path.is_dir() else input_path.parent
+    expected = folder / f"{case_id}.nii.gz"
+    if expected.exists():
+        return expected
     candidates = [
         p
         for p in folder.glob("*.nii.gz")
-        if not p.name.endswith("__CT.nii.gz") and not p.name.endswith("__PT.nii.gz")
+        if not p.name.endswith("_0000.nii.gz") and not p.name.endswith("_0001.nii.gz")
     ]
     if len(candidates) == 1:
         return candidates[0]
@@ -65,7 +71,8 @@ def _find_label(input_path: Path) -> Path | None:
 def _ensure_empty_output(output_dir: Path) -> None:
     if output_dir.exists():
         if any(output_dir.iterdir()):
-            raise RuntimeError(f"Output folder must be empty: {output_dir}")
+            print("Contents are  already present in output folder")
+            # raise RuntimeError(f"Output folder must be empty: {output_dir}")
     else:
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -157,8 +164,9 @@ def main() -> None:
     pt_path = Path(args.pt_path) if args.pt_path else None
     label_path = Path(args.label_path) if args.label_path else None
     ct_path, pt_path = _find_ct_pt(args.input_path, pt_path)
+    case_id = _infer_case_id(ct_path)
     if label_path is None:
-        label_path = _find_label(args.input_path)
+        label_path = _find_label(args.input_path, case_id)
 
     _ensure_empty_output(args.output_dir)
 
@@ -167,8 +175,6 @@ def main() -> None:
         raise FileNotFoundError(
             "nnUNetv2_predict_from_modelfolder not found in PATH. Set --nnunet-predict if needed."
         )
-
-    case_id = _infer_case_id(ct_path)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_path = Path(tmpdir)

@@ -19,4 +19,4 @@ WORKDIR /app
 COPY . .
 
 ENTRYPOINT ["python"]
-CMD ["inference.py", "/test_dir/CHUM-001/CHUM-001__CT.nii.gz", "outputs/CHUM-001", "--model-folder", "plans", "--checkpoint", "checkpoint_best.pth", "--pt-path", "/test_dir/CHUM-001/CHUM-001__PT.nii.gz"]
+CMD ["inference.py", "/test_dir/CHUM-001/CHUM-001__0000.nii.gz", "outputs/CHUM-001", "--model-folder", "plans", "--checkpoint", "checkpoint_best.pth", "--pt-path", "/test_dir/CHUM-001/CHUM-001__0001.nii.gz"]
