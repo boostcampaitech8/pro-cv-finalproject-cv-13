@@ -1,4 +1,7 @@
---index-url https://download.pytorch.org/whl/cu128
-torch==2.7.1+cu128
-torchvision==0.22.1+cu128
+# Docker를 사용할 경우 주석 처리해주세요.
+# --index-url https://download.pytorch.org/whl/cu128
+# torch==2.7.1+cu128
+# torchvision==0.22.1+cu128
+
+numpy==2.2.6 
 fvcore

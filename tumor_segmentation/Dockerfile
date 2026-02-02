@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+FROM pytorch/pytorch:2.7.1-cuda12.8-cudnn9-runtime
 
 WORKDIR /app
 
@@ -18,4 +18,5 @@ WORKDIR /app
 
 COPY . .
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["python"]
+CMD ["inference.py", "/test_dir/CHUM-001/CHUM-001__CT.nii.gz", "outputs/CHUM-001", "--model-folder", "plans", "--checkpoint", "checkpoint_best.pth", "--pt-path", "/test_dir/CHUM-001/CHUM-001__PT.nii.gz"]

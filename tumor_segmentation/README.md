@@ -17,6 +17,15 @@ Minimal single-case inference pipeline:
 python tumor_segmentation/inference.py ../test_dir/CHUM-001/CHUM-001__CT.nii.gz outputs/CHUM-001 --model-folder tumor_segmentation/plans --checkpoint checkpoint_best.pth --pt-path ../test_dir/CHUM-001/CHUM-001__PT.nii.gz
 ```
 
+## Docker
+- When using Docker, comment out the torch installation in `requirements.txt`.
+  
+## Basic Docker Usage
+```
+docker build -t next-ct ./tumor_segmentation 
+docker run --gpus all --shm-size=8g -v %cd%\..\test_dir:/test_dir -v %cd%\.\outputs:/app/outputs next-ct
+```
+
 ## Notes
 - `--pt-path` is optional. If omitted, the script looks for `*__PT.nii.gz` in the same folder as CT.
 - If a single label file exists in the input folder (not CT/PT), Dice will be printed.
