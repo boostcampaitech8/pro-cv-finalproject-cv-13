@@ -3,5 +3,4 @@ __pycache__/
 *.pth
 *.nii.gz
 *.png
-*.txt
 outputs
