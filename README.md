@@ -3,7 +3,7 @@
 두 모델의 추론 파이프라인입니다. (normal_structure_segmentation 및 tumor_segmentation branch를 합친 branch)
 - `tumor_segmentation`: nnUNetv2 종양 분할 + Dice 계산
 - `normal_structure_segmentation`: nnUNet + TotalSegmentator 결과 병합
-
+- `nerve_estimation`: 신경 추정 로직
 
 ## Docker Compose 실행
 `docker-compose.yml`이 있는 폴더에서 실행하세요.
@@ -17,6 +17,7 @@ docker compose up --build
 ```bash
 docker compose up --build tumor-seg
 docker compose up --build normal-seg
+docker compose up --build nerve-estimation
 ```
 
 모든 서비스 실행:
@@ -37,3 +38,4 @@ docker compose down
 - 모든 결과들은 `outputs` 폴더에 저장됩니다. 
   - `normal` : 정상 구조물
   - `tumor` : 병변
+  - `nerve` : 신경 추정 결과
