@@ -16,13 +16,32 @@ for arg in "$@"; do
   fi
 done
 
+    
+## 3. 가용 CPU 코어 수
+NUM_CORES=$(nproc)
+
+## 4. Totalsegmentator V2
+
+# TASKS=("total")
+TASKS=("headneck_bones_vessels" "headneck_muscles") # head&neck
+
+# 실행 바이너리/디바이스
+TS_BIN="${TS_BIN:-TotalSegmentator}"
+DEVICE="${DEVICE:-gpu}"
+
+# if ! command -v "${TS_BIN}" >/dev/null 2>&1; then
+#   if [[ -x "${FALLBACK_TS_BIN}" ]]; then
+#     TS_BIN="${FALLBACK_TS_BIN}"
+#   fi
+# done
+
 mkdir -p "${IN_DIR}" "${OUT_DIR}"
 
 # Optional venv activation for non-docker environments
-if [ -n "${VENV_DIR:-}" ] && [ -f "${VENV_DIR}/bin/activate" ]; then
-  # shellcheck disable=SC1090
-  source "${VENV_DIR}/bin/activate"
-fi
+# if [ -n "${VENV_DIR:-}" ] && [ -f "${VENV_DIR}/bin/activate" ]; then
+#   # shellcheck disable=SC1090
+#   source "${VENV_DIR}/bin/activate"
+# fi
 
 shopt -s nullglob
 all_files=("${IN_DIR}"/*.nii.gz)
@@ -95,9 +114,10 @@ if [ "${ONLY_CT}" = "true" ]; then
   done
 fi
 
-nnUNetv2_predict -i "${NNUNET_INPUT_DIR}" -o "${OUT_DIR}" -d 1 -c 3d_fullres -f 0
+## 5. nnUNet
+nnUNetv2_predict -i "${NNUNET_INPUT_DIR}" -o "${OUT_DIR}" -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs
 
 python "${SCRIPT_DIR}/merge_tsv2_to_nnunet.py" \
   --out_dir "${OUT_DIR}" \
   --structure_list "${SCRIPT_DIR}/structure_list.yaml" \
-  --dataset_json "${OUT_DIR}/dataset.json"
+  --n_jobs ${NUM_CORES}

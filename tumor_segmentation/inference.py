@@ -231,14 +231,14 @@ def main() -> None:
             "--roi",
             str(roi_dir / f"{case_id}_ROI.npz"),
             "--output",
-            str(args.output_dir / f"{case_id}.nii.gz"),
+            str(args.output_dir / f"tumor.nii.gz"),
         ]
         if pt_path is not None:
             restore_cmd += ["--pt", str(pt_path)]
         subprocess.run(restore_cmd, check=True)
 
         if label_path is not None and label_path.exists():
-            pred_img = sitk.ReadImage(str(args.output_dir / f"{case_id}.nii.gz"))
+            pred_img = sitk.ReadImage(str(args.output_dir / f"tumor.nii.gz"))
             gt_img = sitk.ReadImage(str(label_path))
             pred = sitk.GetArrayFromImage(pred_img).astype(np.int16)
             gt = sitk.GetArrayFromImage(gt_img).astype(np.int16)

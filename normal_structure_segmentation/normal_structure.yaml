@@ -1,0 +1,19 @@
+labels:
+  trachea: 1
+  esophagus: 2
+  thyroid_gland: 3
+  vertebrae_C1: 4
+  vertebrae_C2: 5
+  vertebrae_C3: 6
+  vertebrae_C4: 7
+  vertebrae_C5: 8
+  vertebrae_C6: 9
+  vertebrae_C7: 10
+  vertebrae_T1: 11
+  common_carotid_artery_left: 12
+  common_carotid_artery_right: 13
+  hyoid: 14
+  internal_jugular_vein_left: 15
+  internal_jugular_vein_right: 16
+  anterior_scalene_left: 17
+  anterior_scalene_right: 18
