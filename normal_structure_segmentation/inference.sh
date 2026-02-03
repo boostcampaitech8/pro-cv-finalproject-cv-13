@@ -23,8 +23,11 @@ done
 cd ..
 cd ..
 
+## 3. 가용 CPU 코어 수
+NUM_CORES=$(nproc)
 
-## 3. Totalsegmentator V2
+
+## 4. Totalsegmentator V2
 
 # TASKS=("total")
 TASKS=("headneck_bones_vessels" "headneck_muscles") # head&neck
@@ -68,16 +71,16 @@ done
 
 echo "Done."
 
-## 4. nnUNet
+## 5. nnUNet
 
 # nnunet 환경 설정
 export nnUNet_results="./normal_structure_segmentation/normal_structure_model"
 
 # 모델 선정 및 추론
-nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 1 -c 3d_fullres -f 0
+nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs
 
-## 5. TSv2 결과를 nnUNet 결과에 병합
+## 6. TSv2 결과를 nnUNet 결과에 병합
 python ./normal_structure_segmentation/merge_tsv2_to_nnunet.py \
   --out_dir "${OUT_DIR}" \
   --structure_list "./normal_structure_segmentation/structure_list.yaml" \
-  --dataset_json "${OUT_DIR}/dataset.json"
+  --n_jobs ${NUM_CORES}
