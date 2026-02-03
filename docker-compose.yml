@@ -36,3 +36,22 @@ services:
       /data/input
       /data/output
       --only-ct
+
+  nerve-estimation:
+    build:
+      context: ./nerve_estimation
+      dockerfile: Dockerfile
+    image: next-ct/nerve-estimation
+    container_name: nerve-estimation
+    shm_size: "8gb"
+    depends_on:
+      tumor-seg:
+        condition: service_completed_successfully
+      normal-seg:
+        condition: service_completed_successfully
+    volumes:
+      - ./outputs/normal:/data/input/normal_structure
+      - ./outputs/tumor:/data/input/tumor
+      - ./outputs/nerve:/data/output
+    command: >
+      python /app/inference.py /data/input /data/output
