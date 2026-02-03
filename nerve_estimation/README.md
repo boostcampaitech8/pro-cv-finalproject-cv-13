@@ -13,7 +13,7 @@ CT 분할 마스크를 기반으로 경부 신경의 위치를 추정하고, 종
 - SciPy
 - NiBabel
 
-## 빠른 시작
+## 실행
 
 ```python
 from nerve_estimation import run_nerve_estimation
