@@ -358,10 +358,12 @@ async function autoShowImportantSegments(
   const maxAutoShow = 4; // Max segments to auto-show
   let shown = 0;
 
+  const skipPatterns = [/_uncertainty$/i];
+
   for (const segment of labelConfig.segments) {
     if (shown >= maxAutoShow) break;
+    if (skipPatterns.some(p => p.test(segment.label))) continue;
 
-    // Check if segment matches priority patterns
     const isPriority = priorityPatterns.some(pattern => pattern.test(segment.label));
 
     if (isPriority) {

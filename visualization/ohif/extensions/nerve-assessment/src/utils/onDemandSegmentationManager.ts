@@ -325,7 +325,7 @@ export async function addLabelmapSegmentation(
             segmentIndex: seg.segmentIndex,
             label: seg.label,
             active: false,
-            locked: false,
+            locked: true,
             cachedStats: {},
           };
         }
@@ -898,6 +898,35 @@ export async function reapplyLabelmapToViewports(
           }
         }
       }
+    }
+
+    // Re-apply per-segment visibility state to new viewports
+    const visibilityApi = csTools.segmentation?.config?.visibility;
+    if (visibilityApi?.setSegmentIndexVisibility) {
+      const allSegs = csTools.segmentation?.state?.getSegmentations?.() || [];
+      for (const [segIdx, segState] of state.segments) {
+        for (const seg of allSegs) {
+          const segments = seg.segments || {};
+          let matchedIndex: number | null = null;
+          for (const key of Object.keys(segments)) {
+            const idx = Number(key);
+            if (segments[idx]?.label === segState.label) {
+              matchedIndex = idx;
+              break;
+            }
+          }
+          if (matchedIndex === null) continue;
+
+          for (const vpId of viewportIds) {
+            try {
+              visibilityApi.setSegmentIndexVisibility(
+                vpId, { segmentationId: seg.segmentationId }, matchedIndex, segState.isVisible
+              );
+            } catch (_) {}
+          }
+        }
+      }
+      console.log('[OnDemandManager] Segment visibility states restored');
     }
 
     // Trigger render on all viewports
