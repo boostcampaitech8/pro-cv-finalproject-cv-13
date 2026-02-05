@@ -45,12 +45,19 @@ htmlcov/
 # Medical imaging temp files
 *.nii
 *.nii.gz
-!test_data/*.nii.gz
+test_data/
 
 # Output directories
 output/
 results/
 logs/
+test_output/
+
+# Build logs
+*.log
+
+# Model weights
+*.pth
 
 # OS
 .DS_Store

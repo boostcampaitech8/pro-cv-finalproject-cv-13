@@ -35,23 +35,6 @@ def get_mask_z_range(mask: np.ndarray) -> Optional[Tuple[int, int]]:
     return (int(z_indices[0]), int(z_indices[-1]))
 
 
-def get_centerline(mask: np.ndarray) -> Optional[np.ndarray]:
-    """관형 구조물의 중심선 계산."""
-    if mask is None:
-        return None
-
-    z_range = get_mask_z_range(mask)
-    if z_range is None:
-        return None
-
-    centerline = []
-    for z in range(z_range[0], z_range[1] + 1):
-        coords = get_coords_at_z(mask, z)
-        if coords is not None and len(coords) > 0:
-            centerline.append(np.mean(coords, axis=0))
-
-    return np.array(centerline) if centerline else None
-
 
 def get_center_at_z(mask: np.ndarray, z_level: int) -> Optional[np.ndarray]:
     """특정 Z 레벨에서 마스크의 중심점 반환."""
@@ -100,45 +83,6 @@ def get_superior_pole(
 
     return np.mean(top_coords, axis=0)
 
-
-def get_inferior_pole(
-    mask: np.ndarray,
-    affine: np.ndarray,
-    side: Optional[str] = None,
-) -> Optional[np.ndarray]:
-    """구조물의 하극(최하단) 좌표 반환."""
-    if mask is None:
-        return None
-
-    axis, sign = get_anatomical_direction(affine, 'inferior')
-    coords = np.argwhere(mask > 0)
-    if len(coords) == 0:
-        return None
-
-    if side is not None:
-        lateral_axis, lateral_sign = get_lateral_direction(affine, side)
-        centroid = np.mean(coords, axis=0)
-        if lateral_sign > 0:
-            side_coords = coords[coords[:, lateral_axis] >= centroid[lateral_axis]]
-        else:
-            side_coords = coords[coords[:, lateral_axis] <= centroid[lateral_axis]]
-        if len(side_coords) > 0:
-            coords = side_coords
-
-    if sign > 0:
-        inferior_idx = np.argmax(coords[:, axis])
-    else:
-        inferior_idx = np.argmin(coords[:, axis])
-
-    inferior_z = coords[inferior_idx, axis]
-    tolerance = 2
-
-    if sign > 0:
-        bottom_coords = coords[coords[:, axis] >= inferior_z - tolerance]
-    else:
-        bottom_coords = coords[coords[:, axis] <= inferior_z + tolerance]
-
-    return np.mean(bottom_coords, axis=0)
 
 
 def get_lateral_border_at_z(

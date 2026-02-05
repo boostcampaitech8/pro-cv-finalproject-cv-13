@@ -17,7 +17,7 @@ class RLNEstimator(BaseNerveEstimator):
     output_type = "pathway"
     method = "teg_midpoint"
     reference = "Baseline implementation"
-    required_structures = ["trachea", "esophagus"]
+    required_structures = ("trachea", "esophagus")
 
     def __init__(self, mask_loader: MaskLoader):
         super().__init__(mask_loader)

@@ -53,6 +53,10 @@ MASK_ALIASES: Dict[str, str] = {
     "IJV_right": "internal_jugular_vein_right",
     "Anterior_scalene_left": "anterior_scalene_left",
     "Anterior_scalene_right": "anterior_scalene_right",
+    # Tumor aliases
+    "tumor_gtv": "tumor",
+    "GTV": "tumor",
+    "gtv": "tumor",
 }
 
 STRUCTURE_SUBFOLDER: Dict[str, str] = {

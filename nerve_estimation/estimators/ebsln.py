@@ -16,7 +16,7 @@ class EBSLNEstimator(BaseNerveEstimator):
     output_type = "danger_zone"
     method = "superior_pole_offset"
     reference = "Estrela et al. 2011 (PMID:21537628)"
-    required_structures = ["thyroid_gland"]
+    required_structures = ("thyroid_gland",)
 
     def __init__(self, mask_loader: MaskLoader):
         super().__init__(mask_loader)

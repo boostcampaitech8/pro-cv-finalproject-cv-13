@@ -6,6 +6,8 @@ import nibabel as nib
 from pathlib import Path
 from typing import Dict, Union
 
+from .utils import get_spacing
+
 
 def create_tube_mask(
     points: np.ndarray,
@@ -74,7 +76,7 @@ def export_from_json(
     ref_nii = nib.load(str(reference_nifti))
     ref_shape = ref_nii.shape[:3]
     affine = ref_nii.affine
-    spacing = np.abs(np.diag(affine)[:3])
+    spacing = get_spacing(affine)
 
     saved_files = {}
     combined_mask = np.zeros(ref_shape, dtype=np.uint8)
@@ -82,9 +84,11 @@ def export_from_json(
     label_counter = 1
 
     for nerve_data in results.get('nerves', []):
-        nerve = nerve_data['nerve']
-        side = nerve_data['side']
-        nerve_type = nerve_data['type']
+        nerve = nerve_data.get('nerve')
+        side = nerve_data.get('side')
+        nerve_type = nerve_data.get('type')
+        if nerve is None or side is None or nerve_type is None:
+            continue
         name = f"{nerve}_{side}"
 
         radius_mm = nerve_data.get('uncertainty_mm', default_radius_mm) if use_uncertainty_as_radius else default_radius_mm

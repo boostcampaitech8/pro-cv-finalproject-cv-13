@@ -65,7 +65,7 @@ class BaseNerveEstimator(ABC):
     uncertainty_mm: float = 5.0
     method: str = ""
     reference: str = ""
-    required_structures: List[str] = []
+    required_structures: tuple = ()
 
     def __init__(self, mask_loader: MaskLoader):
         self.mask_loader = mask_loader

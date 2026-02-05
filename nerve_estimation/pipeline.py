@@ -8,13 +8,7 @@ from typing import Dict, List, Optional, Any, Union
 import numpy as np
 
 from .mask_loader import MaskLoader
-from .estimators import (
-    VagusEstimator,
-    EBSLNEstimator,
-    RLNEstimator,
-    PhrenicEstimator,
-    EstimationResult,
-)
+from .estimators import ESTIMATOR_CLASSES, EstimationResult
 from .risk import RiskCalculator, RiskResult
 from .utils import get_spacing
 from .config import SIDES
@@ -41,10 +35,7 @@ class NerveEstimationPipeline:
         )
 
         self.estimators = {
-            "vagus": VagusEstimator(self.mask_loader),
-            "ebsln": EBSLNEstimator(self.mask_loader),
-            "rln": RLNEstimator(self.mask_loader),
-            "phrenic": PhrenicEstimator(self.mask_loader),
+            name: cls(self.mask_loader) for name, cls in ESTIMATOR_CLASSES.items()
         }
 
         self._nerve_results: List[EstimationResult] = []

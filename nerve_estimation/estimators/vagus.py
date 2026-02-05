@@ -1,8 +1,6 @@
 """미주신경(Vagus) 추정기."""
 
 import numpy as np
-from typing import Optional
-
 from .base import BaseNerveEstimator, EstimationResult
 from ..mask_loader import MaskLoader
 from ..landmarks import get_center_at_z, get_mask_z_range
@@ -17,7 +15,7 @@ class VagusEstimator(BaseNerveEstimator):
     output_type = "pathway"
     method = "midpoint_posterior"
     reference = "Inamura et al. 2017"
-    required_structures = ["common_carotid_artery", "internal_jugular_vein"]
+    required_structures = ("common_carotid_artery", "internal_jugular_vein")
 
     def __init__(self, mask_loader: MaskLoader):
         super().__init__(mask_loader)

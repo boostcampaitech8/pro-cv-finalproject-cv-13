@@ -17,7 +17,7 @@ class PhrenicEstimator(BaseNerveEstimator):
     output_type = "pathway"
     method = "anterior_surface"
     reference = "Baseline implementation"
-    required_structures = ["anterior_scalene"]
+    required_structures = ("anterior_scalene",)
 
     def __init__(self, mask_loader: MaskLoader):
         super().__init__(mask_loader)

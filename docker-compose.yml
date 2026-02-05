@@ -1,0 +1,139 @@
+services:
+  # ============================================
+  # DICOM Server
+  # ============================================
+  orthanc:
+    image: orthancteam/orthanc:24.1.2
+    container_name: orthanc
+    ports:
+      - "8042:8042"
+    volumes:
+      - orthanc-data:/var/lib/orthanc/db
+      - ./visualization/orthanc/orthanc.json:/etc/orthanc/orthanc.json:ro
+    environment:
+      - ORTHANC__DICOM_WEB__ENABLE=true
+      - ORTHANC__DICOM_WEB__ROOT=/dicom-web/
+      - ORTHANC__DICOM_WEB__ENABLEWADO=true
+      - ORTHANC__DICOM_WEB__WADOURL=/wado
+      - ORTHANC__DICOM_WEB__SSL=false
+      - ORTHANC__DICOM_WEB__STUDIESMETADATA=Full
+      - ORTHANC__DICOM_WEB__SERIESMETADATA=Full
+    restart: unless-stopped
+    networks:
+      - medical-network
+
+  # ============================================
+  # Web Viewer (OHIF)
+  # ============================================
+  ohif:
+    build:
+      context: ./visualization/ohif
+      dockerfile: Dockerfile
+    container_name: ohif-viewer
+    ports:
+      - "3000:80"
+    depends_on:
+      - orthanc
+    restart: unless-stopped
+    networks:
+      - medical-network
+
+  # ============================================
+  # Backend API (FastAPI + nerve_estimation)
+  # ============================================
+  backend:
+    build:
+      context: ./visualization/backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # Core modules
+      - ./nerve_estimation:/app/nerve_estimation:ro
+      - ./test_data:/data/test_data:ro
+      - upload-data:/app/uploads
+      # Docker socket for calling segmentation containers
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Shared volumes for segmentation I/O
+      - seg-input:/data/seg_input
+      - seg-output:/data/seg_output
+    environment:
+      - ORTHANC_URL=http://orthanc:8042
+      - OHIF_URL=http://localhost:3000
+      - PYTHONUNBUFFERED=1
+      - TZ=Asia/Seoul
+      # Segmentation container settings
+      - NORMAL_SEG_IMAGE=next-ct/normal-seg
+      - TUMOR_SEG_IMAGE=next-ct/tumor-seg
+      - SEG_INPUT_DIR=/data/seg_input
+      - SEG_OUTPUT_DIR=/data/seg_output
+      - DOCKER_NETWORK=nextct-medical-network
+      - SEG_INPUT_VOLUME=nextct-seg-input
+      - SEG_OUTPUT_VOLUME=nextct-seg-output
+      - TS_CACHE_VOLUME=nextct-ts-cache
+    depends_on:
+      - orthanc
+    restart: unless-stopped
+    networks:
+      - medical-network
+
+  # ============================================
+  # Tumor Segmentation (GPU)
+  # ============================================
+  tumor-seg:
+    build:
+      context: ./segmentation/tumor
+      dockerfile: Dockerfile
+    image: next-ct/tumor-seg
+    container_name: tumor-seg
+    runtime: nvidia
+    shm_size: "16gb"
+    volumes:
+      - seg-input:/data/input:ro
+      - seg-output:/data/output
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    networks:
+      - medical-network
+    profiles:
+      - gpu
+
+  # ============================================
+  # Normal Structure Segmentation (GPU)
+  # ============================================
+  normal-seg:
+    build:
+      context: ./segmentation/normal_structure
+      dockerfile: Dockerfile
+    image: next-ct/normal-seg
+    container_name: normal-seg
+    runtime: nvidia
+    shm_size: "16gb"
+    volumes:
+      - seg-input:/data/input:ro
+      - seg-output:/data/output
+      - ts-cache:/root/.totalsegmentator
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    networks:
+      - medical-network
+    profiles:
+      - gpu
+
+volumes:
+  orthanc-data:
+    name: nextct-orthanc-data
+  upload-data:
+    name: nextct-upload-data
+  seg-input:
+    name: nextct-seg-input
+  seg-output:
+    name: nextct-seg-output
+  ts-cache:
+    name: nextct-ts-cache
+
+networks:
+  medical-network:
+    name: nextct-medical-network
+    driver: bridge
