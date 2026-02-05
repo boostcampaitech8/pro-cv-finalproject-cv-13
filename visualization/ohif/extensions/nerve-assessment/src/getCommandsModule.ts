@@ -97,8 +97,30 @@ function getCommandsModule({
           }
         },
       },
+      setWindowLevelPreset: {
+        commandFn: ({ width, level }: { width: number; level: number }) => {
+          try {
+            const cs = (window as any).cornerstone || (window as any).cornerstoneCore;
+            const re = cs?.getRenderingEngine?.('OHIFCornerstoneRenderingEngine');
+            if (!re) return;
+
+            const lower = level - width / 2;
+            const upper = level + width / 2;
+
+            re.getViewports()
+              .filter((v: any) => v.type === 'orthographic')
+              .forEach((vp: any) => {
+                vp.setProperties({ voiRange: { lower, upper } });
+                vp.render();
+              });
+
+            console.log(`[NerveAssessment] W/L preset applied: W${width}/L${level}`);
+          } catch (e: any) {
+            console.warn('[NerveAssessment] W/L preset failed:', e?.message);
+          }
+        },
+      },
     },
-    // No defaultContext - commands will be available in all contexts
   };
 }
 

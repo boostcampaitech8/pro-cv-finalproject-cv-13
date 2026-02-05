@@ -354,19 +354,79 @@ const toolbarButtons = [
       evaluate: 'evaluate.cornerstoneTool',
     },
   },
-  // Window/Level
+  // Window/Level (split button with presets)
+  {
+    id: 'WindowLevelTools',
+    uiType: 'ohif.toolButtonList',
+    props: {
+      groupId: 'WindowLevelGroupId',
+      buttonSection: 'WindowLevelTools',
+    },
+  },
   {
     id: 'WindowLevel',
     uiType: 'ohif.toolButton',
     props: {
       icon: 'tool-window-level',
       label: 'Window Level',
-      tooltip: 'Window Level',
+      tooltip: 'Drag to adjust W/L',
       commands: {
         commandName: 'setToolActiveToolbar',
         commandOptions: { toolGroupIds: ['mpr', 'default'] },
       },
       evaluate: 'evaluate.cornerstoneTool',
+    },
+  },
+  {
+    id: 'WL-SoftTissue',
+    uiType: 'ohif.toolButton',
+    props: {
+      icon: 'tool-window-level',
+      label: 'Soft Tissue',
+      tooltip: 'W:350 / L:40',
+      commands: {
+        commandName: 'setWindowLevelPreset',
+        commandOptions: { width: 350, level: 40 },
+      },
+    },
+  },
+  {
+    id: 'WL-Bone',
+    uiType: 'ohif.toolButton',
+    props: {
+      icon: 'tool-window-level',
+      label: 'Bone',
+      tooltip: 'W:2000 / L:500',
+      commands: {
+        commandName: 'setWindowLevelPreset',
+        commandOptions: { width: 2000, level: 500 },
+      },
+    },
+  },
+  {
+    id: 'WL-Lung',
+    uiType: 'ohif.toolButton',
+    props: {
+      icon: 'tool-window-level',
+      label: 'Lung',
+      tooltip: 'W:1500 / L:-500',
+      commands: {
+        commandName: 'setWindowLevelPreset',
+        commandOptions: { width: 1500, level: -500 },
+      },
+    },
+  },
+  {
+    id: 'WL-Brain',
+    uiType: 'ohif.toolButton',
+    props: {
+      icon: 'tool-window-level',
+      label: 'Brain',
+      tooltip: 'W:80 / L:40',
+      commands: {
+        commandName: 'setWindowLevelPreset',
+        commandOptions: { width: 80, level: 40 },
+      },
     },
   },
   // Pan
@@ -577,7 +637,7 @@ function setupToolbar(toolbarService: any) {
   // v3.11.0 uses updateSection with sections object
   const primaryButtonIds = [
     'MeasurementTools',
-    'WindowLevel',
+    'WindowLevelTools',
     'Pan',
     'Zoom',
     'Crosshairs',
@@ -604,6 +664,14 @@ function setupToolbar(toolbarService: any) {
     toolbarService.updateSection(toolbarService.sections.MeasurementTools, measurementToolIds);
   } else if (toolbarService.updateSection) {
     toolbarService.updateSection('MeasurementTools', measurementToolIds);
+  }
+
+  // Configure WindowLevelTools button list
+  const windowLevelToolIds = ['WL-SoftTissue', 'WL-Bone', 'WL-Lung', 'WL-Brain'];
+  if (toolbarService.sections?.WindowLevelTools) {
+    toolbarService.updateSection(toolbarService.sections.WindowLevelTools, windowLevelToolIds);
+  } else if (toolbarService.updateSection) {
+    toolbarService.updateSection('WindowLevelTools', windowLevelToolIds);
   }
 
   console.log('[NerveAssessment Mode] Toolbar registered with v3.11.0 API');
