@@ -104,3 +104,9 @@ bash ./normal_stucture_segmentation/inference.sh
 1) inference.sh
 2) structure_list.yaml
 3) merge_tsv2_to_nnunet.py
+
+## 2026-02-06 변경 사항
+
+1. TSV2 라벨 추가
+1) internal_carotid_artery_left
+2) internal_carotid_artery_right
