@@ -1,6 +1,6 @@
 labels:
-- hyoid
-- internal_jugular_vein_left
-- internal_jugular_vein_right
-- anterior_scalene_left
-- anterior_scalene_right
+  hyoid: 14
+  internal_jugular_vein_left: 15
+  internal_jugular_vein_right: 16
+  anterior_scalene_left: 17
+  anterior_scalene_right: 18

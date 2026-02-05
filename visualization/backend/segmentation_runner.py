@@ -34,24 +34,24 @@ SEG_OUTPUT_VOLUME = os.environ.get("SEG_OUTPUT_VOLUME", "github_final_team_proje
 TS_CACHE_VOLUME = os.environ.get("TS_CACHE_VOLUME", "github_final_team_project_ts-cache")
 
 NNUNET_LABELS = {
-    1: "internal_jugular_vein_left",    # IJV_left
-    2: "internal_jugular_vein_right",   # IJV_right
-    3: "anterior_scalene_left",         # Anterior_scalene_left
-    4: "anterior_scalene_right",        # Anterior_scalene_right
-    5: "hyoid",
-    6: "common_carotid_artery_left",
-    7: "common_carotid_artery_right",
-    8: "esophagus",
-    9: "thyroid_gland",
-    10: "trachea",
-    11: "vertebrae_C1",
-    12: "vertebrae_C2",
-    13: "vertebrae_C3",
-    14: "vertebrae_C4",
-    15: "vertebrae_C5",
-    16: "vertebrae_C6",
-    17: "vertebrae_C7",
-    18: "vertebrae_T1",
+    1: "trachea",
+    2: "esophagus",
+    3: "thyroid_gland",
+    4: "vertebrae_C1",
+    5: "vertebrae_C2",
+    6: "vertebrae_C3",
+    7: "vertebrae_C4",
+    8: "vertebrae_C5",
+    9: "vertebrae_C6",
+    10: "vertebrae_C7",
+    11: "vertebrae_T1",
+    12: "common_carotid_artery_left",
+    13: "common_carotid_artery_right",
+    14: "hyoid",
+    15: "internal_jugular_vein_left",
+    16: "internal_jugular_vein_right",
+    17: "anterior_scalene_left",
+    18: "anterior_scalene_right",
 }
 
 

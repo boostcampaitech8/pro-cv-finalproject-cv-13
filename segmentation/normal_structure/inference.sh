@@ -109,15 +109,17 @@ if [ "${ONLY_CT}" = "true" ]; then
 fi
 
 NNUNET_START=$(date +%s)
-nnUNetv2_predict -i "${NNUNET_INPUT_DIR}" -o "${OUT_DIR}" -d 1 -c 3d_fullres -f 0
+nnUNetv2_predict -i "${NNUNET_INPUT_DIR}" -o "${OUT_DIR}" -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs
 NNUNET_END=$(date +%s)
 log_time "nnUNet" $((NNUNET_END - NNUNET_START))
+
+NUM_CORES=$(nproc)
 
 MERGE_START=$(date +%s)
 python "${SCRIPT_DIR}/merge_tsv2_to_nnunet.py" \
   --out_dir "${OUT_DIR}" \
   --structure_list "${SCRIPT_DIR}/structure_list.yaml" \
-  --dataset_json "${OUT_DIR}/dataset.json"
+  --n_jobs ${NUM_CORES}
 MERGE_END=$(date +%s)
 log_time "Merge" $((MERGE_END - MERGE_START))
 

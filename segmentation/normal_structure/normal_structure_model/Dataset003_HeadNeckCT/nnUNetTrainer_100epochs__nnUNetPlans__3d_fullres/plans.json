@@ -1,5 +1,5 @@
 {
-    "dataset_name": "Dataset002_NeckCT",
+    "dataset_name": "Dataset003_HeadNeckCT",
     "plans_name": "nnUNetPlans",
     "original_median_spacing_after_transp": [
         1.5,
@@ -7,9 +7,9 @@
         1.5
     ],
     "original_median_shape_after_transp": [
-        168,
-        170,
-        181
+        210,
+        182,
+        190
     ],
     "image_reader_writer": "SimpleITKIO",
     "transpose_forward": [
@@ -26,14 +26,14 @@
         "2d": {
             "data_identifier": "nnUNetPlans_2d",
             "preprocessor_name": "DefaultPreprocessor",
-            "batch_size": 84,
+            "batch_size": 85,
             "patch_size": [
                 192,
                 192
             ],
             "median_image_size_in_voxels": [
-                170.5,
-                181.0
+                182.0,
+                190.0
             ],
             "spacing": [
                 1.5,
@@ -178,9 +178,9 @@
                 128
             ],
             "median_image_size_in_voxels": [
-                168.0,
-                170.5,
-                181.0
+                210.0,
+                182.0,
+                190.0
             ],
             "spacing": [
                 1.5,
@@ -333,13 +333,13 @@
     "label_manager": "LabelManager",
     "foreground_intensity_properties_per_channel": {
         "0": {
-            "max": 3388.0,
-            "mean": 219.9080352783203,
-            "median": 232.9601287841797,
-            "min": -1222.031982421875,
-            "percentile_00_5": -1023.0162963867188,
-            "percentile_99_5": 1435.0152587890625,
-            "std": 471.38775634765625
+            "max": 4319.9921875,
+            "mean": 233.1083221435547,
+            "median": 271.0114440917969,
+            "min": -1708.0240478515625,
+            "percentile_00_5": -1023.0044555664062,
+            "percentile_99_5": 1708.032470703125,
+            "std": 542.9717407226562
         }
     }
 }
