@@ -6,7 +6,7 @@
  * DICOM volume-based segmentations (imageIds required), which standalone meshes lack.
  */
 
-import { reapplyLabelmapToViewports } from './onDemandSegmentationManager';
+import { reapplyLabelmapToViewports, getSegmentStates } from './onDemandSegmentationManager';
 
 export const VOLUME3D_VIEWPORT_ID = 'volume3d';
 
@@ -487,6 +487,23 @@ async function reapplyOnLayoutChange(): Promise<void> {
   if (cachedData) {
     try {
       await loadSurfaceMeshesFromCache(currentStudyUID, currentServicesManager, cachedData);
+
+      // Restore 3D actor visibility from segment states
+      const segStates = getSegmentStates(currentStudyUID);
+      const cornerstone = (window as any).cornerstone || (window as any).cornerstoneCore;
+      const re = cornerstone?.getRenderingEngine?.('OHIFCornerstoneRenderingEngine');
+      const vp3d = re?.getViewports?.().find((v: any) => v.type === 'volume3d');
+      if (vp3d) {
+        for (const seg of segStates) {
+          if (!seg.isVisible) {
+            const actor = vp3d.getActors().find((a: any) => a.uid === `nerve-surface-${seg.label}`);
+            if (actor) {
+              actor.actor.setVisibility(false);
+            }
+          }
+        }
+        vp3d.render();
+      }
     } catch (e) {
       console.warn('[SurfaceLoader] Mesh reapply failed:', e);
     }
