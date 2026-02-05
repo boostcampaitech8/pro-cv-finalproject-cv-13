@@ -367,7 +367,7 @@ async function autoShowImportantSegments(
     if (isPriority) {
       console.log(`[LabelmapIntegration] Auto-showing segment: ${segment.label}`);
       await setSegmentVisibility(
-        segment.segmentIndex,
+        segment.label,
         true,
         studyInstanceUID,
         viewportId,
@@ -382,7 +382,7 @@ async function autoShowImportantSegments(
     const firstSegment = labelConfig.segments[0];
     console.log(`[LabelmapIntegration] No priority segments, showing first: ${firstSegment.label}`);
     await setSegmentVisibility(
-      firstSegment.segmentIndex,
+      firstSegment.label,
       true,
       studyInstanceUID,
       viewportId,

@@ -245,7 +245,7 @@ export async function createLabelmapVolume(
         labelIndex: segment.segmentIndex,
         label: segment.label,
         color: segment.color,
-        isVisible: false,  // Start hidden, user toggles on
+        isVisible: true,  // Start visible (RTSS contours are shown by default)
         hasContour: false,
       });
     }
@@ -668,45 +668,93 @@ export async function convertSegmentToContour(
 }
 
 /**
- * Set segment visibility and trigger on-demand conversion if needed
+ * Set segment visibility and trigger on-demand conversion if needed.
+ * Applies to all segmentations that contain this segment (RTSS + labelmap).
  */
 export async function setSegmentVisibility(
-  segmentIndex: number,
+  segmentLabel: string,
   isVisible: boolean,
   studyInstanceUID: string,
   viewportId: string,
   servicesManager: any
 ): Promise<void> {
   const state = getManagerState(studyInstanceUID);
-  if (!state || !state.segmentationId) {
+  if (!state) {
     return;
   }
 
-  const segmentState = state.segments.get(segmentIndex);
-  if (!segmentState) {
+  // Find segment in our state by label
+  let segmentState: SegmentState | undefined;
+  let segmentIndex: number | undefined;
+  for (const [idx, seg] of state.segments) {
+    if (seg.label === segmentLabel) {
+      segmentState = seg;
+      segmentIndex = idx;
+      break;
+    }
+  }
+  if (!segmentState || segmentIndex === undefined) {
     return;
   }
 
-  console.log(`[OnDemandManager] Setting segment ${segmentIndex} visibility: ${isVisible}`);
+  console.log(`[OnDemandManager] Setting segment "${segmentLabel}" visibility: ${isVisible}`);
 
-  const { segmentationService } = servicesManager.services;
+  const { segmentationService, cornerstoneViewportService } = servicesManager.services;
 
-  // If showing and no CONTOUR yet, compute it
-  if (isVisible && !segmentState.hasContour) {
+  // If showing and no CONTOUR yet, compute it on-demand
+  if (isVisible && state.segmentationId && !segmentState.hasContour) {
     await convertSegmentToContour(segmentIndex, studyInstanceUID, viewportId, servicesManager);
   }
 
-  // Update visibility in service
-  if (segmentationService?.setSegmentVisibility) {
-    try {
-      segmentationService.setSegmentVisibility(
-        state.segmentationId,
-        segmentIndex,
-        isVisible
-      );
-    } catch (e) {
-      // API might differ
+  // Apply visibility to all segmentations, matching by label name
+  const csTools = getCornerstoneTools();
+  const cs = getCornerstoneCore();
+  const allSegs = csTools.segmentation?.state?.getSegmentations?.() || [];
+  const mprViewportIds = getMPRViewportIds(servicesManager);
+
+  for (const seg of allSegs) {
+    // Find the actual segment index in this segmentation by label
+    const segments = seg.segments || {};
+    let matchedIndex: number | null = null;
+    for (const key of Object.keys(segments)) {
+      const idx = Number(key);
+      if (segments[idx]?.label === segmentLabel) {
+        matchedIndex = idx;
+        break;
+      }
     }
+    if (matchedIndex === null) continue;
+
+    // Per-viewport visibility (works for Contour representations)
+    for (const vpId of mprViewportIds) {
+      try {
+        csTools.segmentation.config.visibility.setSegmentIndexVisibility(
+          vpId, { segmentationId: seg.segmentationId }, matchedIndex, isVisible
+        );
+      } catch (e: any) {
+        console.warn(`[OnDemandManager] setSegmentIndexVisibility failed on ${vpId}:`, e?.message);
+      }
+    }
+  }
+
+  // 3D surface actor visibility
+  try {
+    const re = cs.getRenderingEngine?.('OHIFCornerstoneRenderingEngine');
+    const vp3d = re?.getViewport?.('volume3d');
+    if (vp3d) {
+      const actor = vp3d.getActors().find((a: any) => a.uid === `nerve-surface-${segmentLabel}`);
+      if (actor) {
+        actor.actor.setVisibility(isVisible);
+        vp3d.render();
+      }
+    }
+  } catch (e: any) {
+    console.warn(`[OnDemandManager] 3D actor visibility failed:`, e?.message);
+  }
+
+  // Trigger render on MPR viewports
+  for (const vpId of mprViewportIds) {
+    cornerstoneViewportService?.getCornerstoneViewport?.(vpId)?.render?.();
   }
 
   segmentState.isVisible = isVisible;
@@ -716,7 +764,7 @@ export async function setSegmentVisibility(
  * Toggle segment visibility
  */
 export async function toggleSegmentVisibility(
-  segmentIndex: number,
+  segmentLabel: string,
   studyInstanceUID: string,
   viewportId: string,
   servicesManager: any
@@ -724,11 +772,18 @@ export async function toggleSegmentVisibility(
   const state = getManagerState(studyInstanceUID);
   if (!state) return;
 
-  const segmentState = state.segments.get(segmentIndex);
+  // Find segment by label
+  let segmentState: SegmentState | undefined;
+  for (const seg of state.segments.values()) {
+    if (seg.label === segmentLabel) {
+      segmentState = seg;
+      break;
+    }
+  }
   if (!segmentState) return;
 
   await setSegmentVisibility(
-    segmentIndex,
+    segmentLabel,
     !segmentState.isVisible,
     studyInstanceUID,
     viewportId,
@@ -736,27 +791,6 @@ export async function toggleSegmentVisibility(
   );
 }
 
-/**
- * Show only specific segments (hide all others)
- */
-export async function showOnlySegments(
-  segmentIndices: number[],
-  studyInstanceUID: string,
-  viewportId: string,
-  servicesManager: any
-): Promise<void> {
-  const state = getManagerState(studyInstanceUID);
-  if (!state) return;
-
-  const indicesSet = new Set(segmentIndices);
-
-  for (const [index, segmentState] of state.segments) {
-    const shouldShow = indicesSet.has(index);
-    if (segmentState.isVisible !== shouldShow) {
-      await setSegmentVisibility(index, shouldShow, studyInstanceUID, viewportId, servicesManager);
-    }
-  }
-}
 
 /**
  * Get count of visible segments
@@ -779,7 +813,7 @@ export function getSegmentStates(studyInstanceUID: string): SegmentState[] {
   const state = getManagerState(studyInstanceUID);
   if (!state) return [];
 
-  return Array.from(state.segments.values());
+  return Array.from(state.segments.values()).sort((a, b) => a.label.localeCompare(b.label));
 }
 
 /**
@@ -932,16 +966,18 @@ export function subscribeToVisibilityChanges(
           const { segmentIndex, isVisible, segmentationId } = event || {};
 
           if (segmentIndex !== undefined && isVisible !== undefined) {
-            console.log(`[OnDemandManager] Visibility event: segment ${segmentIndex} -> ${isVisible}`);
+            // Resolve label from the source segmentation
+            const csTools = getCornerstoneTools();
+            const allSegs = csTools.segmentation?.state?.getSegmentations?.() || [];
+            const sourceSeg = allSegs.find((s: any) => s.segmentationId === segmentationId);
+            const label = sourceSeg?.segments?.[segmentIndex]?.label;
 
-            // Trigger on-demand conversion
-            await setSegmentVisibility(
-              segmentIndex,
-              isVisible,
-              studyInstanceUID,
-              viewportId,
-              servicesManager
-            );
+            if (label) {
+              console.log(`[OnDemandManager] Visibility event: "${label}" -> ${isVisible}`);
+              await setSegmentVisibility(label, isVisible, studyInstanceUID, viewportId, servicesManager);
+            } else {
+              console.warn(`[OnDemandManager] Could not resolve label for segmentIndex=${segmentIndex} in segmentation=${segmentationId}`);
+            }
           }
         }
       );
@@ -974,7 +1010,6 @@ export default {
   convertSegmentToContour,
   setSegmentVisibility,
   toggleSegmentVisibility,
-  showOnlySegments,
   getVisibleSegmentCount,
   getSegmentStates,
   cleanupManager,

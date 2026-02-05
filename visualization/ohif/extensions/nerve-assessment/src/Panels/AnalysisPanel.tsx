@@ -121,12 +121,12 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
     return () => clearInterval(interval);
   }, [refreshSegments]);
 
-  const handleToggleSegment = async (segmentIndex: number) => {
+  const handleToggleSegment = async (segmentLabel: string) => {
     if (!studyInstanceUID || !servicesManager) return;
     const { cornerstoneViewportService } = servicesManager.services;
     const viewportIds = cornerstoneViewportService?.getViewportIds?.() || [];
     const viewportId = viewportIds[0] || 'mpr-axial';
-    await toggleSegmentVisibility(segmentIndex, studyInstanceUID, viewportId, servicesManager);
+    await toggleSegmentVisibility(segmentLabel, studyInstanceUID, viewportId, servicesManager);
     refreshSegments();
   };
 
@@ -339,7 +339,7 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
                   {segments.map((seg) => (
                     <div
                       key={seg.labelIndex}
-                      onClick={() => handleToggleSegment(seg.labelIndex)}
+                      onClick={() => handleToggleSegment(seg.label)}
                       style={{
                         padding: '8px 12px',
                         display: 'flex',
@@ -417,7 +417,7 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
               3D Surface Rendering
             </div>
             <div style={{ fontSize: '10px', color: '#94a3b8', marginBottom: '8px' }}>
-              Load 3D mesh from server (no browser conversion)
+              Load 3D mesh from server
             </div>
 
             <div style={{ display: 'flex', gap: '8px' }}>
