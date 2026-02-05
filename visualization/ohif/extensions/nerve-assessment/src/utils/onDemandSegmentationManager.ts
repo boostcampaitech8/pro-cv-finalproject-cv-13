@@ -740,7 +740,7 @@ export async function setSegmentVisibility(
   // 3D surface actor visibility
   try {
     const re = cs.getRenderingEngine?.('OHIFCornerstoneRenderingEngine');
-    const vp3d = re?.getViewport?.('volume3d');
+    const vp3d = re?.getViewports?.().find((v: any) => v.type === 'volume3d');
     if (vp3d) {
       const actor = vp3d.getActors().find((a: any) => a.uid === `nerve-surface-${segmentLabel}`);
       if (actor) {
