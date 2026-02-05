@@ -6,7 +6,6 @@ import {
 import {
   loadSurfaceMeshesToViewport,
   removeSurfaceMeshes,
-  setVolume3DPreset,
   setVolumeHUThreshold,
 } from '../utils/surfaceLoader';
 
@@ -90,7 +89,6 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
   const [is3DLoading, setIs3DLoading] = useState<boolean>(false);
   const [is3DLoaded, setIs3DLoaded] = useState<boolean>(false);
   const [meshError, setMeshError] = useState<string | null>(null);
-  const [vrPreset, setVrPreset] = useState<string>('CT-Bone');
   const [huMin, setHuMin] = useState<number>(300);
   const [huOpacity, setHuOpacity] = useState<number>(15);
   const [showHUControls, setShowHUControls] = useState<boolean>(false);
@@ -467,39 +465,6 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
 
             {/* Volume Rendering Controls */}
             <div style={{ marginTop: '10px' }}>
-              <label style={{ fontSize: '10px', color: '#94a3b8', display: 'block', marginBottom: '4px' }}>
-                CT Volume Preset
-              </label>
-              <select
-                value={vrPreset}
-                onChange={(e) => {
-                  const preset = e.target.value;
-                  setVrPreset(preset);
-                  if (servicesManager) {
-                    setVolume3DPreset(servicesManager, preset);
-                    setShowHUControls(false);
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  padding: '6px 8px',
-                  background: '#0f172a',
-                  border: '1px solid #475569',
-                  borderRadius: '4px',
-                  color: 'white',
-                  fontSize: '11px',
-                }}
-              >
-                <option value="CT-Bone">CT-Bone (skeletal)</option>
-                <option value="CT-AAA">CT-AAA (vascular)</option>
-                <option value="CT-Soft-Tissue">CT-Soft-Tissue</option>
-                <option value="CT-Muscle">CT-Muscle</option>
-                <option value="CT-Fat">CT-Fat</option>
-                <option value="CT-Lung">CT-Lung</option>
-                <option value="CT-MIP">CT-MIP (max intensity)</option>
-                <option value="CT-Coronary-Arteries-3">CT-Coronary-Arteries</option>
-              </select>
-
               {/* HU Threshold toggle */}
               <div
                 onClick={() => setShowHUControls(!showHUControls)}
