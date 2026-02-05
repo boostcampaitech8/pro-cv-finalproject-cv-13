@@ -91,19 +91,17 @@ bash ./normal_stucture_segmentation/inference.sh
 ## 2026-02-3 변경 사항
 
 1. nnUNet 모델 예측 라벨 18 -> 13개 
--> TSV2가 예측하는 라벨(5개)는 예측하지 않도록 변경
-
-변경 파일
-1) normal_structure_model 하위 파일 및 폴더 전부
+* TSV2가 예측하는 라벨(5개)는 예측하지 않도록 변경
+* 변경 파일
+   1) normal_structure_model 하위 파일 및 폴더 전부
 
 
 2. CPU 병렬 처리
--> TSV2 라벨과 nnUNet 라벨이 겹치지 않아서 라벨을 합치는 것으로 변경
-
-변경 파일
-1) inference.sh
-2) structure_list.yaml
-3) merge_tsv2_to_nnunet.py
+* TSV2 라벨과 nnUNet 라벨이 겹치지 않아서 라벨을 합치는 것으로 변경
+* 변경 파일
+   1) inference.sh
+   2) structure_list.yaml
+   3) merge_tsv2_to_nnunet.py
 
 ## 2026-02-06 변경 사항
 
