@@ -40,10 +40,8 @@ nnU-Net v2는 입력 파일명이 `_0000.nii.gz`로 끝나야 합니다.
 - `CHUM-001.nii.gz` → `CHUM-001_0000.nii.gz`
 
 ## 추론 실행
-**반드시 `/data/ephemeral/home/T8215`에서 실행**하세요. (상대경로를 사용함)
 ```bash
-cd /data/ephemeral/home/T8215
-bash /data/ephemeral/home/T8215/tumor_segmentation_onlyct/inference.sh
+bash ./tumor_segmentation_onlyct/inference.sh
 ```
 
 ## 모델 정보
