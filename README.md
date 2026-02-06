@@ -4,4 +4,4 @@ CT/PET 영상에서 두경부 신경 경로를 추정하고, 종양과의 근접
 
 ## Architecture Overview
 
-<img width="2700" height="1920" alt="architecture" src="https://github.com/user-attachments/assets/73be8e04-a664-4da0-99a0-8fd9f0861992" />
+<img width="2000" height="1440" alt="architecture (1)" src="https://github.com/user-attachments/assets/e402373d-10ba-4cbc-afa2-dbc6ae6f51b8" />
