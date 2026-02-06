@@ -3,8 +3,8 @@ VENV_DIR="/data/ephemeral/home/testvenv" # 경로 설정 필요
 source $VENV_DIR/bin/activate
 
 ## 2. 입출력 파일 설정 및 파일 이름 설정
-IN_DIR="./normal_structure_segmentation/input_folder"
-OUT_DIR="./normal_structure_segmentation/output_folder"
+IN_DIR="./tumor_segmentation_onlyct/input_folder"
+OUT_DIR="./tumor_segmentation_onlyct/output_folder"
 
 
 cd $IN_DIR
@@ -23,64 +23,11 @@ done
 cd ..
 cd ..
 
-## 3. 가용 CPU 코어 수
-NUM_CORES=$(nproc)
-
-
-## 4. Totalsegmentator V2
-
-# TASKS=("total")
-TASKS=("headneck_bones_vessels" "headneck_muscles") # head&neck
-
-# 실행 바이너리/디바이스
-TS_BIN="${TS_BIN:-TotalSegmentator}"
-FALLBACK_TS_BIN="${VENV_DIR}/bin/TotalSegmentator"
-DEVICE="${DEVICE:-gpu}"
-
-if ! command -v "${TS_BIN}" >/dev/null 2>&1; then
-  if [[ -x "${FALLBACK_TS_BIN}" ]]; then
-    TS_BIN="${FALLBACK_TS_BIN}"
-  fi
-fi
-
-
-echo "TotalSegmentator inference"
-echo "Tasks: ${TASKS[*]}"
-echo "Input: ${IN_DIR}"
-echo "Output: ${OUT_DIR}"
-echo "Device: ${DEVICE}"
-echo "Binary: ${TS_BIN}"
-
-mkdir -p "${OUT_DIR}"
-
-for nifti in "${IN_DIR}"/*.nii.gz; do
-  [[ -e "${nifti}" ]] || { echo "No .nii.gz in ${IN_DIR}"; exit 0; }
-  fname="$(basename "${nifti}")"
-  case_name="${fname%.nii.gz}"
-  case_out="${OUT_DIR}/${case_name}"
-  mkdir -p "${case_out}"
-
-  for task in "${TASKS[@]}"; do
-    task_out="${case_out}/${task}"
-    mkdir -p "${task_out}"
-    echo "[RUN] ${case_name} ${task}"
-    "${TS_BIN}" -i "${nifti}" -o "${task_out}" -ta "${task}" --device "${DEVICE}" \
-      --higher_order_resampling
-  done
-done
-
-echo "Done."
-
-## 5. nnUNet
+## 3. nnUNet
 
 # nnunet 환경 설정
-export nnUNet_results="./normal_structure_segmentation/normal_structure_model"
+export nnUNet_results="./tumor_segmentation_onlyct/tumor_segmentation_onlyct_model"
 
 # 모델 선정 및 추론
-nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs
+nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 901 -c 3d_cascade_fullres -f 0 -tr nnUNetTrainer_100epochs
 
-## 6. TSv2 결과를 nnUNet 결과에 병합
-python ./normal_structure_segmentation/merge_tsv2_to_nnunet.py \
-  --out_dir "${OUT_DIR}" \
-  --structure_list "./normal_structure_segmentation/structure_list.yaml" \
-  --n_jobs ${NUM_CORES}

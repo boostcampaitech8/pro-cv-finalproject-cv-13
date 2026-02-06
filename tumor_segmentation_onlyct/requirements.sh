@@ -23,4 +23,3 @@ pip install --no-cache-dir torch==2.8.0 torchvision torchaudio --index-url https
 
 cd ./nnUNet
 pip install -e .
-
