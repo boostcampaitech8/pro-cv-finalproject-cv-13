@@ -48,12 +48,12 @@ STRUCTURE_COLORS: Dict[str, Tuple[int, int, int]] = {
     "sympathetic_trunk": (255, 210, 120),
 
     # ===== Tumors =====
-    "tumor": (0, 0, 0),
-    "tumour": (0, 0, 0),
-    "gtv": (0, 0, 0),
-    "tumor_gtv": (0, 0, 0),
-    "lesion": (0, 0, 0),
-    "mass": (0, 0, 0),
+    "tumor": (220, 20, 60),
+    "tumour": (220, 20, 60),
+    "gtv": (220, 20, 60),
+    "tumor_gtv": (220, 20, 60),
+    "lesion": (220, 20, 60),
+    "mass": (220, 20, 60),
 
     # ===== Airways =====
     "trachea": (0, 0, 128),
@@ -209,10 +209,10 @@ NIFTI_STRUCTURE_COLORS_RGBA: Dict[str, Tuple[int, int, int, int]] = {
     "nerve_left_ebsln": (127, 255, 212, 200),
     "nerve_right_ebsln": (127, 255, 212, 200),
 
-    # Tumors (alpha=200, dark gray for NIfTI display)
-    "tumor": (50, 50, 50, 200),
-    "tumour": (50, 50, 50, 200),
-    "gtv": (50, 50, 50, 200),
+    # Tumors (alpha=200, crimson for NIfTI display)
+    "tumor": (220, 20, 60, 200),
+    "tumour": (220, 20, 60, 200),
+    "gtv": (220, 20, 60, 200),
 
     # Airways (alpha=150, bright blue for NIfTI display)
     "trachea": (0, 191, 255, 150),
