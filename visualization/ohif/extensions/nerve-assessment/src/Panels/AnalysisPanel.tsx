@@ -7,6 +7,7 @@ import {
   loadSurfaceMeshesToViewport,
   removeSurfaceMeshes,
   setVolumeHUThreshold,
+  markUserThresholdAdjustment,
   startAutoRotation,
   stopAutoRotation,
   setRotationSpeed as setSurfaceRotationSpeed,
@@ -513,6 +514,7 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
                       onChange={(e) => {
                         const val = Number(e.target.value);
                         setHuMin(val);
+                        markUserThresholdAdjustment();
                         if (servicesManager) {
                           setVolumeHUThreshold(servicesManager, val, 3000, huOpacity / 100, 100);
                         }
@@ -539,6 +541,7 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
                       onChange={(e) => {
                         const val = Number(e.target.value);
                         setHuOpacity(val);
+                        markUserThresholdAdjustment();
                         if (servicesManager) {
                           setVolumeHUThreshold(servicesManager, huMin, 3000, val / 100, 100);
                         }
@@ -563,6 +566,7 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
                         onClick={() => {
                           setHuMin(p.min);
                           setHuOpacity(p.op);
+                          markUserThresholdAdjustment();
                           if (servicesManager) {
                             setVolumeHUThreshold(servicesManager, p.min, 3000, p.op / 100, 100);
                           }

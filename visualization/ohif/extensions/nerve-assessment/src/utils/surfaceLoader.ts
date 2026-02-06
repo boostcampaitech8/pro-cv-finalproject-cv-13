@@ -32,6 +32,10 @@ let layoutChangeUnsubscribe: (() => void) | null = null;
 let currentServicesManager: any = null;
 let currentStudyUID: string | null = null;
 
+// Volume3D init state
+let userHasAdjustedThreshold = false;
+let volumeResetCleanup: (() => void) | null = null;
+
 /**
  * Apply CT-Bone style rendering directly to a vtkVolume actor.
  * Bypasses viewport.setProperties({ preset }) which leaks to 2D viewports via shared volume state.
@@ -52,6 +56,10 @@ function applyBonePresetToActor(volumeActor: any): void {
   prop.setSpecular(0.2);
   prop.setSpecularPower(10);
   prop.setUseGradientOpacity(0, false);
+
+  cfun.modified();
+  prop.modified();
+  volumeActor.modified();
 }
 
 export function setVolume3DPreset(
@@ -71,8 +79,7 @@ export function setVolume3DPreset(
       const actor = actorEntry.actor || actorEntry;
       if (actor?.getClassName?.() === 'vtkVolume') {
         applyBonePresetToActor(actor);
-        viewport.render();
-        console.log('[SurfaceLoader] Volume3D bone preset applied directly to actor');
+        console.log('[SurfaceLoader] Volume3D bone preset applied');
         return true;
       }
     }
@@ -83,6 +90,130 @@ export function setVolume3DPreset(
     console.warn('[SurfaceLoader] Could not set volume preset:', e?.message || e);
     return false;
   }
+}
+
+export function markUserThresholdAdjustment(): void {
+  userHasAdjustedThreshold = true;
+}
+
+export function initVolume3DRendering(servicesManager: any): void {
+  userHasAdjustedThreshold = false;
+  const startTime = Date.now();
+  const MAX_WAIT = 15000;
+
+  const tryApply = () => {
+    if (Date.now() - startTime > MAX_WAIT) {
+      console.warn('[SurfaceLoader] Volume3D init timeout');
+      return;
+    }
+
+    const viewportId = findVolume3DViewportId(servicesManager);
+    if (!viewportId) {
+      requestAnimationFrame(tryApply);
+      return;
+    }
+    const { cornerstoneViewportService } = servicesManager.services;
+    const vp = cornerstoneViewportService?.getCornerstoneViewport?.(viewportId);
+    const hasVolume = vp?.getActors?.()?.some((a: any) =>
+      (a.actor || a)?.getClassName?.() === 'vtkVolume'
+    );
+    if (!hasVolume) {
+      requestAnimationFrame(tryApply);
+      return;
+    }
+
+    reset2DViewportRendering(servicesManager);
+    setVolume3DPreset(servicesManager, 'CT-Bone');
+    setVolumeHUThreshold(servicesManager, 300, 3000, 0.15, 100);
+    setVolume3DFrontView(servicesManager);
+    listenForVolumeReset(servicesManager);
+    console.log('[SurfaceLoader] Volume3D fully initialized');
+  };
+
+  requestAnimationFrame(tryApply);
+}
+
+export function setVolume3DFrontView(servicesManager: any): boolean {
+  const cornerstone = (window as any).cornerstone || (window as any).cornerstoneCore;
+  const re = cornerstone?.getRenderingEngine?.('OHIFCornerstoneRenderingEngine');
+  const vp3d = re?.getViewports?.().find((v: any) => v.type === 'volume3d');
+  if (!vp3d) return false;
+
+  const renderer = vp3d.getRenderer?.();
+  const camera = renderer?.getActiveCamera?.();
+  if (!renderer || !camera) return false;
+
+  const bounds = renderer.computeVisiblePropBounds();
+  if (!bounds || bounds[0] === bounds[1]) return false;
+
+  const center = [
+    (bounds[0] + bounds[1]) / 2,
+    (bounds[2] + bounds[3]) / 2,
+    (bounds[4] + bounds[5]) / 2,
+  ];
+  const dx = bounds[1] - bounds[0];
+  const dy = bounds[3] - bounds[2];
+  const dz = bounds[5] - bounds[4];
+  const distance = Math.sqrt(dx * dx + dy * dy + dz * dz) * 1.5;
+
+  camera.setPosition(center[0], center[1] - distance, center[2]);
+  camera.setFocalPoint(center[0], center[1], center[2]);
+  camera.setViewUp(0, 0, 1);
+  renderer.resetCameraClippingRange();
+  vp3d.render();
+
+  console.log('[SurfaceLoader] Camera set to anterior view');
+  return true;
+}
+
+function listenForVolumeReset(servicesManager: any): void {
+  if (volumeResetCleanup) {
+    volumeResetCleanup();
+    volumeResetCleanup = null;
+  }
+
+  const cornerstone = (window as any).cornerstone || (window as any).cornerstoneCore;
+  const eventName = cornerstone?.Enums?.Events?.IMAGE_VOLUME_MODIFIED;
+  if (!eventName || !cornerstone?.eventTarget) return;
+
+  let pendingRaf: number | null = null;
+  let isReapplying = false;
+
+  const cleanup = () => {
+    cornerstone.eventTarget.removeEventListener(eventName, handler);
+    if (pendingRaf) cancelAnimationFrame(pendingRaf);
+    volumeResetCleanup = null;
+  };
+
+  const handler = () => {
+    if (userHasAdjustedThreshold) {
+      cleanup();
+      return;
+    }
+    if (isReapplying) return;
+    if (pendingRaf) cancelAnimationFrame(pendingRaf);
+    pendingRaf = requestAnimationFrame(() => {
+      pendingRaf = null;
+      isReapplying = true;
+      reset2DViewportRendering(servicesManager);
+      setVolume3DPreset(servicesManager, 'CT-Bone');
+      setVolumeHUThreshold(servicesManager, 300, 3000, 0.15, 100);
+      console.log('[SurfaceLoader] Volume reset reapplied');
+      requestAnimationFrame(() => { isReapplying = false; });
+    });
+  };
+
+  cornerstone.eventTarget.addEventListener(eventName, handler);
+  volumeResetCleanup = cleanup;
+  setTimeout(cleanup, 30000);
+}
+
+export function cleanupVolumeInit(): void {
+  if (volumeResetCleanup) {
+    volumeResetCleanup();
+    volumeResetCleanup = null;
+  }
+  userHasAdjustedThreshold = false;
 }
 
 export async function fetchSurfaceMeshes(studyUID: string): Promise<SurfaceMeshResponse | null> {
@@ -291,6 +422,7 @@ export async function loadSurfaceMeshesToViewport(
       addedActorUIDs.set(studyUID, actorUIDs);
 
       try {
+        reset2DViewportRendering(servicesManager);
         const actors = viewport.getActors?.() || [];
         for (const actorEntry of actors) {
           const actor = actorEntry.actor || actorEntry;
@@ -305,11 +437,13 @@ export async function loadSurfaceMeshesToViewport(
             ofun.addPoint(3000, 0.15);
             ofun.addPoint(3071, 0.15);
 
+            ofun.modified();
+            actor.getProperty().modified();
+            actor.modified();
             console.log('[SurfaceLoader] Bone preset + HU threshold applied');
             break;
           }
         }
-        reset2DViewportRendering(servicesManager);
       } catch (presetErr: any) {
         console.warn('[SurfaceLoader] Could not apply bone preset:', presetErr?.message);
       }
@@ -368,6 +502,9 @@ export function setVolumeHUThreshold(
     ofun.addPoint(maxHU, opacity);
     ofun.addPoint(3071, opacity);
 
+    ofun.modified();
+    volumeActor.getProperty().modified();
+    volumeActor.modified();
     viewport.render();
     console.log(`[SurfaceLoader] HU threshold set: min=${minHU}, max=${maxHU}, opacity=${opacity}`);
     return true;
@@ -404,7 +541,7 @@ export async function removeSurfaceMeshes(
 /**
  * Reset 2D viewport rendering after 3D bone preset leaks via shared VTK transfer functions.
  */
-function reset2DViewportRendering(servicesManager: any): void {
+export function reset2DViewportRendering(servicesManager: any): void {
   try {
     const { cornerstoneViewportService } = servicesManager.services;
     const allIds: string[] = cornerstoneViewportService?.getViewportIds?.() || [];
@@ -474,10 +611,10 @@ async function reapplyOnLayoutChange(): Promise<void> {
   }
 
   try {
+    reset2DViewportRendering(currentServicesManager);
     const presetSet = setVolume3DPreset(currentServicesManager, 'CT-Bone');
     if (presetSet) {
       setVolumeHUThreshold(currentServicesManager, 300, 3000, 0.15, 100);
-      reset2DViewportRendering(currentServicesManager);
     }
   } catch (e) {
     console.warn('[SurfaceLoader] Preset reapply failed:', e);
