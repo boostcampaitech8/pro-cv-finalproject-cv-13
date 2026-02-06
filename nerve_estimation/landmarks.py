@@ -5,15 +5,18 @@ from typing import Optional, Tuple
 from .utils import get_anatomical_direction, get_lateral_direction
 
 
-def get_coords_at_z(mask: np.ndarray, z_level: int) -> Optional[np.ndarray]:
-    """특정 Z 레벨에서 마스크의 복셀 좌표 반환."""
+MIN_VOXELS_PER_SLICE = 20
+
+
+def get_coords_at_z(mask: np.ndarray, z_level: int, min_voxels: int = MIN_VOXELS_PER_SLICE) -> Optional[np.ndarray]:
+    """특정 Z 레벨에서 마스크의 복셀 좌표 반환. min_voxels 미만이면 노이즈로 간주."""
     if mask is None or z_level < 0 or z_level >= mask.shape[2]:
         return None
 
     slice_2d = mask[:, :, z_level]
     coords_2d = np.argwhere(slice_2d > 0)
 
-    if len(coords_2d) == 0:
+    if len(coords_2d) < min_voxels:
         return None
 
     return np.column_stack([

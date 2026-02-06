@@ -3,6 +3,8 @@
 import os
 import sys
 import json
+import time
+import asyncio
 import shutil
 import uuid
 import zipfile
@@ -77,7 +79,35 @@ OHIF_URL = os.environ.get("OHIF_URL", "http://localhost:3000")
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/app/uploads")) / "nerve_viz_data"
 DATA_DIR.mkdir(exist_ok=True)
 
+SESSION_TTL_HOURS = int(os.environ.get("SESSION_TTL_HOURS", "24"))
+
 SEGMENTATION_DIR_METADATA_KEY = "SegmentationDir"
+
+
+async def _cleanup_old_sessions():
+    """Delete session directories older than SESSION_TTL_HOURS."""
+    while True:
+        await asyncio.sleep(3600)  # check every hour
+        try:
+            now = time.time()
+            ttl_seconds = SESSION_TTL_HOURS * 3600
+            removed = 0
+            for entry in DATA_DIR.iterdir():
+                if not entry.is_dir():
+                    continue
+                age = now - entry.stat().st_mtime
+                if age > ttl_seconds:
+                    shutil.rmtree(entry, ignore_errors=True)
+                    removed += 1
+            if removed:
+                logger.info(f"Session cleanup: removed {removed} directories older than {SESSION_TTL_HOURS}h")
+        except Exception as e:
+            logger.warning(f"Session cleanup error: {e}")
+
+
+@app.on_event("startup")
+async def startup_session_cleanup():
+    asyncio.create_task(_cleanup_old_sessions())
 
 
 def save_segmentation_mapping(study_uid: str, seg_dir: str) -> bool:
