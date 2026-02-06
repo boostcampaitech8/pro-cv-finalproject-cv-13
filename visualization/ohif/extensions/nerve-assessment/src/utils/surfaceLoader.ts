@@ -645,3 +645,90 @@ export function unsubscribeFromLayoutChanges(): void {
   currentStudyUID = null;
   meshDataCache.clear();
 }
+
+// ── Auto-Rotation ──────────────────────────────────────────────────────────
+
+let rotationAnimationId: number | null = null;
+let rotationDegreesPerFrame = 0.5;
+let rotationOnStopCallback: (() => void) | null = null;
+let rotationInteractorSub: any = null;
+
+export function startAutoRotation(
+  servicesManager: any,
+  onStop?: () => void,
+): void {
+  // Stop any existing rotation first
+  stopAutoRotation();
+
+  rotationOnStopCallback = onStop || null;
+
+  const cornerstone = (window as any).cornerstone || (window as any).cornerstoneCore;
+  const re = cornerstone?.getRenderingEngine?.('OHIFCornerstoneRenderingEngine');
+  const vp3d = re?.getViewports?.().find((v: any) => v.type === 'volume3d');
+  if (!vp3d) {
+    console.warn('[SurfaceLoader] No volume3d viewport for auto-rotation');
+    return;
+  }
+
+  const renderer = vp3d.getRenderer?.();
+  const camera = renderer?.getActiveCamera?.();
+  if (!renderer || !camera) {
+    console.warn('[SurfaceLoader] Could not get VTK renderer/camera');
+    return;
+  }
+
+  // Register pointer listener on viewport canvas: stop rotation on mouse interaction
+  try {
+    const canvas = vp3d.canvas;
+    if (canvas) {
+      const handler = () => { stopAutoRotation(); };
+      canvas.addEventListener('pointerdown', handler);
+      rotationInteractorSub = { el: canvas, handler };
+    }
+  } catch (e) {
+    console.warn('[SurfaceLoader] Could not register pointer listener:', e);
+  }
+
+  const animate = () => {
+    if (!vp3d.getRenderer?.()) {
+      stopAutoRotation();
+      return;
+    }
+    camera.azimuth(rotationDegreesPerFrame);
+    renderer.resetCameraClippingRange();
+    vp3d.render();
+    rotationAnimationId = requestAnimationFrame(animate);
+  };
+
+  rotationAnimationId = requestAnimationFrame(animate);
+  console.log('[SurfaceLoader] Auto-rotation started, deg/frame:', rotationDegreesPerFrame);
+}
+
+export function stopAutoRotation(): void {
+  if (rotationAnimationId !== null) {
+    cancelAnimationFrame(rotationAnimationId);
+    rotationAnimationId = null;
+    console.log('[SurfaceLoader] Auto-rotation stopped');
+  }
+
+  if (rotationInteractorSub) {
+    try {
+      rotationInteractorSub.el.removeEventListener('pointerdown', rotationInteractorSub.handler);
+    } catch (_) {}
+    rotationInteractorSub = null;
+  }
+
+  if (rotationOnStopCallback) {
+    const cb = rotationOnStopCallback;
+    rotationOnStopCallback = null;
+    cb();
+  }
+}
+
+export function setRotationSpeed(degreesPerFrame: number): void {
+  rotationDegreesPerFrame = degreesPerFrame;
+}
+
+export function isAutoRotating(): boolean {
+  return rotationAnimationId !== null;
+}

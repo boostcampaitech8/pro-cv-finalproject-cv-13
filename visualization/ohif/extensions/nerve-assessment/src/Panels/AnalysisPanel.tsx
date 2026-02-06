@@ -7,6 +7,9 @@ import {
   loadSurfaceMeshesToViewport,
   removeSurfaceMeshes,
   setVolumeHUThreshold,
+  startAutoRotation,
+  stopAutoRotation,
+  setRotationSpeed as setSurfaceRotationSpeed,
 } from '../utils/surfaceLoader';
 
 const BACKEND_URL = '/api';
@@ -92,6 +95,15 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
   const [huMin, setHuMin] = useState<number>(300);
   const [huOpacity, setHuOpacity] = useState<number>(15);
   const [showHUControls, setShowHUControls] = useState<boolean>(false);
+  const [isRotating, setIsRotating] = useState<boolean>(false);
+  const [rotationSpeed, setRotationSpeed] = useState<number>(50);
+
+  // Stop auto-rotation on unmount
+  useEffect(() => {
+    return () => {
+      stopAutoRotation();
+    };
+  }, []);
 
   // Get StudyInstanceUID from URL on mount
   useEffect(() => {
@@ -571,6 +583,74 @@ function AnalysisPanel({ servicesManager }: AnalysisPanelProps): React.ReactElem
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Auto Rotation Controls */}
+            <div style={{ marginTop: '8px' }}>
+              <div
+                style={{
+                  padding: '6px 8px',
+                  background: '#334155',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '10px',
+                  color: '#94a3b8',
+                }}
+              >
+                <span>Auto Rotation</span>
+                <button
+                  onClick={() => {
+                    if (isRotating) {
+                      stopAutoRotation();
+                      setIsRotating(false);
+                    } else {
+                      setSurfaceRotationSpeed(0.1 + (rotationSpeed / 100) * 1.9);
+                      startAutoRotation(servicesManager, () => setIsRotating(false));
+                      setIsRotating(true);
+                    }
+                  }}
+                  disabled={!is3DLoaded}
+                  style={{
+                    padding: '2px 10px',
+                    background: !is3DLoaded ? '#475569' : isRotating ? '#dc2626' : '#2563eb',
+                    border: 'none',
+                    borderRadius: '3px',
+                    color: 'white',
+                    fontSize: '11px',
+                    cursor: !is3DLoaded ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {isRotating ? '⏸ Stop' : '▶ Play'}
+                </button>
+              </div>
+
+              <div style={{ padding: '8px', background: '#0f172a', borderRadius: '0 0 4px 4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#94a3b8', marginBottom: '2px' }}>
+                  <span>Speed</span>
+                  <span>{rotationSpeed}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={rotationSpeed}
+                  disabled={!is3DLoaded}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setRotationSpeed(val);
+                    const deg = 0.1 + (val / 100) * 1.9;
+                    setSurfaceRotationSpeed(deg);
+                  }}
+                  style={{ width: '100%', accentColor: '#3b82f6' }}
+                />
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#64748b' }}>
+                  <span>Slow</span>
+                  <span>Fast</span>
+                </div>
+              </div>
             </div>
 
             {meshError && (
