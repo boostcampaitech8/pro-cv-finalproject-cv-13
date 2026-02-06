@@ -23,11 +23,8 @@ done
 cd ..
 cd ..
 
-## 3. nnUNet
-
-# nnunet 환경 설정
+# 3. nnunet 환경 설정
 export nnUNet_results="./tumor_segmentation_onlyct/tumor_segmentation_onlyct_model"
 
-# 모델 선정 및 추론
-nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 901 -c 3d_cascade_fullres -f 0 -tr nnUNetTrainer_100epochs
-
+# 4. 모델 선정 및 추론
+nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 901 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs -p nnUNetResEncUNetLPlans

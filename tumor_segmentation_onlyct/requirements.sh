@@ -21,5 +21,5 @@ apt install -y gcc
 pip install --upgrade pip
 pip install --no-cache-dir torch==2.8.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
-cd ./nnUNet
+cd ./tumor_segmentation_onlyct/nnUNet
 pip install -e .
