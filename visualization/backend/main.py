@@ -1431,9 +1431,9 @@ async def upload_ct_and_segment(
 
     Args:
         ct_file: CT 파일 (.nii.gz NIfTI 또는 .zip DICOM 시리즈)
-        pt_file: PT (PET) 파일 (.nii.gz NIfTI 또는 .zip DICOM 시리즈) - tumor 분할 시 필수
+        pt_file: PT (PET) 파일 (.nii.gz NIfTI 또는 .zip DICOM 시리즈) - 선택사항
         patient_name: DICOM 메타데이터용 환자 이름
-        run_tumor: tumor 분할 실행 여부 (PT 파일 필요)
+        run_tumor: tumor 분할 실행 여부 (PT 없으면 CT-only 모델 사용)
 
     Returns:
         JSON with:
@@ -1520,13 +1520,11 @@ async def upload_ct_and_segment(
         results["timing"]["upload"] = round(step1_time, 2)
         logger.info(f"[{session_id}] Step 1 (업로드): {step1_time:.2f}초")
 
-        # tumor 분할 요청했는데 PT 없으면 경고
         if run_tumor and pt_path is None:
-            results["steps"]["tumor_warning"] = {
-                "status": "warning",
-                "message": "Tumor 분할을 요청했지만 PT 파일이 없습니다. Tumor 분할은 CT+PT가 필요합니다.",
+            results["steps"]["tumor_info"] = {
+                "status": "info",
+                "message": "PT 파일 없음 — CT-only 종양 분할 모델을 사용합니다.",
             }
-            run_tumor = False  # PT 없으면 tumor 분할 비활성화
 
         # Step 2: 분할 모델 실행
         step2_start = time_module.time()

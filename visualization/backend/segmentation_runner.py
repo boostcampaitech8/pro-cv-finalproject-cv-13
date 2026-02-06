@@ -1,13 +1,5 @@
-"""Segmentation pipeline runner.
+"""Segmentation pipeline runner"""
 
-Docker 기반 분할 파이프라인을 실행합니다.
-- Normal Structure: TotalSegmentator v2 + nnUNet
-- Tumor: STU-Net + nnUNet
-
-중요: Backend 컨테이너에서 Docker socket을 통해 다른 컨테이너를 실행할 때,
-Named Volume을 사용해야 합니다. 컨테이너 내부 경로를 bind mount하면
-호스트에서 해당 경로를 찾을 수 없습니다.
-"""
 import subprocess
 import os
 import shutil
@@ -25,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 NORMAL_SEG_IMAGE = os.environ.get("NORMAL_SEG_IMAGE", "next-ct/normal-seg")
 TUMOR_SEG_IMAGE = os.environ.get("TUMOR_SEG_IMAGE", "next-ct/tumor-seg")
+TUMOR_SEG_CTONLY_IMAGE = os.environ.get("TUMOR_SEG_CTONLY_IMAGE", "next-ct/tumor-seg-ctonly")
 SEG_INPUT_DIR = os.environ.get("SEG_INPUT_DIR", "/data/seg_input")
 SEG_OUTPUT_DIR = os.environ.get("SEG_OUTPUT_DIR", "/data/seg_output")
 DOCKER_NETWORK = os.environ.get("DOCKER_NETWORK", "github_final_team_project_medical-network")
@@ -278,18 +271,9 @@ def run_tumor_segmentation(
     pt_nifti_path: Optional[str] = None,
     timeout: int = 1800,
 ) -> Dict[str, Any]:
-    """Run tumor segmentation pipeline (STU-Net + nnUNet).
+    """Run tumor segmentation.
 
-    현재 모델은 CT+PT 2채널로 학습되어 PT가 필수입니다.
-    나중에 CT-only 모델이 추가되면 PT 없이도 실행 가능하도록 확장 예정.
-
-    Args:
-        ct_nifti_path: CT NIfTI file path
-        output_dir: Output directory
-        pt_nifti_path: PET NIfTI file path (현재 필수)
-
-    Returns:
-        Segmentation result
+    PT 있으면 CT+PT 모델(next-ct/tumor-seg), 없으면 CT-only 모델(next-ct/tumor-seg-ctonly) 자동 선택.
     """
     ct_path = Path(ct_nifti_path)
     output_path = Path(output_dir)
@@ -297,26 +281,11 @@ def run_tumor_segmentation(
     if not ct_path.exists():
         raise FileNotFoundError(f"CT file not found: {ct_path}")
 
-    # PT 필수 체크 (현재 모델은 CT+PT 2채널로 학습됨)
-    if pt_nifti_path is None:
-        return {
-            "status": "error",
-            "error": "PT (PET) 파일이 필요합니다. 현재 tumor 모델은 CT+PT 2채널로 학습되었습니다.",
-            "requires_pt": True,
-        }
-
-    pt_path = Path(pt_nifti_path)
-    if not pt_path.exists():
-        return {
-            "status": "error",
-            "error": f"PT file not found: {pt_path}",
-            "requires_pt": True,
-        }
+    has_pt = pt_nifti_path is not None and Path(pt_nifti_path).exists()
 
     session_id = uuid.uuid4().hex[:8]
     input_session = Path(SEG_INPUT_DIR) / session_id
     output_session = Path(SEG_OUTPUT_DIR) / session_id
-
     input_session.mkdir(parents=True, exist_ok=True)
     output_session.mkdir(parents=True, exist_ok=True)
 
@@ -325,20 +294,34 @@ def run_tumor_segmentation(
         ct_dest = input_session / f"{case_name}__CT.nii.gz"
         shutil.copy2(ct_path, ct_dest)
 
-        pt_dest = input_session / f"{case_name}__PT.nii.gz"
-        shutil.copy2(pt_path, pt_dest)
-        pt_arg = ["--pt-path", f"/data/seg_input/{session_id}/{case_name}__PT.nii.gz"]
+        if has_pt:
+            # CT+PT: 기존 tumor-seg 컨테이너
+            pt_dest = input_session / f"{case_name}__PT.nii.gz"
+            shutil.copy2(Path(pt_nifti_path), pt_dest)
 
-        command = [
-            "inference.py",
-            f"/data/seg_input/{session_id}/{case_name}__CT.nii.gz",
-            f"/data/seg_output/{session_id}",
-            "--model-folder", "plans",
-            "--checkpoint", "checkpoints/checkpoint_best.pth",
-        ] + pt_arg
+            image_name = TUMOR_SEG_IMAGE
+            command = [
+                "inference.py",
+                f"/data/seg_input/{session_id}/{case_name}__CT.nii.gz",
+                f"/data/seg_output/{session_id}",
+                "--model-folder", "plans",
+                "--checkpoint", "checkpoints/checkpoint_best.pth",
+                "--pt-path", f"/data/seg_input/{session_id}/{case_name}__PT.nii.gz",
+            ]
+            logger.info("Tumor segmentation: CT+PT mode")
+        else:
+            # CT-only: 새 tumor-seg-ctonly 컨테이너
+            image_name = TUMOR_SEG_CTONLY_IMAGE
+            command = [
+                "inference.py",
+                f"/data/seg_input/{session_id}/{case_name}__CT.nii.gz",
+                f"/data/seg_output/{session_id}",
+                "--model-folder", "model",
+            ]
+            logger.info("Tumor segmentation: CT-only mode")
 
         result = run_docker_segmentation(
-            image_name=TUMOR_SEG_IMAGE,
+            image_name=image_name,
             session_id=session_id,
             command=command,
             timeout=timeout,
@@ -349,10 +332,7 @@ def run_tumor_segmentation(
 
         output_files = list(output_session.glob("*.nii.gz"))
         if not output_files:
-            return {
-                "status": "error",
-                "error": "No output files found",
-            }
+            return {"status": "error", "error": "No output files found"}
 
         tumor_dir = output_path / "tumor"
         tumor_dir.mkdir(parents=True, exist_ok=True)
@@ -365,6 +345,7 @@ def run_tumor_segmentation(
             "status": "success",
             "output_dir": str(tumor_dir),
             "tumor_mask": str(tumor_dest),
+            "mode": "ct_pt" if has_pt else "ct_only",
         }
 
     finally:
@@ -480,6 +461,10 @@ def check_segmentation_images() -> Dict[str, Any]:
         },
         "tumor": {
             "image": TUMOR_SEG_IMAGE,
+            "available": False,
+        },
+        "tumor_ctonly": {
+            "image": TUMOR_SEG_CTONLY_IMAGE,
             "available": False,
         },
     }

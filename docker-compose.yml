@@ -66,6 +66,7 @@ services:
       # Segmentation container settings
       - NORMAL_SEG_IMAGE=next-ct/normal-seg
       - TUMOR_SEG_IMAGE=next-ct/tumor-seg
+      - TUMOR_SEG_CTONLY_IMAGE=next-ct/tumor-seg-ctonly
       - SEG_INPUT_DIR=/data/seg_input
       - SEG_OUTPUT_DIR=/data/seg_output
       - DOCKER_NETWORK=nextct-medical-network
@@ -83,7 +84,7 @@ services:
   # ============================================
   tumor-seg:
     build:
-      context: ./segmentation/tumor
+      context: ./segmentation/tumor/ct_pt
       dockerfile: Dockerfile
     image: next-ct/tumor-seg
     container_name: tumor-seg
@@ -92,6 +93,27 @@ services:
     volumes:
       - seg-input:/data/input:ro
       - seg-output:/data/output
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    networks:
+      - medical-network
+    profiles:
+      - gpu
+
+  # ============================================
+  # Tumor Segmentation CT-only (GPU)
+  # ============================================
+  tumor-seg-ctonly:
+    build:
+      context: ./segmentation/tumor/ctonly
+      dockerfile: Dockerfile
+    image: next-ct/tumor-seg-ctonly
+    container_name: tumor-seg-ctonly
+    runtime: nvidia
+    shm_size: "16gb"
+    volumes:
+      - seg-input:/data/seg_input:ro
+      - seg-output:/data/seg_output
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     networks:

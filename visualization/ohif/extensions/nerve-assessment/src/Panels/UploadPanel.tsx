@@ -222,12 +222,6 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
       return;
     }
 
-    // Tumor 분할 요청했는데 PT 없으면 경고
-    if (runTumor && !ptFile) {
-      setError('Tumor 분할을 위해서는 PT (PET) 파일이 필요합니다');
-      return;
-    }
-
     setIsProcessing(true);
     setError(null);
     setResult(null);
@@ -359,7 +353,7 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
         const formData = new FormData();
         formData.append('ct_file', caseItem.files[0]);
         formData.append('patient_name', sanitizePatientName(`${patientName}_${caseItem.id}`));
-        formData.append('run_tumor', String(runTumor && !!caseItem.ptFile));
+        formData.append('run_tumor', String(runTumor));
         if (caseItem.ptFile) {
           formData.append('pt_file', caseItem.ptFile);
         }
@@ -650,7 +644,7 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
                 {/* PT File Selection */}
                 <div style={{ marginBottom: '12px' }}>
                   <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px', color: '#a0aec0' }}>
-                    PT (PET) File (NIfTI .nii.gz 또는 DICOM .zip) - Tumor 시 필수:
+                    PT (PET) File (NIfTI .nii.gz 또는 DICOM .zip) - 선택사항:
                   </label>
                   <input
                     ref={ptInputRef}
@@ -663,7 +657,7 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
                   <div
                     style={{
                       ...fileButtonStyle,
-                      borderColor: runTumor && !ptFile ? '#ef4444' : '#4a5568',
+                      borderColor: '#4a5568',
                     }}
                     onClick={() => !isProcessing && ptInputRef.current?.click()}
                   >
@@ -686,14 +680,9 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
                       style={{ marginRight: '8px' }}
                     />
                     <span style={{ color: runTumor ? '#f59e0b' : '#a0aec0' }}>
-                      Tumor 분할 실행 (CT+PT 필요)
+                      Tumor 분할 실행
                     </span>
                   </label>
-                  {runTumor && !ptFile && (
-                    <div style={{ fontSize: '11px', color: '#ef4444', marginTop: '4px', marginLeft: '20px' }}>
-                      Tumor 분할을 위해 PT 파일을 선택하세요
-                    </div>
-                  )}
                 </div>
 
                 {/* Patient Name */}
@@ -713,8 +702,8 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
                 {/* Upload Button */}
                 <button
                   onClick={handleUploadAndSegment}
-                  disabled={isProcessing || !ctFile || (runTumor && !ptFile)}
-                  style={isProcessing || !ctFile || (runTumor && !ptFile) ? buttonDisabledStyle : { ...buttonStyle, backgroundColor: '#10b981' }}
+                  disabled={isProcessing || !ctFile}
+                  style={isProcessing || !ctFile ? buttonDisabledStyle : { ...buttonStyle, backgroundColor: '#10b981' }}
                 >
                   {isProcessing ? progressMessage || 'Processing...' : 'Upload & Run Segmentation'}
                 </button>
@@ -821,18 +810,18 @@ function UploadPanel({ commandsManager, extensionManager, servicesManager }: Upl
                             {c.type === 'nifti' ? 'NIfTI' : 'DICOM ZIP'}
                           </span>
                           {c.ptFile ? (
-                            <span style={{ color: '#8b5cf6', fontSize: '10px' }}>+PT</span>
-                          ) : runTumor ? (
-                            <span style={{ color: '#f59e0b', fontSize: '10px' }}>no PT</span>
-                          ) : null}
+                            <span style={{ color: '#8b5cf6', fontSize: '10px' }}>CT+PT</span>
+                          ) : (
+                            <span style={{ color: '#3b82f6', fontSize: '10px' }}>CT only</span>
+                          )}
                           {c.status === 'processing' && (
                             <span style={{ color: '#f59e0b', fontSize: '10px' }}>
-                              {runTumor && !c.ptFile ? 'structures only...' : 'segmenting...'}
+                              segmenting...
                             </span>
                           )}
                           {c.status === 'success' && (
                             <span style={{ color: '#10b981', fontSize: '10px' }}>
-                              {runTumor && !c.ptFile ? 'done (structures only)' : 'done'}
+                              done
                             </span>
                           )}
                           {c.status === 'failed' && (
