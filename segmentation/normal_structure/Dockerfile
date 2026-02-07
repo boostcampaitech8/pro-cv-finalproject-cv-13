@@ -13,7 +13,9 @@ WORKDIR /app/nnUNet
 RUN pip install -e .
 
 WORKDIR /app
-RUN pip install --no-cache-dir TotalSegmentator
+RUN pip install --no-cache-dir TotalSegmentator \
+ && sed -i 's/task_id = \[778, 779\]/task_id = [779]/' \
+    $(python -c "import totalsegmentator.python_api as m; print(m.__file__)")
 
 COPY . .
 
