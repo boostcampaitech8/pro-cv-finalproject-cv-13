@@ -1,5 +1,7 @@
 from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
+import os
 from typing import Union, Tuple, List
 
 import numpy as np
@@ -9,6 +11,29 @@ from batchgenerators.augmentations.utils import resize_segmentation
 from scipy.ndimage import map_coordinates
 from skimage.transform import resize
 from nnunetv2.configuration import ANISO_THRESHOLD
+
+_RESAMPLE_MAX_WORKERS = int(os.environ.get('RESAMPLE_WORKERS', max((os.cpu_count() or 2) // 2, 2)))
+
+
+def _calc_workers(new_shape, num_channels):
+    cpu_limit = min(_RESAMPLE_MAX_WORKERS, num_channels)
+    try:
+        with open('/proc/meminfo') as f:
+            for line in f:
+                if line.startswith('MemTotal:'):
+                    total = int(line.split()[1]) * 1024
+                    vol_bytes = int(np.prod(new_shape)) * 8
+                    # Base: output array + coord_map + OS headroom
+                    base = vol_bytes * (num_channels + 3) + 4 * 1024**3
+                    per_worker = vol_bytes * 2
+                    usable = total - base
+                    if usable <= 0:
+                        return 1
+                    mem_limit = max(int(usable / per_worker), 1)
+                    return min(cpu_limit, mem_limit)
+    except Exception:
+        pass
+    return min(cpu_limit, 4)
 
 
 def get_do_separate_z(spacing: Union[Tuple[float, ...], List[float], np.ndarray], anisotropy_threshold=ANISO_THRESHOLD):
@@ -149,7 +174,25 @@ def resample_data_or_seg(data: np.ndarray, new_shape: Union[Tuple[float, ...], L
             else:
                 new_shape_2d = new_shape[:-1]
 
-            for c in range(data.shape[0]):
+            # Pre-compute coord_map once (identical for all channels)
+            _need_z_resample = bool(shape[axis] != new_shape[axis])
+            _coord_map = None
+            if _need_z_resample:
+                rows, cols, dim = int(new_shape[0]), int(new_shape[1]), int(new_shape[2])
+                _tmp_shape = deepcopy(new_shape)
+                _tmp_shape[axis] = shape[axis]
+                orig_rows, orig_cols, orig_dim = int(_tmp_shape[0]), int(_tmp_shape[1]), int(_tmp_shape[2])
+                row_scale = float(orig_rows) / rows
+                col_scale = float(orig_cols) / cols
+                dim_scale = float(orig_dim) / dim
+                map_rows, map_cols, map_dims = np.mgrid[:rows, :cols, :dim]
+                map_rows = row_scale * (map_rows + 0.5) - 0.5
+                map_cols = col_scale * (map_cols + 0.5) - 0.5
+                map_dims = dim_scale * (map_dims + 0.5) - 0.5
+                _coord_map = np.array([map_rows, map_cols, map_dims])
+                del map_rows, map_cols, map_dims
+
+            def _resample_channel_sep_z(c):
                 tmp = deepcopy(new_shape)
                 tmp[axis] = shape[axis]
                 reshaped_here = np.zeros(tmp)
@@ -160,36 +203,31 @@ def resample_data_or_seg(data: np.ndarray, new_shape: Union[Tuple[float, ...], L
                         reshaped_here[:, slice_id] = resize_fn(data[c, :, slice_id], new_shape_2d, order, **kwargs)
                     else:
                         reshaped_here[:, :, slice_id] = resize_fn(data[c, :, :, slice_id], new_shape_2d, order, **kwargs)
-                if shape[axis] != new_shape[axis]:
-
-                    # The following few lines are blatantly copied and modified from sklearn's resize()
-                    rows, cols, dim = new_shape[0], new_shape[1], new_shape[2]
-                    orig_rows, orig_cols, orig_dim = reshaped_here.shape
-
-                    # align_corners=False
-                    row_scale = float(orig_rows) / rows
-                    col_scale = float(orig_cols) / cols
-                    dim_scale = float(orig_dim) / dim
-
-                    map_rows, map_cols, map_dims = np.mgrid[:rows, :cols, :dim]
-                    map_rows = row_scale * (map_rows + 0.5) - 0.5
-                    map_cols = col_scale * (map_cols + 0.5) - 0.5
-                    map_dims = dim_scale * (map_dims + 0.5) - 0.5
-
-                    coord_map = np.array([map_rows, map_cols, map_dims])
+                if _need_z_resample:
                     if not is_seg or order_z == 0:
-                        reshaped_final[c] = map_coordinates(reshaped_here, coord_map, order=order_z, mode='nearest')[None]
+                        return map_coordinates(reshaped_here, _coord_map, order=order_z, mode='nearest')[None]
                     else:
-                        unique_labels = np.sort(pd.unique(reshaped_here.ravel()))  # np.unique(reshaped_data)
+                        result = np.zeros(new_shape, dtype=dtype_out)
+                        unique_labels = np.sort(pd.unique(reshaped_here.ravel()))
                         for i, cl in enumerate(unique_labels):
-                            reshaped_final[c][np.round(
-                                map_coordinates((reshaped_here == cl).astype(float), coord_map, order=order_z,
+                            result[np.round(
+                                map_coordinates((reshaped_here == cl).astype(float), _coord_map, order=order_z,
                                                 mode='nearest')) > 0.5] = cl
+                        return result
                 else:
-                    reshaped_final[c] = reshaped_here
+                    return reshaped_here
+
+            _n_workers = _calc_workers(new_shape, data.shape[0])
+            with ThreadPoolExecutor(max_workers=_n_workers) as executor:
+                for c, result in zip(range(data.shape[0]), executor.map(_resample_channel_sep_z, range(data.shape[0]))):
+                    reshaped_final[c] = result
         else:
-            for c in range(data.shape[0]):
-                reshaped_final[c] = resize_fn(data[c], new_shape, order, **kwargs)
+            def _resample_channel(c):
+                return resize_fn(data[c], new_shape, order, **kwargs)
+            _n_workers = _calc_workers(new_shape, data.shape[0])
+            with ThreadPoolExecutor(max_workers=_n_workers) as executor:
+                for c, result in zip(range(data.shape[0]), executor.map(_resample_channel, range(data.shape[0]))):
+                    reshaped_final[c] = result
         return reshaped_final
     else:
         # print("no resampling necessary")

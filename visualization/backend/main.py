@@ -2236,10 +2236,11 @@ def _load_labelmap_and_config(study_instance_uid: str):
 @app.get("/surface-mesh/{study_instance_uid}")
 def get_surface_mesh(study_instance_uid: str, decimate: float = 0.3):
     """Generate and return 3D surface meshes for all segments."""
+    from concurrent.futures import ThreadPoolExecutor
+
     data, affine, config = _load_labelmap_and_config(study_instance_uid)
 
-    structures = {}
-
+    tasks = []
     for segment in config.get("segments", []):
         label_id = segment["segmentIndex"]
         name = segment["label"]
@@ -2251,10 +2252,17 @@ def get_surface_mesh(study_instance_uid: str, decimate: float = 0.3):
             print(f"[SurfaceMesh] Skipping {name}: too few voxels")
             continue
 
+        tasks.append((name, mask, color, label_id))
+
+    structures = {}
+    max_workers = max(os.cpu_count() // 2, 2)
+
+    def process_mesh(args):
+        name, mask, color, label_id = args
         try:
             verts_lps, faces = _compute_mesh(mask, affine, decimate)
-
-            structures[name] = {
+            print(f"[SurfaceMesh] {name}: {len(verts_lps)} vertices, {len(faces)} faces")
+            return name, {
                 "vertices": verts_lps.tolist(),
                 "faces": faces.tolist(),
                 "color": color[:3] if len(color) > 3 else color,
@@ -2262,12 +2270,16 @@ def get_surface_mesh(study_instance_uid: str, decimate: float = 0.3):
                 "vertexCount": len(verts_lps),
                 "faceCount": len(faces),
             }
-
-            print(f"[SurfaceMesh] {name}: {len(verts_lps)} vertices, {len(faces)} faces")
-
         except Exception as e:
             print(f"[SurfaceMesh] Failed to generate mesh for {name}: {e}")
-            continue
+            return None
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        results = executor.map(process_mesh, tasks)
+        for result in results:
+            if result is not None:
+                name, mesh_data = result
+                structures[name] = mesh_data
 
     return JSONResponse({
         "studyUID": study_instance_uid,

@@ -108,12 +108,12 @@ if [ "${ONLY_CT}" = "true" ]; then
   done
 fi
 
+NUM_CORES=$(nproc)
+
 NNUNET_START=$(date +%s)
 nnUNetv2_predict -i "${NNUNET_INPUT_DIR}" -o "${OUT_DIR}" -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs
 NNUNET_END=$(date +%s)
 log_time "nnUNet" $((NNUNET_END - NNUNET_START))
-
-NUM_CORES=$(nproc)
 
 MERGE_START=$(date +%s)
 python "${SCRIPT_DIR}/merge_tsv2_to_nnunet.py" \
