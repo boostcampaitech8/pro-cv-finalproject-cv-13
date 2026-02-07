@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Dict, Optional, Tuple, List
 import numpy as np
+from scipy import ndimage
 
 try:
     import nibabel as nib
@@ -10,6 +11,8 @@ except ImportError:
     raise ImportError("nibabel is required. Install with: pip install nibabel")
 
 from .config import MASK_ALIASES, STRUCTURE_SUBFOLDER
+
+LCC_SKIP_STRUCTURES = {"thyroid_gland"}
 
 
 class MaskLoader:
@@ -32,6 +35,15 @@ class MaskLoader:
         self._cache: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
         self._affine: Optional[np.ndarray] = None
         self._shape: Optional[Tuple[int, int, int]] = None
+
+    @staticmethod
+    def _keep_largest_component(mask: np.ndarray) -> np.ndarray:
+        labeled, num_features = ndimage.label(mask)
+        if num_features <= 1:
+            return mask
+        sizes = ndimage.sum(mask, labeled, range(1, num_features + 1))
+        largest = int(np.argmax(sizes)) + 1
+        return (labeled == largest).astype(np.uint8)
 
     def _get_search_dirs(self, structure_name: str) -> List[Path]:
         dirs = []
@@ -86,6 +98,8 @@ class MaskLoader:
             mask = np.asarray(nifti.get_fdata(), dtype=np.float32)
             affine = nifti.affine
             mask = (mask > 0.5).astype(np.uint8)
+            if structure_name not in LCC_SKIP_STRUCTURES:
+                mask = self._keep_largest_component(mask)
 
             if self._affine is None:
                 self._affine = affine.copy()

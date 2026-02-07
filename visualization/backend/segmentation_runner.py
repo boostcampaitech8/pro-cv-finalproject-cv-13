@@ -45,6 +45,8 @@ NNUNET_LABELS = {
     16: "internal_jugular_vein_right",
     17: "anterior_scalene_left",
     18: "anterior_scalene_right",
+    19: "internal_carotid_artery_left",
+    20: "internal_carotid_artery_right",
 }
 
 

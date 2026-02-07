@@ -9,7 +9,6 @@ from ..config import NERVE_CONFIG
 
 
 class VagusEstimator(BaseNerveEstimator):
-    """CCA-IJV 중간점 방법으로 미주신경 위치 추정."""
 
     nerve_name = "vagus"
     output_type = "pathway"
@@ -28,29 +27,33 @@ class VagusEstimator(BaseNerveEstimator):
         if side not in ["left", "right"]:
             return self._create_error_result(side, f"Invalid side: {side}")
 
-        missing = self.check_required_structures(side)
-        if missing:
-            return self._create_error_result(side, f"Missing required structures: {missing}")
-
-        cca_mask = self.mask_loader.load_mask(f"common_carotid_artery_{side}")
         ijv_mask = self.mask_loader.load_mask(f"internal_jugular_vein_{side}")
-
-        if cca_mask is None:
-            return self._create_error_result(side, f"Failed to load CCA mask for {side}")
         if ijv_mask is None:
             return self._create_error_result(side, f"Failed to load IJV mask for {side}")
 
-        cca_range = get_mask_z_range(cca_mask)
+        cca_mask = self.mask_loader.load_mask(f"common_carotid_artery_{side}")
+        ica_mask = self.mask_loader.load_mask(f"internal_carotid_artery_{side}")
+
+        if cca_mask is None and ica_mask is None:
+            return self._create_error_result(side, f"Neither CCA nor ICA mask available for {side}")
+
         ijv_range = get_mask_z_range(ijv_mask)
+        if ijv_range is None:
+            return self._create_error_result(side, "Empty IJV mask")
 
-        if cca_range is None or ijv_range is None:
-            return self._create_error_result(side, "Empty mask(s)")
+        cca_range = get_mask_z_range(cca_mask) if cca_mask is not None else None
+        ica_range = get_mask_z_range(ica_mask) if ica_mask is not None else None
 
-        z_min = max(cca_range[0], ijv_range[0])
-        z_max = min(cca_range[1], ijv_range[1])
+        artery_z_min = min(r[0] for r in [cca_range, ica_range] if r is not None)
+        artery_z_max = max(r[1] for r in [cca_range, ica_range] if r is not None)
+
+        z_min = max(ijv_range[0], artery_z_min)
+        z_max = min(ijv_range[1], artery_z_max)
+
+        z_min, z_max = self.clamp_z_range(z_min, z_max)
 
         if z_min > z_max:
-            return self._create_error_result(side, "No overlapping Z range between CCA and IJV")
+            return self._create_error_result(side, "No overlapping Z range between carotid and IJV")
 
         affine = self.affine
         if affine is None:
@@ -64,13 +67,19 @@ class VagusEstimator(BaseNerveEstimator):
         warnings = []
 
         for z in range(z_min, z_max + 1):
-            cca_center = get_center_at_z(cca_mask, z)
             ijv_center = get_center_at_z(ijv_mask, z)
-
-            if cca_center is None or ijv_center is None:
+            if ijv_center is None:
                 continue
 
-            midpoint = (cca_center + ijv_center) / 2
+            artery_center = None
+            if cca_mask is not None:
+                artery_center = get_center_at_z(cca_mask, z)
+            if artery_center is None and ica_mask is not None:
+                artery_center = get_center_at_z(ica_mask, z)
+            if artery_center is None:
+                continue
+
+            midpoint = (artery_center + ijv_center) / 2
             nerve_pos = midpoint.copy()
             nerve_pos[posterior_axis] += posterior_sign * offset_voxels
             pathway_points.append(nerve_pos)

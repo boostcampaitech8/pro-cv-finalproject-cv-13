@@ -6,6 +6,8 @@ from typing import Optional, List, Dict, Any
 import numpy as np
 
 from ..mask_loader import MaskLoader
+from ..landmarks import get_mask_z_range
+from ..config import VERTEBRAE
 
 
 @dataclass
@@ -77,9 +79,32 @@ class BaseNerveEstimator(ABC):
             self._affine = self.mask_loader.get_affine()
         return self._affine
 
+    def get_vertebral_z_range(self) -> Optional[tuple]:
+        if hasattr(self, '_vertebral_z_cache'):
+            return self._vertebral_z_cache
+        z_min, z_max = None, None
+        for v in VERTEBRAE:
+            mask = self.mask_loader.load_mask(v)
+            if mask is None:
+                continue
+            r = get_mask_z_range(mask)
+            if r is None:
+                continue
+            z_min = r[0] if z_min is None else min(z_min, r[0])
+            z_max = r[1] if z_max is None else max(z_max, r[1])
+        self._vertebral_z_cache = (z_min, z_max) if z_min is not None else None
+        return self._vertebral_z_cache
+
+    def clamp_z_range(self, z_min: int, z_max: int) -> tuple:
+        vr = self.get_vertebral_z_range()
+        if vr is not None:
+            z_min = max(z_min, vr[0])
+            z_max = min(z_max, vr[1])
+        return (z_min, z_max)
+
     def check_required_structures(self, side: str) -> List[str]:
         missing = []
-        bilateral = ["common_carotid_artery", "internal_jugular_vein", "anterior_scalene"]
+        bilateral = ["common_carotid_artery", "internal_carotid_artery", "internal_jugular_vein", "anterior_scalene"]
         for struct in self.required_structures:
             struct_name = f"{struct}_{side}" if struct in bilateral else struct
             if not self.mask_loader.has_structure(struct_name):

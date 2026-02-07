@@ -48,10 +48,12 @@ class PhrenicEstimator(BaseNerveEstimator):
         if z_range is None:
             return self._create_error_result(side, "Empty scalene mask")
 
+        z_min, z_max = self.clamp_z_range(z_range[0], z_range[1])
+
         pathway_points = []
         warnings = []
 
-        for z in range(z_range[0], z_range[1] + 1):
+        for z in range(z_min, z_max + 1):
             position = self._estimate_at_z(scalene_mask, z)
             if position is not None:
                 pathway_points.append(position)

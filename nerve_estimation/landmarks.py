@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 from .utils import get_anatomical_direction, get_lateral_direction
 
 
-MIN_VOXELS_PER_SLICE = 20
+MIN_VOXELS_PER_SLICE = 3
 
 
 def get_coords_at_z(mask: np.ndarray, z_level: int, min_voxels: int = MIN_VOXELS_PER_SLICE) -> Optional[np.ndarray]:
@@ -51,6 +51,7 @@ def get_superior_pole(
     mask: np.ndarray,
     affine: np.ndarray,
     side: Optional[str] = None,
+    midline_point: Optional[np.ndarray] = None,
 ) -> Optional[np.ndarray]:
     """구조물의 상극(최상단) 좌표 반환."""
     if mask is None:
@@ -63,11 +64,11 @@ def get_superior_pole(
 
     if side is not None:
         lateral_axis, lateral_sign = get_lateral_direction(affine, side)
-        centroid = np.mean(coords, axis=0)
+        reference = midline_point if midline_point is not None else np.mean(coords, axis=0)
         if lateral_sign > 0:
-            side_coords = coords[coords[:, lateral_axis] >= centroid[lateral_axis]]
+            side_coords = coords[coords[:, lateral_axis] >= reference[lateral_axis]]
         else:
-            side_coords = coords[coords[:, lateral_axis] <= centroid[lateral_axis]]
+            side_coords = coords[coords[:, lateral_axis] <= reference[lateral_axis]]
         if len(side_coords) > 0:
             coords = side_coords
 

@@ -69,6 +69,8 @@ class RLNEstimator(BaseNerveEstimator):
         z_min = max(trachea_range[0], esophagus_range[0])
         z_max = min(trachea_range[1], esophagus_range[1])
 
+        z_min, z_max = self.clamp_z_range(z_min, z_max)
+
         if z_min > z_max:
             return self._create_error_result(side, "No overlapping Z range between trachea and esophagus")
 

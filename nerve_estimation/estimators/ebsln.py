@@ -4,7 +4,7 @@ import numpy as np
 
 from .base import BaseNerveEstimator, EstimationResult
 from ..mask_loader import MaskLoader
-from ..landmarks import get_superior_pole
+from ..landmarks import get_superior_pole, get_mask_z_range, get_center_at_z
 from ..utils import get_anatomical_direction, get_spacing
 from ..config import NERVE_CONFIG
 
@@ -41,7 +41,15 @@ class EBSLNEstimator(BaseNerveEstimator):
         if affine is None:
             return self._create_error_result(side, "No affine matrix available")
 
-        superior_pole = get_superior_pole(thyroid_mask, affine, side=side)
+        trachea_mask = self.mask_loader.load_mask("trachea")
+        trachea_midline = None
+        if trachea_mask is not None:
+            thyroid_z_range = get_mask_z_range(thyroid_mask)
+            if thyroid_z_range is not None:
+                mid_z = (thyroid_z_range[0] + thyroid_z_range[1]) // 2
+                trachea_midline = get_center_at_z(trachea_mask, mid_z)
+
+        superior_pole = get_superior_pole(thyroid_mask, affine, side=side, midline_point=trachea_midline)
         if superior_pole is None:
             return self._create_error_result(side, f"Could not find thyroid superior pole for {side} side")
 
