@@ -4,9 +4,12 @@ from copy import deepcopy
 import os
 from typing import Union, Tuple, List
 
+import time
+
 import numpy as np
 import pandas as pd
 import torch
+from torch.nn import functional as F
 from batchgenerators.augmentations.utils import resize_segmentation
 from scipy.ndimage import map_coordinates
 from skimage.transform import resize
@@ -34,6 +37,72 @@ def _calc_workers(new_shape, num_channels):
     except Exception:
         pass
     return min(cpu_limit, 4)
+
+
+def _resample_gpu(data, new_shape, axis, do_separate_z, dtype_out):
+    _t0 = time.perf_counter()
+    device = torch.device('cuda')
+    num_channels = data.shape[0]
+    new_shape = np.array(new_shape, dtype=int)
+    orig_shape = np.array(data.shape[1:], dtype=int)
+
+    result = np.empty((num_channels, *new_shape), dtype=np.float32)
+
+    if do_separate_z:
+        assert axis is not None
+        if axis == 0:
+            target_xy = (int(new_shape[1]), int(new_shape[2]))
+        elif axis == 1:
+            target_xy = (int(new_shape[0]), int(new_shape[2]))
+        else:
+            target_xy = (int(new_shape[0]), int(new_shape[1]))
+
+        need_z = orig_shape[axis] != new_shape[axis]
+        if need_z:
+            orig_z = int(orig_shape[axis])
+            target_z = int(new_shape[axis])
+            scale = orig_z / target_z
+            z_indices = np.clip(
+                np.floor(scale * (np.arange(target_z) + 0.5)).astype(int),
+                0, orig_z - 1)
+
+        perm = list(range(4))
+        spatial_ax = axis + 1
+        perm.remove(spatial_ax)
+        perm.insert(1, spatial_ax)
+        inv_perm = [0] * 4
+        for i, p in enumerate(perm):
+            inv_perm[p] = i
+
+        for c in range(num_channels):
+            chunk_t = torch.from_numpy(data[c:c+1]).float().to(device)
+            chunk_t = chunk_t.permute(*perm)
+            ax_len = chunk_t.shape[1]
+            chunk_t = chunk_t.reshape(ax_len, 1, chunk_t.shape[2], chunk_t.shape[3])
+            chunk_t = F.interpolate(chunk_t, size=target_xy, mode='bilinear', align_corners=False)
+            chunk_t = chunk_t.reshape(1, ax_len, target_xy[0], target_xy[1])
+            chunk_t = chunk_t.permute(*inv_perm)
+            xy_result = chunk_t.cpu().numpy()
+            del chunk_t
+
+            if need_z:
+                result[c] = np.take(xy_result[0], z_indices, axis=axis)
+            else:
+                result[c] = xy_result[0]
+            del xy_result
+    else:
+        target_3d = (int(new_shape[0]), int(new_shape[1]), int(new_shape[2]))
+        for c in range(num_channels):
+            chunk_t = torch.from_numpy(data[c:c+1]).float().to(device)
+            chunk_t = chunk_t.unsqueeze(0)
+            chunk_t = F.interpolate(chunk_t, size=target_3d, mode='trilinear', align_corners=False)
+            result[c] = chunk_t[0, 0].cpu().numpy()
+            del chunk_t
+
+    torch.cuda.empty_cache()
+    print(f"[RESAMPLE-GPU] {time.perf_counter()-_t0:.1f}s  shape={list(data.shape[1:])}->{list(new_shape)}  "
+          f"channels={num_channels}  separate_z={do_separate_z}", flush=True)
+    return result.astype(dtype_out)
 
 
 def get_do_separate_z(spacing: Union[Tuple[float, ...], List[float], np.ndarray], anisotropy_threshold=ANISO_THRESHOLD):
@@ -164,7 +233,11 @@ def resample_data_or_seg(data: np.ndarray, new_shape: Union[Tuple[float, ...], L
         dtype_out = data.dtype
     reshaped_final = np.zeros((data.shape[0], *new_shape), dtype=dtype_out)
     if np.any(shape != new_shape):
+        if not is_seg and order <= 1 and order_z == 0 and torch.cuda.is_available():
+            reshaped_final[:] = _resample_gpu(data, new_shape, axis, do_separate_z, dtype_out)
+            return reshaped_final
         data = data.astype(float, copy=False)
+        _cpu_t0 = time.perf_counter()
         if do_separate_z:
             assert axis is not None, 'If do_separate_z, we need to know what axis is anisotropic'
             if axis == 0:
@@ -228,6 +301,8 @@ def resample_data_or_seg(data: np.ndarray, new_shape: Union[Tuple[float, ...], L
             with ThreadPoolExecutor(max_workers=_n_workers) as executor:
                 for c, result in zip(range(data.shape[0]), executor.map(_resample_channel, range(data.shape[0]))):
                     reshaped_final[c] = result
+        print(f"[RESAMPLE-CPU] {time.perf_counter()-_cpu_t0:.1f}s  shape={list(shape)}->{list(new_shape)}  "
+              f"channels={data.shape[0]}  separate_z={do_separate_z}", flush=True)
         return reshaped_final
     else:
         # print("no resampling necessary")
