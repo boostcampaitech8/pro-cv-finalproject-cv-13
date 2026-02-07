@@ -15,6 +15,7 @@ import json
 import shutil
 import zipfile
 import logging
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
@@ -252,8 +253,9 @@ def run_pipeline(
             "error": str(e),
         }
 
-    # Step 4: Convert ALL segmentation masks to a SINGLE multi-segment DICOM SEG
+    # Steps 4 + 6 in parallel: RTSS generation + Labelmap generation
     seg_conversion_results = []
+    all_masks_dict = {}
 
     if study_uid and ct_dicom_dir.exists():
         all_segment_masks = []
@@ -289,7 +291,6 @@ def run_pipeline(
                     "status": "pending",
                 })
 
-        all_masks_dict = {}
         for folder_name, folder_path in seg_folders.items():
             for nii_file in folder_path.glob("*.nii.gz"):
                 structure_name = nii_file.stem.replace(".nii", "")
@@ -300,32 +301,74 @@ def run_pipeline(
                 nerve_name = nii_file.stem.replace(".nii", "")
                 all_masks_dict[f"nerve_{nerve_name}"] = str(nii_file)
 
-        if all_masks_dict:
-            rtss_output = dicom_dir / "rtss" / "rtstruct.dcm"
-            try:
-                rtss_path = nifti_masks_to_rtss(
-                    mask_files=all_masks_dict,
-                    reference_ct_dir=str(ct_dicom_dir),
-                    output_path=str(rtss_output),
-                    colors=STRUCTURE_COLORS,
-                    study_uid=study_uid,
-                    patient_name=patient_name,
-                )
+    def _gen_rtss():
+        if not all_masks_dict:
+            return None
+        rtss_output = dicom_dir / "rtss" / "rtstruct.dcm"
+        path = nifti_masks_to_rtss(
+            mask_files=all_masks_dict,
+            reference_ct_dir=str(ct_dicom_dir),
+            output_path=str(rtss_output),
+            colors=STRUCTURE_COLORS,
+            study_uid=study_uid,
+            patient_name=patient_name,
+        )
+        print(f"[Pipeline] Generated RTSS with {len(all_masks_dict)} structures")
+        return path
+
+    def _gen_labelmap():
+        labelmap_output_dir = output_dir / "labelmap"
+        labelmap_output_dir.mkdir(parents=True, exist_ok=True)
+        r = generate_labelmap_for_study(
+            ct_nifti_path=ct_path,
+            segmentation_dir=str(segmentation_dir),
+            nerve_masks_dir=str(nerve_masks_dir) if nerve_masks_dir.exists() else None,
+            output_dir=str(labelmap_output_dir),
+            study_uid=study_uid,
+        )
+        print(f"[Pipeline] Generated NIfTI labelmap with {r['num_labels']} labels")
+        return r
+
+    labelmap_result = None
+    rtss_path = None
+
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        f_rtss = ex.submit(_gen_rtss)
+        f_labelmap = ex.submit(_gen_labelmap)
+
+        try:
+            rtss_path = f_rtss.result()
+            if rtss_path:
                 for result in seg_conversion_results:
                     result["status"] = "success"
                     result["file"] = str(rtss_path)
-                print(f"[Pipeline] Generated RTSS with {len(all_masks_dict)} structures")
-            except Exception as e:
-                print(f"[Pipeline] RTSS generation error: {e}")
-                for result in seg_conversion_results:
-                    result["status"] = "error"
-                    result["error"] = str(e)
+        except Exception as e:
+            print(f"[Pipeline] RTSS generation error: {e}")
+            for result in seg_conversion_results:
+                result["status"] = "error"
+                result["error"] = str(e)
+
+        try:
+            labelmap_result = f_labelmap.result()
+            results["steps"]["labelmap"] = {
+                "status": "success",
+                "num_labels": labelmap_result.get("num_labels", 0),
+                "labelmap_path": labelmap_result.get("labelmap_path"),
+            }
+        except Exception as e:
+            print(f"[Pipeline] NIfTI labelmap generation failed: {e}")
+            labelmap_result = {"error": str(e)}
+            results["steps"]["labelmap"] = {
+                "status": "error",
+                "error": str(e),
+            }
 
     results["steps"]["seg_conversion"] = {
         "status": "success" if seg_conversion_results else "skipped",
         "segments": seg_conversion_results,
     }
     results["segments_created"] = len(seg_conversion_results)
+    results["labelmap_result"] = labelmap_result
 
     # Step 5: Upload to Orthanc
     try:
@@ -345,36 +388,6 @@ def run_pipeline(
             "status": "error",
             "error": str(e),
         }
-
-    # Step 6: Generate NIfTI multi-label labelmap for polySeg rendering
-    # This enables sagittal/coronal views in OHIF (RTSTRUCT has spacing issues)
-    labelmap_result = None
-    try:
-        labelmap_output_dir = output_dir / "labelmap"
-        labelmap_output_dir.mkdir(parents=True, exist_ok=True)
-
-        labelmap_result = generate_labelmap_for_study(
-            ct_nifti_path=ct_path,
-            segmentation_dir=str(segmentation_dir),
-            nerve_masks_dir=str(nerve_masks_dir) if nerve_masks_dir.exists() else None,
-            output_dir=str(labelmap_output_dir),
-            study_uid=study_uid,
-        )
-        print(f"[Pipeline] Generated NIfTI labelmap with {labelmap_result['num_labels']} labels")
-        results["steps"]["labelmap"] = {
-            "status": "success",
-            "num_labels": labelmap_result.get("num_labels", 0),
-            "labelmap_path": labelmap_result.get("labelmap_path"),
-        }
-    except Exception as e:
-        print(f"[Pipeline] NIfTI labelmap generation failed: {e}")
-        labelmap_result = {"error": str(e)}
-        results["steps"]["labelmap"] = {
-            "status": "error",
-            "error": str(e),
-        }
-
-    results["labelmap_result"] = labelmap_result
 
     if study_uid:
         results["ohif_url"] = f"{ohif_url}/nerve-assessment?StudyInstanceUIDs={study_uid}"
@@ -684,26 +697,7 @@ def analyze_dicom_study_rtss(
         except Exception as e:
             print(f"[RTSS Pipeline] Error creating nerve masks: {e}")
 
-    # Step 2.5: Generate NIfTI multi-label labelmap for Cornerstone3D polySeg
-    # This is used alongside RTSS for better sagittal/coronal rendering
-    labelmap_result = None
-    try:
-        labelmap_output_dir = output_dir / "labelmap"
-        labelmap_output_dir.mkdir(parents=True, exist_ok=True)
-
-        labelmap_result = generate_labelmap_for_study(
-            ct_nifti_path=ct_nifti_path,
-            segmentation_dir=str(seg_dir),
-            nerve_masks_dir=str(nerve_masks_dir) if nerve_mask_files else None,
-            output_dir=str(labelmap_output_dir),
-            study_uid=study_instance_uid,
-        )
-        print(f"[RTSS Pipeline] Generated NIfTI labelmap with {labelmap_result['num_labels']} labels")
-    except Exception as e:
-        print(f"[RTSS Pipeline] NIfTI labelmap generation failed: {e}")
-        labelmap_result = {"error": str(e)}
-
-    # Step 3: Check for existing RTSTRUCT in Orthanc
+    # Step 3: Check for existing RTSTRUCT in Orthanc and collect masks
     existing_rtstruct_id = find_existing_rtstruct(study_instance_uid, orthanc_url)
     has_existing_rtstruct = existing_rtstruct_id is not None
 
@@ -712,87 +706,99 @@ def analyze_dicom_study_rtss(
     else:
         print(f"[RTSS Pipeline] No existing RTSTRUCT, will create new with all structures")
 
-    # Collect masks based on whether we have existing RTSTRUCT
     all_masks = {}
-
-    # 3-1: Segmentation masks (only if no existing RTSTRUCT)
     if not has_existing_rtstruct:
         for folder_name, folder_path in seg_folders.items():
             for nii_file in folder_path.glob("*.nii.gz"):
                 structure_name = nii_file.stem.replace(".nii", "")
                 all_masks[structure_name] = str(nii_file)
 
-    # 3-2: Nerve masks (always add, prefix with "nerve_")
     nerve_only_masks = {}
     for nerve_name, nerve_path in nerve_mask_files.items():
         prefixed_name = f"nerve_{nerve_name}"
         all_masks[prefixed_name] = nerve_path
         nerve_only_masks[prefixed_name] = nerve_path
 
-    # Step 4: Generate or Update RTSS file
     rtss_output_dir = output_dir / "rtss"
     rtss_output_dir.mkdir(parents=True, exist_ok=True)
-    rtss_path = None
-    structures_count = 0
+    labelmap_output_dir = output_dir / "labelmap"
+    labelmap_output_dir.mkdir(parents=True, exist_ok=True)
 
-    if has_existing_rtstruct and nerve_only_masks:
-        # MODE A: Add nerves to existing RTSTRUCT
-        try:
-            rtss_path = add_nerves_to_existing_rtss(
+    # Steps 2.5, 4, 5 in parallel
+    def _gen_labelmap():
+        r = generate_labelmap_for_study(
+            ct_nifti_path=ct_nifti_path,
+            segmentation_dir=str(seg_dir),
+            nerve_masks_dir=str(nerve_masks_dir) if nerve_mask_files else None,
+            output_dir=str(labelmap_output_dir),
+            study_uid=study_instance_uid,
+        )
+        print(f"[RTSS Pipeline] Generated NIfTI labelmap with {r['num_labels']} labels")
+        return r
+
+    def _gen_rtss():
+        if has_existing_rtstruct and nerve_only_masks:
+            path = add_nerves_to_existing_rtss(
                 nerve_mask_files=nerve_only_masks,
                 reference_ct_dir=original_dicom_dir,
                 output_path=str(rtss_output_dir / "updated_rtss.dcm"),
                 study_uid=study_instance_uid,
                 orthanc_url=orthanc_url,
             )
-            structures_count = len(nerve_only_masks)
-            print(f"[RTSS Pipeline] Added {structures_count} nerve structures to existing RTSTRUCT")
-        except Exception as e:
-            print(f"[RTSS Pipeline] Failed to add nerves to existing RTSTRUCT: {e}")
-            return {
-                "status": "error",
-                "error": f"Failed to add nerves to existing RTSTRUCT: {e}",
-                "study_uid": study_instance_uid,
-            }
-    elif all_masks:
-        # MODE B: Create new RTSS with all structures
-        try:
-            rtss_path = generate_rtss_for_study(
+            return path, len(nerve_only_masks)
+        elif all_masks:
+            path = generate_rtss_for_study(
                 mask_files=all_masks,
                 reference_ct_dir=original_dicom_dir,
                 output_dir=str(output_dir),
                 study_uid=study_instance_uid,
                 patient_name=patient_name,
             )
-            structures_count = len(all_masks)
-            print(f"[RTSS Pipeline] Generated new RTSS with {structures_count} structures")
+            return path, len(all_masks)
+        return None, 0
+
+    def _gen_surface():
+        if has_existing_rtstruct or not generate_surface_seg or not all_masks:
+            return None
+        return generate_surface_segmentation_for_study(
+            mask_files=all_masks,
+            reference_ct_dir=original_dicom_dir,
+            output_dir=str(output_dir),
+            study_uid=study_instance_uid,
+            patient_name=patient_name,
+            decimate_ratio=0.3,
+        )
+
+    labelmap_result = None
+    rtss_path = None
+    structures_count = 0
+    surface_seg_path = None
+
+    with ThreadPoolExecutor(max_workers=3) as ex:
+        f_labelmap = ex.submit(_gen_labelmap)
+        f_rtss = ex.submit(_gen_rtss)
+        f_surface = ex.submit(_gen_surface)
+
+        try:
+            labelmap_result = f_labelmap.result()
+        except Exception as e:
+            print(f"[RTSS Pipeline] NIfTI labelmap generation failed: {e}")
+            labelmap_result = {"error": str(e)}
+
+        try:
+            rtss_path, structures_count = f_rtss.result()
+            if rtss_path:
+                print(f"[RTSS Pipeline] RTSS: {structures_count} structures")
         except Exception as e:
             print(f"[RTSS Pipeline] RTSS generation failed: {e}")
-            return {
-                "status": "error",
-                "error": f"RTSS generation failed: {e}",
-                "study_uid": study_instance_uid,
-            }
+            return {"status": "error", "error": str(e), "study_uid": study_instance_uid}
 
-    # Step 5: Generate Surface Segmentation for 3D view (optional)
-    # Skip if adding to existing RTSTRUCT (don't create duplicate SEG)
-    surface_seg_path = None
-    if has_existing_rtstruct:
-        print(f"[RTSS Pipeline] Skipping Surface Segmentation (adding to existing RTSTRUCT)")
-    elif generate_surface_seg and all_masks:
         try:
-            surface_seg_path = generate_surface_segmentation_for_study(
-                mask_files=all_masks,
-                reference_ct_dir=original_dicom_dir,
-                output_dir=str(output_dir),
-                study_uid=study_instance_uid,
-                patient_name=patient_name,
-                decimate_ratio=0.3,  # 30% of original mesh size
-            )
-            print(f"[RTSS Pipeline] Generated Surface Segmentation: {surface_seg_path}")
+            surface_seg_path = f_surface.result()
+            if surface_seg_path:
+                print(f"[RTSS Pipeline] Generated Surface Segmentation: {surface_seg_path}")
         except Exception as e:
             print(f"[RTSS Pipeline] Surface Segmentation generation failed: {e}")
-            # Continue without surface seg - RTSS is more important
 
     # Step 6: Upload RTSS and Surface Segmentation to Orthanc
     client = OrthancClient(url=orthanc_url)

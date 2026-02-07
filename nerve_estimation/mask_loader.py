@@ -1,5 +1,7 @@
 """NIfTI 마스크 로딩 및 캐싱."""
 
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, Optional, Tuple, List
 import numpy as np
@@ -10,9 +12,9 @@ try:
 except ImportError:
     raise ImportError("nibabel is required. Install with: pip install nibabel")
 
-from .config import MASK_ALIASES, STRUCTURE_SUBFOLDER
+from .config import MASK_ALIASES, STRUCTURE_SUBFOLDER, VERTEBRAE
 
-LCC_SKIP_STRUCTURES = {"thyroid_gland"}
+LCC_SKIP_STRUCTURES = {"thyroid_gland"} | set(VERTEBRAE)
 
 
 class MaskLoader:
@@ -33,8 +35,11 @@ class MaskLoader:
             self.tumor_dir = Path(tumor_dir) if tumor_dir else None
 
         self._cache: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
+        self._lock = threading.Lock()
         self._affine: Optional[np.ndarray] = None
         self._shape: Optional[Tuple[int, int, int]] = None
+        self._vertebral_z_range: Optional[Tuple[int, int]] = None
+        self._vertebral_z_computed: bool = False
 
     @staticmethod
     def _keep_largest_component(mask: np.ndarray) -> np.ndarray:
@@ -101,15 +106,23 @@ class MaskLoader:
             if structure_name not in LCC_SKIP_STRUCTURES:
                 mask = self._keep_largest_component(mask)
 
-            if self._affine is None:
-                self._affine = affine.copy()
-                self._shape = mask.shape
-
-            self._cache[structure_name] = (mask, affine)
+            with self._lock:
+                if self._affine is None:
+                    self._affine = affine.copy()
+                    self._shape = mask.shape
+                self._cache[structure_name] = (mask, affine)
             return mask
         except Exception as e:
             print(f"Warning: Failed to load mask {filepath}: {e}")
             return None
+
+    def preload(self, structure_names: List[str], max_workers: int = 4) -> None:
+        """Load multiple masks in parallel."""
+        to_load = [n for n in structure_names if n not in self._cache and self._find_mask_file(n)]
+        if not to_load:
+            return
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            list(ex.map(self.load_mask, to_load))
 
     def get_affine(self, structure_name: Optional[str] = None) -> Optional[np.ndarray]:
         if structure_name is not None:
@@ -142,6 +155,24 @@ class MaskLoader:
                 if canonical not in structures:
                     structures.append(canonical)
         return sorted(structures)
+
+    def get_vertebral_z_range(self) -> Optional[Tuple[int, int]]:
+        if self._vertebral_z_computed:
+            return self._vertebral_z_range
+        from .landmarks import get_mask_z_range
+        z_min, z_max = None, None
+        for v in VERTEBRAE:
+            mask = self.load_mask(v)
+            if mask is None:
+                continue
+            r = get_mask_z_range(mask)
+            if r is None:
+                continue
+            z_min = r[0] if z_min is None else min(z_min, r[0])
+            z_max = r[1] if z_max is None else max(z_max, r[1])
+        self._vertebral_z_range = (z_min, z_max) if z_min is not None else None
+        self._vertebral_z_computed = True
+        return self._vertebral_z_range
 
     def has_structure(self, structure_name: str) -> bool:
         return self._find_mask_file(structure_name) is not None

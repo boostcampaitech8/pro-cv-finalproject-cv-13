@@ -11,7 +11,7 @@ from .mask_loader import MaskLoader
 from .estimators import ESTIMATOR_CLASSES, EstimationResult
 from .risk import RiskCalculator, RiskResult
 from .utils import get_spacing
-from .config import SIDES
+from .config import SIDES, VERTEBRAE, NERVE_CONFIG
 
 
 class NerveEstimationPipeline:
@@ -41,6 +41,20 @@ class NerveEstimationPipeline:
         self._nerve_results: List[EstimationResult] = []
         self._risk_results: List[RiskResult] = []
         self._failed_nerves: List[Dict[str, str]] = []
+
+        # Preload all needed masks in parallel
+        bilateral = {"common_carotid_artery", "internal_carotid_artery",
+                      "internal_jugular_vein", "anterior_scalene"}
+        preload_names = list(VERTEBRAE)
+        for cfg in NERVE_CONFIG.values():
+            for s in cfg.get("required_structures", []):
+                if s in bilateral:
+                    preload_names.extend([f"{s}_left", f"{s}_right"])
+                else:
+                    preload_names.append(s)
+        if tumor_dir is not None:
+            preload_names.append("tumor")
+        self.mask_loader.preload(preload_names)
 
     def estimate_nerves(
         self,
