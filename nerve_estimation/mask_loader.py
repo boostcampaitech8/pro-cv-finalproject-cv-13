@@ -177,5 +177,9 @@ class MaskLoader:
     def has_structure(self, structure_name: str) -> bool:
         return self._find_mask_file(structure_name) is not None
 
+    def set_tumor_dir(self, tumor_dir: str):
+        """Set tumor directory after initialization."""
+        self.tumor_dir = Path(tumor_dir)
+
     def clear_cache(self):
         self._cache.clear()

@@ -96,41 +96,97 @@ export function markUserThresholdAdjustment(): void {
   userHasAdjustedThreshold = true;
 }
 
+/**
+ * Try to apply 3D rendering settings if volume3d viewport is ready.
+ * Returns true if settings were applied, false if viewport/actor not ready yet.
+ */
+function tryApplyVolume3DSettings(servicesManager: any): boolean {
+  const viewportId = findVolume3DViewportId(servicesManager);
+  if (!viewportId) return false;
+
+  const { cornerstoneViewportService } = servicesManager.services;
+  const vp = cornerstoneViewportService?.getCornerstoneViewport?.(viewportId);
+  const hasVolume = vp?.getActors?.()?.some((a: any) =>
+    (a.actor || a)?.getClassName?.() === 'vtkVolume'
+  );
+  if (!hasVolume) return false;
+
+  reset2DViewportRendering(servicesManager);
+  setVolume3DPreset(servicesManager, 'CT-Bone');
+  setVolumeHUThreshold(servicesManager, 300, 3000, 0.15, 100);
+  setVolume3DFrontView(servicesManager);
+  listenForVolumeReset(servicesManager);
+  console.log('[SurfaceLoader] Volume3D fully initialized (event-driven)');
+  return true;
+}
+
 export function initVolume3DRendering(servicesManager: any): void {
   userHasAdjustedThreshold = false;
+
+  // Already ready — apply immediately
+  if (tryApplyVolume3DSettings(servicesManager)) return;
+
+  const cornerstone = (window as any).cornerstone || (window as any).cornerstoneCore;
+  const eventTarget = cornerstone?.eventTarget;
+  const volumeEvent = cornerstone?.Enums?.Events?.IMAGE_VOLUME_LOADING_COMPLETED;
+
+  if (!eventTarget || !volumeEvent) {
+    console.warn('[SurfaceLoader] Cornerstone events not available, falling back to polling');
+    initVolume3DRenderingPoll(servicesManager);
+    return;
+  }
+
+  const MAX_WAIT = 60000;
+  let checkInterval: ReturnType<typeof setInterval> | null = null;
+
+  const cleanup = () => {
+    eventTarget.removeEventListener(volumeEvent, handler);
+    if (checkInterval) clearInterval(checkInterval);
+    clearTimeout(timeout);
+  };
+
+  const handler = () => {
+    if (tryApplyVolume3DSettings(servicesManager)) {
+      cleanup();
+    }
+  };
+
+  const timeout = setTimeout(() => {
+    cleanup();
+    console.warn('[SurfaceLoader] Volume3D init timeout after 60s');
+  }, MAX_WAIT);
+
+  // Primary: event-driven
+  eventTarget.addEventListener(volumeEvent, handler);
+
+  // Backup: poll every 2s in case event was missed or fired for a different volume
+  checkInterval = setInterval(() => {
+    if (tryApplyVolume3DSettings(servicesManager)) {
+      cleanup();
+    }
+  }, 2000);
+
+  console.log('[SurfaceLoader] Waiting for volume3d via IMAGE_VOLUME_LOADING_COMPLETED event');
+}
+
+/**
+ * Fallback polling when Cornerstone events are not available.
+ */
+function initVolume3DRenderingPoll(servicesManager: any): void {
   const startTime = Date.now();
-  const MAX_WAIT = 15000;
+  const MAX_WAIT = 60000;
 
   const tryApply = () => {
     if (Date.now() - startTime > MAX_WAIT) {
-      console.warn('[SurfaceLoader] Volume3D init timeout');
+      console.warn('[SurfaceLoader] Volume3D polling timeout after 60s');
       return;
     }
-
-    const viewportId = findVolume3DViewportId(servicesManager);
-    if (!viewportId) {
-      requestAnimationFrame(tryApply);
-      return;
+    if (!tryApplyVolume3DSettings(servicesManager)) {
+      setTimeout(tryApply, 1000);
     }
-    const { cornerstoneViewportService } = servicesManager.services;
-    const vp = cornerstoneViewportService?.getCornerstoneViewport?.(viewportId);
-    const hasVolume = vp?.getActors?.()?.some((a: any) =>
-      (a.actor || a)?.getClassName?.() === 'vtkVolume'
-    );
-    if (!hasVolume) {
-      requestAnimationFrame(tryApply);
-      return;
-    }
-
-    reset2DViewportRendering(servicesManager);
-    setVolume3DPreset(servicesManager, 'CT-Bone');
-    setVolumeHUThreshold(servicesManager, 300, 3000, 0.15, 100);
-    setVolume3DFrontView(servicesManager);
-    listenForVolumeReset(servicesManager);
-    console.log('[SurfaceLoader] Volume3D fully initialized');
   };
 
-  requestAnimationFrame(tryApply);
+  setTimeout(tryApply, 1000);
 }
 
 export function setVolume3DFrontView(servicesManager: any): boolean {

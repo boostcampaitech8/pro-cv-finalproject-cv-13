@@ -27,9 +27,12 @@ from skimage import measure
 sys.path.insert(0, "/app")
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from nerve_estimation import run_nerve_estimation, export_from_json
+from nerve_estimation import run_nerve_estimation, export_from_json, NerveEstimationPipeline
+from concurrent.futures import ThreadPoolExecutor as _ThreadPoolExecutor
 from segmentation_runner import (
     run_full_segmentation_pipeline,
+    run_normal_structure_segmentation,
+    run_tumor_segmentation,
     check_segmentation_images,
 )
 from dicom_converter import (
@@ -53,7 +56,7 @@ from nerve_to_dicom import (
     get_nerve_color,
     NERVE_COLORS,
 )
-from pipeline import run_pipeline, analyze_dicom_study, analyze_dicom_study_rtss
+from pipeline import run_pipeline, finalize_pipeline, find_reference_nifti, analyze_dicom_study, analyze_dicom_study_rtss
 try:
     from colors import get_color_for_structure_rgba as get_color_for_structure
 except ImportError:
@@ -1526,22 +1529,20 @@ async def upload_ct_and_segment(
                 "message": "PT 파일 없음 — CT-only 종양 분할 모델을 사용합니다.",
             }
 
-        # Step 2: 분할 모델 실행
+        # Step 2: Normal structure segmentation only
         step2_start = time_module.time()
-        logger.info(f"[{session_id}] Step 2 (분할) 시작...")
+        logger.info(f"[{session_id}] Step 2 (Normal-seg) 시작...")
         try:
-            seg_result = run_full_segmentation_pipeline(
+            normal_result = run_normal_structure_segmentation(
                 ct_nifti_path=str(ct_path),
                 output_dir=str(session_dir),
-                pt_nifti_path=str(pt_path) if pt_path else None,
-                run_normal_structure=True,
-                run_tumor=run_tumor,
             )
-            results["steps"]["segmentation"] = seg_result
-            segmentation_dir = seg_result.get("output_dir", str(session_dir))
+            if normal_result.get("status") != "success":
+                raise RuntimeError(normal_result.get("error", "Normal segmentation failed"))
+            segmentation_dir = str(session_dir)
             step2_time = time_module.time() - step2_start
-            results["timing"]["segmentation"] = round(step2_time, 2)
-            logger.info(f"[{session_id}] Step 2 (분할): {step2_time:.2f}초")
+            results["timing"]["normal_seg"] = round(step2_time, 2)
+            logger.info(f"[{session_id}] Step 2 (Normal-seg): {step2_time:.2f}s")
         except Exception as e:
             results["steps"]["segmentation"] = {
                 "status": "error",
@@ -1552,32 +1553,133 @@ async def upload_ct_and_segment(
                 detail=f"분할 모델 실행 실패: {e}"
             )
 
-        # Step 3: Pipeline 실행 (DICOM 변환 + Orthanc 업로드)
+        # Step 3: Overlap — Tumor-seg(GPU) || Nerve+masks+CT→DICOM(CPU)
         step3_start = time_module.time()
-        logger.info(f"[{session_id}] Step 3 (DICOM 변환 + 업로드) 시작...")
+        logger.info(f"[{session_id}] Step 3 (Overlap: tumor || nerve+dicom) 시작...")
+
+        output_dir = session_dir / "output"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        nerve_output_dir = output_dir / "nerve_output"
+        nerve_output_dir.mkdir(exist_ok=True)
+        nerve_masks_dir = output_dir / "nerve_masks"
+        dicom_dir = output_dir / "dicom"
+        ct_dicom_dir = dicom_dir / "ct"
+
+        def _run_nerve_and_dicom():
+            """CPU-only: nerve estimation -> nerve masks -> CT->DICOM."""
+            nerve_pipeline = NerveEstimationPipeline(
+                normal_structure_dir=str(session_dir / "normal_structure"),
+            )
+            nerve_pipeline.estimate_nerves()
+            # 1st save: nerve_results.json without risk (needed for mask generation below)
+            nerve_pipeline.save_results(str(nerve_output_dir))
+
+            nerve_results_path = nerve_output_dir / "nerve_results.json"
+            seg_folders = {}
+            ns_dir = session_dir / "normal_structure"
+            if ns_dir.exists():
+                seg_folders["normal_structure"] = ns_dir
+            ref_nifti = find_reference_nifti(seg_folders) or str(ct_path)
+            if nerve_results_path.exists():
+                nerve_json_to_nifti_masks(str(nerve_results_path), ref_nifti, str(nerve_masks_dir))
+
+            metadata = create_dicom_metadata(
+                patient_name=patient_name,
+                study_description="Nerve Estimation Study",
+                series_description="CT Volume",
+            )
+            study_uid, _series_uid, _ct_files = nifti_to_dicom_series(
+                str(ct_path), str(ct_dicom_dir), metadata=metadata,
+            )
+            return nerve_pipeline, study_uid
+
+        def _run_tumor():
+            """GPU: tumor segmentation."""
+            if not run_tumor:
+                return None
+            return run_tumor_segmentation(
+                ct_nifti_path=str(ct_path),
+                output_dir=str(session_dir),
+                pt_nifti_path=str(pt_path) if pt_path else None,
+            )
+
+        nerve_pipeline = None
+        study_uid = None
+        tumor_result = None
+
+        with _ThreadPoolExecutor(max_workers=2) as ex:
+            f_nerve = ex.submit(_run_nerve_and_dicom)
+            f_tumor = ex.submit(_run_tumor)
+
+            # Nerve+DICOM is critical — must succeed
+            try:
+                nerve_pipeline, study_uid = f_nerve.result()
+            except Exception as e:
+                logger.error(f"[{session_id}] Nerve+DICOM failed: {e}")
+                results["steps"]["pipeline"] = {"status": "error", "error": str(e)}
+                results["status"] = "partial_failure"
+                total_time = time_module.time() - total_start
+                results["timing"]["total"] = round(total_time, 2)
+                return JSONResponse(results)
+
+            # Tumor failure is non-fatal — continue without risk calc
+            try:
+                tumor_result = f_tumor.result()
+            except Exception as e:
+                logger.warning(f"[{session_id}] Tumor segmentation failed: {e}")
+                tumor_result = {"status": "error", "error": str(e)}
+
+        step3_time = time_module.time() - step3_start
+        results["timing"]["overlap"] = round(step3_time, 2)
+        logger.info(f"[{session_id}] Step 3 (Overlap): {step3_time:.2f}s")
+
+        results["steps"]["segmentation"] = {
+            "normal": normal_result,
+            "tumor": tumor_result,
+        }
+
+        # Step 4: Risk calculation (needs both tumor + nerve results)
+        step4_start = time_module.time()
+        if tumor_result and tumor_result.get("status") == "success":
+            tumor_dir = tumor_result.get("output_dir", str(session_dir / "tumor"))
+            nerve_pipeline.mask_loader.set_tumor_dir(tumor_dir)
+            nerve_pipeline.calculate_risk()
+            # 2nd save: overwrite with risk data included
+            nerve_pipeline.save_results(str(nerve_output_dir))
+        step4_time = time_module.time() - step4_start
+        results["timing"]["risk_calc"] = round(step4_time, 2)
+        logger.info(f"[{session_id}] Step 4 (Risk calc): {step4_time:.2f}s")
+
+        # Step 5: RTSS || Labelmap -> Upload (finalize_pipeline)
+        step5_start = time_module.time()
+        logger.info(f"[{session_id}] Step 5 (RTSS+Labelmap+Upload) 시작...")
         try:
-            pipeline_results = run_pipeline(
+            pipeline_results = finalize_pipeline(
                 ct_path=str(ct_path),
                 segmentation_dir=segmentation_dir,
-                output_dir=str(session_dir / "output"),
+                output_dir=str(output_dir),
+                nerve_output_dir=str(nerve_output_dir),
+                nerve_masks_dir=str(nerve_masks_dir),
+                study_uid=study_uid,
+                ct_dicom_dir=str(ct_dicom_dir),
                 patient_name=patient_name,
                 orthanc_url=ORTHANC_URL,
                 ohif_url=OHIF_URL,
+                nerve_results=nerve_pipeline.get_results(),
             )
             results["steps"]["pipeline"] = pipeline_results
-            results["study_uid"] = pipeline_results.get("study_uid")
+            results["study_uid"] = study_uid
             results["ohif_url"] = pipeline_results.get("ohif_url")
-            results["status"] = "success"
-            step3_time = time_module.time() - step3_start
-            results["timing"]["pipeline"] = round(step3_time, 2)
-            logger.info(f"[{session_id}] Step 3 (DICOM 변환 + 업로드): {step3_time:.2f}초")
+            results["status"] = pipeline_results.get("status", "success")
+            step5_time = time_module.time() - step5_start
+            results["timing"]["finalize"] = round(step5_time, 2)
+            logger.info(f"[{session_id}] Step 5 (RTSS+Labelmap+Upload): {step5_time:.2f}s")
 
-            # Save study_uid -> segmentation_dir mapping to Orthanc metadata
-            study_uid = pipeline_results.get("study_uid")
+            # Save study_uid -> segmentation_dir mapping
             if study_uid and segmentation_dir:
                 save_segmentation_mapping(study_uid, segmentation_dir)
 
-            # Save labelmap mapping to Orthanc metadata (for polySeg rendering)
+            # Save labelmap mapping (for polySeg rendering)
             labelmap_result = pipeline_results.get("labelmap_result")
             if labelmap_result and labelmap_result.get("labelmap_path"):
                 labelmap_dir = str(Path(labelmap_result["labelmap_path"]).parent)
@@ -1592,8 +1694,8 @@ async def upload_ct_and_segment(
 
         total_time = time_module.time() - total_start
         results["timing"]["total"] = round(total_time, 2)
-        logger.info(f"[{session_id}] ========== 파이프라인 완료: 총 {total_time:.2f}초 ==========")
-        logger.info(f"[{session_id}] 요약: 업로드 {results['timing'].get('upload', 0):.1f}s | 분할 {results['timing'].get('segmentation', 0):.1f}s | 변환+업로드 {results['timing'].get('pipeline', 0):.1f}s")
+        logger.info(f"[{session_id}] ========== 파이프라인 완료: 총 {total_time:.2f}s ==========")
+        logger.info(f"[{session_id}] 요약: 업로드 {results['timing'].get('upload', 0):.1f}s | Normal-seg {results['timing'].get('normal_seg', 0):.1f}s | Overlap {results['timing'].get('overlap', 0):.1f}s | Risk {results['timing'].get('risk_calc', 0):.1f}s | Finalize {results['timing'].get('finalize', 0):.1f}s")
 
         return JSONResponse(results)
 

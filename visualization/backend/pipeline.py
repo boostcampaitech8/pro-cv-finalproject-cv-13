@@ -110,6 +110,163 @@ def find_reference_nifti(segmentation_dirs: Dict[str, Path]) -> Optional[str]:
     return None
 
 
+def finalize_pipeline(
+    ct_path: str,
+    segmentation_dir: str,
+    output_dir: str,
+    nerve_output_dir: str,
+    nerve_masks_dir: str,
+    study_uid: str,
+    ct_dicom_dir: str,
+    patient_name: str,
+    orthanc_url: str,
+    ohif_url: str,
+    nerve_results: Any = None,
+) -> Dict[str, Any]:
+    """RTSS + Labelmap parallel generation -> Orthanc upload.
+
+    Extracted from run_pipeline() steps 4-6 so it can be called independently
+    when nerve estimation + CT->DICOM have already been completed.
+    """
+    output_dir = Path(output_dir)
+    segmentation_dir = Path(segmentation_dir)
+    nerve_masks_dir = Path(nerve_masks_dir)
+    ct_dicom_dir = Path(ct_dicom_dir)
+    dicom_dir = ct_dicom_dir.parent  # dicom/ directory containing ct/
+
+    results = {"steps": {}}
+
+    seg_folders = {}
+    for folder_name in ["normal_structure", "tumor"]:
+        folder_path = segmentation_dir / folder_name
+        if folder_path.exists():
+            seg_folders[folder_name] = folder_path
+
+    seg_conversion_results = []
+    all_masks_dict = {}
+
+    if study_uid and ct_dicom_dir.exists():
+        for folder_name, folder_path in seg_folders.items():
+            for nii_file in folder_path.glob("*.nii.gz"):
+                structure_name = nii_file.stem.replace(".nii", "")
+                all_masks_dict[structure_name] = str(nii_file)
+                seg_conversion_results.append({
+                    "name": structure_name,
+                    "color": get_structure_color(structure_name),
+                    "status": "pending",
+                })
+
+        if nerve_masks_dir.exists():
+            for nii_file in nerve_masks_dir.glob("*.nii.gz"):
+                nerve_name = nii_file.stem.replace(".nii", "")
+                all_masks_dict[f"nerve_{nerve_name}"] = str(nii_file)
+                seg_conversion_results.append({
+                    "name": f"nerve_{nerve_name}",
+                    "color": get_nerve_color(nerve_name),
+                    "type": "nerve_path",
+                    "status": "pending",
+                })
+
+    def _gen_rtss():
+        if not all_masks_dict:
+            return None
+        rtss_output = dicom_dir / "rtss" / "rtstruct.dcm"
+        path = nifti_masks_to_rtss(
+            mask_files=all_masks_dict,
+            reference_ct_dir=str(ct_dicom_dir),
+            output_path=str(rtss_output),
+            colors=STRUCTURE_COLORS,
+            study_uid=study_uid,
+            patient_name=patient_name,
+        )
+        print(f"[Pipeline] Generated RTSS with {len(all_masks_dict)} structures")
+        return path
+
+    def _gen_labelmap():
+        labelmap_output_dir = output_dir / "labelmap"
+        labelmap_output_dir.mkdir(parents=True, exist_ok=True)
+        r = generate_labelmap_for_study(
+            ct_nifti_path=ct_path,
+            segmentation_dir=str(segmentation_dir),
+            nerve_masks_dir=str(nerve_masks_dir) if nerve_masks_dir.exists() else None,
+            output_dir=str(labelmap_output_dir),
+            study_uid=study_uid,
+        )
+        print(f"[Pipeline] Generated NIfTI labelmap with {r['num_labels']} labels")
+        return r
+
+    labelmap_result = None
+    rtss_path = None
+
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        f_rtss = ex.submit(_gen_rtss)
+        f_labelmap = ex.submit(_gen_labelmap)
+
+        try:
+            rtss_path = f_rtss.result()
+            if rtss_path:
+                for result in seg_conversion_results:
+                    result["status"] = "success"
+                    result["file"] = str(rtss_path)
+        except Exception as e:
+            print(f"[Pipeline] RTSS generation error: {e}")
+            for result in seg_conversion_results:
+                result["status"] = "error"
+                result["error"] = str(e)
+
+        try:
+            labelmap_result = f_labelmap.result()
+            results["steps"]["labelmap"] = {
+                "status": "success",
+                "num_labels": labelmap_result.get("num_labels", 0),
+                "labelmap_path": labelmap_result.get("labelmap_path"),
+            }
+        except Exception as e:
+            print(f"[Pipeline] NIfTI labelmap generation failed: {e}")
+            labelmap_result = {"error": str(e)}
+            results["steps"]["labelmap"] = {
+                "status": "error",
+                "error": str(e),
+            }
+
+    results["steps"]["seg_conversion"] = {
+        "status": "success" if seg_conversion_results else "skipped",
+        "segments": seg_conversion_results,
+    }
+    results["segments_created"] = len(seg_conversion_results)
+    results["labelmap_result"] = labelmap_result
+
+    # Upload to Orthanc
+    try:
+        client = OrthancClient(url=orthanc_url)
+        upload_result = client.upload_directory(str(dicom_dir))
+
+        results["steps"]["orthanc_upload"] = {
+            "status": "success",
+            "uploaded_count": len(upload_result["uploaded"]),
+            "failed_count": len(upload_result["failed"]),
+            "study_ids": upload_result["study_ids"],
+            "series_ids": upload_result["series_ids"],
+        }
+
+    except Exception as e:
+        results["steps"]["orthanc_upload"] = {
+            "status": "error",
+            "error": str(e),
+        }
+
+    if study_uid:
+        results["ohif_url"] = f"{ohif_url}/nerve-assessment?StudyInstanceUIDs={study_uid}"
+
+    all_success = all(
+        step.get("status") in ("success", "skipped")
+        for step in results["steps"].values()
+    )
+    results["status"] = "success" if all_success else "partial_failure"
+
+    return results
+
+
 def run_pipeline(
     ct_path: str,
     segmentation_dir: str,
@@ -253,150 +410,24 @@ def run_pipeline(
             "error": str(e),
         }
 
-    # Steps 4 + 6 in parallel: RTSS generation + Labelmap generation
-    seg_conversion_results = []
-    all_masks_dict = {}
-
-    if study_uid and ct_dicom_dir.exists():
-        all_segment_masks = []
-
-        for folder_name, folder_path in seg_folders.items():
-            for nii_file in folder_path.glob("*.nii.gz"):
-                structure_name = nii_file.stem.replace(".nii", "")
-                color = get_structure_color(structure_name)
-                all_segment_masks.append({
-                    'nifti_path': str(nii_file),
-                    'label': structure_name.replace("_", " ").title(),
-                    'color': color,
-                })
-                seg_conversion_results.append({
-                    "name": structure_name,
-                    "color": color,
-                    "status": "pending",
-                })
-
-        if nerve_masks_dir.exists():
-            for nii_file in nerve_masks_dir.glob("*.nii.gz"):
-                nerve_name = nii_file.stem.replace(".nii", "")
-                color = get_nerve_color(nerve_name)
-                all_segment_masks.append({
-                    'nifti_path': str(nii_file),
-                    'label': f"Nerve: {nerve_name.replace('_', ' ').title()}",
-                    'color': color,
-                })
-                seg_conversion_results.append({
-                    "name": f"nerve_{nerve_name}",
-                    "color": color,
-                    "type": "nerve_path",
-                    "status": "pending",
-                })
-
-        for folder_name, folder_path in seg_folders.items():
-            for nii_file in folder_path.glob("*.nii.gz"):
-                structure_name = nii_file.stem.replace(".nii", "")
-                all_masks_dict[structure_name] = str(nii_file)
-
-        if nerve_masks_dir.exists():
-            for nii_file in nerve_masks_dir.glob("*.nii.gz"):
-                nerve_name = nii_file.stem.replace(".nii", "")
-                all_masks_dict[f"nerve_{nerve_name}"] = str(nii_file)
-
-    def _gen_rtss():
-        if not all_masks_dict:
-            return None
-        rtss_output = dicom_dir / "rtss" / "rtstruct.dcm"
-        path = nifti_masks_to_rtss(
-            mask_files=all_masks_dict,
-            reference_ct_dir=str(ct_dicom_dir),
-            output_path=str(rtss_output),
-            colors=STRUCTURE_COLORS,
-            study_uid=study_uid,
-            patient_name=patient_name,
-        )
-        print(f"[Pipeline] Generated RTSS with {len(all_masks_dict)} structures")
-        return path
-
-    def _gen_labelmap():
-        labelmap_output_dir = output_dir / "labelmap"
-        labelmap_output_dir.mkdir(parents=True, exist_ok=True)
-        r = generate_labelmap_for_study(
-            ct_nifti_path=ct_path,
-            segmentation_dir=str(segmentation_dir),
-            nerve_masks_dir=str(nerve_masks_dir) if nerve_masks_dir.exists() else None,
-            output_dir=str(labelmap_output_dir),
-            study_uid=study_uid,
-        )
-        print(f"[Pipeline] Generated NIfTI labelmap with {r['num_labels']} labels")
-        return r
-
-    labelmap_result = None
-    rtss_path = None
-
-    with ThreadPoolExecutor(max_workers=2) as ex:
-        f_rtss = ex.submit(_gen_rtss)
-        f_labelmap = ex.submit(_gen_labelmap)
-
-        try:
-            rtss_path = f_rtss.result()
-            if rtss_path:
-                for result in seg_conversion_results:
-                    result["status"] = "success"
-                    result["file"] = str(rtss_path)
-        except Exception as e:
-            print(f"[Pipeline] RTSS generation error: {e}")
-            for result in seg_conversion_results:
-                result["status"] = "error"
-                result["error"] = str(e)
-
-        try:
-            labelmap_result = f_labelmap.result()
-            results["steps"]["labelmap"] = {
-                "status": "success",
-                "num_labels": labelmap_result.get("num_labels", 0),
-                "labelmap_path": labelmap_result.get("labelmap_path"),
-            }
-        except Exception as e:
-            print(f"[Pipeline] NIfTI labelmap generation failed: {e}")
-            labelmap_result = {"error": str(e)}
-            results["steps"]["labelmap"] = {
-                "status": "error",
-                "error": str(e),
-            }
-
-    results["steps"]["seg_conversion"] = {
-        "status": "success" if seg_conversion_results else "skipped",
-        "segments": seg_conversion_results,
-    }
-    results["segments_created"] = len(seg_conversion_results)
-    results["labelmap_result"] = labelmap_result
-
-    # Step 5: Upload to Orthanc
-    try:
-        client = OrthancClient(url=orthanc_url)
-        upload_result = client.upload_directory(str(dicom_dir))
-
-        results["steps"]["orthanc_upload"] = {
-            "status": "success",
-            "uploaded_count": len(upload_result["uploaded"]),
-            "failed_count": len(upload_result["failed"]),
-            "study_ids": upload_result["study_ids"],
-            "series_ids": upload_result["series_ids"],
-        }
-
-    except Exception as e:
-        results["steps"]["orthanc_upload"] = {
-            "status": "error",
-            "error": str(e),
-        }
-
-    if study_uid:
-        results["ohif_url"] = f"{ohif_url}/nerve-assessment?StudyInstanceUIDs={study_uid}"
-
-    all_success = all(
-        step.get("status") in ("success", "skipped")
-        for step in results["steps"].values()
+    # Steps 4-6: delegate to finalize_pipeline
+    final = finalize_pipeline(
+        ct_path=ct_path,
+        segmentation_dir=str(segmentation_dir),
+        output_dir=str(output_dir),
+        nerve_output_dir=str(output_dir / "nerve_output"),
+        nerve_masks_dir=str(nerve_masks_dir),
+        study_uid=study_uid,
+        ct_dicom_dir=str(ct_dicom_dir),
+        patient_name=patient_name,
+        orthanc_url=orthanc_url,
+        ohif_url=ohif_url,
+        nerve_results=nerve_results,
     )
-    results["status"] = "success" if all_success else "partial_failure"
+    results["steps"].update(final.get("steps", {}))
+    for key in ("segments_created", "labelmap_result", "ohif_url", "status"):
+        if key in final:
+            results[key] = final[key]
 
     return results
 
