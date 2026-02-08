@@ -6,6 +6,7 @@ source $VENV_DIR/bin/activate
 IN_DIR="./normal_structure_segmentation/input_folder"
 OUT_DIR="./normal_structure_segmentation/output_folder"
 
+mkdir -p "${OUT_DIR}"
 
 cd $IN_DIR
 for f in *.nii.gz; do
@@ -77,10 +78,11 @@ echo "Done."
 export nnUNet_results="./normal_structure_segmentation/normal_structure_model"
 
 # 모델 선정 및 추론
-nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs
+nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 3 -c 3d_fullres -f 0 -tr nnUNetTrainer_gsl -p nnUNetResEncUNetMPlans
 
 ## 6. TSv2 결과를 nnUNet 결과에 병합
 python ./normal_structure_segmentation/merge_tsv2_to_nnunet.py \
   --out_dir "${OUT_DIR}" \
   --structure_list "./normal_structure_segmentation/structure_list.yaml" \
   --n_jobs ${NUM_CORES}
+

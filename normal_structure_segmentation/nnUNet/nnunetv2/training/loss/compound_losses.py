@@ -1,5 +1,6 @@
 import torch
 from nnunetv2.training.loss.dice import SoftDiceLoss, MemoryEfficientSoftDiceLoss
+from nnunetv2.training.loss.gsl_gpu import GeneralizedSurfaceLoss # append by LDH
 from nnunetv2.training.loss.robust_ce_loss import RobustCrossEntropyLoss, TopKLoss
 from nnunetv2.utilities.helpers import softmax_helper_dim1
 from torch import nn
@@ -153,4 +154,52 @@ class DC_and_topk_loss(nn.Module):
             if self.weight_ce != 0 and (self.ignore_label is None or num_fg > 0) else 0
 
         result = self.weight_ce * ce_loss + self.weight_dice * dc_loss
+        return result
+
+# append by LDH
+
+class DC_CE_GSL_loss(nn.Module):
+    def __init__(
+        self,
+        soft_dice_kwargs,
+        ce_kwargs,
+        gsl_kwargs,
+        weight_ce=1,
+        weight_dice=1,
+        weight_surface=1,
+        ignore_label=None,
+        dice_class=SoftDiceLoss,
+    ):
+        super().__init__()
+        if ignore_label is not None:
+            ce_kwargs['ignore_index'] = ignore_label
+            gsl_kwargs = {**gsl_kwargs, 'ignore_label': ignore_label}
+
+        self.weight_dice = weight_dice
+        self.weight_ce = weight_ce
+        self.weight_surface = weight_surface
+        self.ignore_label = ignore_label
+
+        self.ce = RobustCrossEntropyLoss(**ce_kwargs)
+        self.dc = dice_class(apply_nonlin=softmax_helper_dim1, **soft_dice_kwargs)
+        self.gsl = GeneralizedSurfaceLoss(apply_nonlin=softmax_helper_dim1, **gsl_kwargs)
+
+    def forward(self, net_output: torch.Tensor, target: torch.Tensor):
+        if self.ignore_label is not None:
+            assert target.shape[1] == 1, 'ignore label is not implemented for one hot encoded target variables'
+            mask = target != self.ignore_label
+            target_dice = torch.where(mask, target, 0)
+            num_fg = mask.sum()
+        else:
+            target_dice = target
+            mask = None
+
+        dc_loss = self.dc(net_output, target_dice, loss_mask=mask) \
+            if self.weight_dice != 0 else 0
+        ce_loss = self.ce(net_output, target[:, 0]) \
+            if self.weight_ce != 0 and (self.ignore_label is None or num_fg > 0) else 0
+        gsl_loss = self.gsl(net_output, target_dice) \
+            if self.weight_surface != 0 else 0
+
+        result = self.weight_ce * ce_loss + self.weight_dice * dc_loss + self.weight_surface * gsl_loss
         return result

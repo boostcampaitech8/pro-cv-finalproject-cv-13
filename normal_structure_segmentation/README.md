@@ -108,3 +108,35 @@ bash ./normal_stucture_segmentation/inference.sh
 1. TSV2 라벨 추가
 1) internal_carotid_artery_left
 2) internal_carotid_artery_right
+
+## 2026-02-09 변경 사항
+
+1. requirements.sh 실행 시간
+원격 서버 기준 205s
+
+```
+
+# 시간 측정 시작
+start_ts="$(date +%s)"
+
+# 코드
+
+# 시간 측정 종료 
+end_ts="$(date +%s)"
+elapsed="$((end_ts - start_ts))"
+echo "Elapsed: ${elapsed}s"
+
+```
+
+2. 모델 변경 
+nnUNet + ResEnc + custom gsl
+* 변경 및 수정 파일
+   1) nnUNet/nnunetv2/training/loss/gsl_gpu.py # 추가
+   2) nnUNet/nnunetv2/training/loss/compound_losses.py # 코드 일부 추가
+   3) nnUNet/nnunetv2/training/nnUNetTrainer/nnUNetTrainer_gsl.py # 추가
+   4) nnUNet/nnunetv2/training/loss/generalized_surface_loss_gpu.py # 추가
+   5) nnUNet/nnunetv2/training/nnUNetTrainer/nnUNetTrainerGSL.py # 추가
+   6) normal_structure_model 하위 모든 파일
+   7) inference.sh # ouput 폴더 자동으로 만들도록 설정
+   
+추론 시간 : 278s

@@ -21,7 +21,7 @@ apt install -y gcc
 pip install --upgrade pip
 pip install --no-cache-dir torch==2.8.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
-cd ./nnUNet
+cd ./normal_structure_segmentation/nnUNet
 pip install -e .
 
 echo "------TSV2------"
