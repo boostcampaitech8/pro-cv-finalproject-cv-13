@@ -19,7 +19,11 @@ apt install -y gcc
 
 # 5. 파이썬 패키지 설치
 pip install --upgrade pip
+pip install nibabel
 pip install --no-cache-dir torch==2.8.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
 cd ./tumor_segmentation_onlyct/nnUNet
 pip install -e .
+
+pip uninstall -y numpy
+pip install --no-cache-dir -U numpy

@@ -6,6 +6,8 @@ source $VENV_DIR/bin/activate
 IN_DIR="./tumor_segmentation_onlyct/input_folder"
 OUT_DIR="./tumor_segmentation_onlyct/output_folder"
 
+mkdir -p "${OUT_DIR}"
+
 
 cd $IN_DIR
 for f in *.nii.gz; do
@@ -27,4 +29,7 @@ cd ..
 export nnUNet_results="./tumor_segmentation_onlyct/tumor_segmentation_onlyct_model"
 
 # 4. 모델 선정 및 추론
-nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 901 -c 3d_fullres -f 0 -tr nnUNetTrainer_100epochs -p nnUNetResEncUNetLPlans
+nnUNetv2_predict -i $IN_DIR -o $OUT_DIR -d 901 -c 3d_fullres -f 0 -tr nnUNetTrainer -p nnUNetResEncUNetLPlans
+
+# 5. Label Integration Postprocess
+python ./tumor_segmentation_onlyct/postprocess_merge_labels.py
