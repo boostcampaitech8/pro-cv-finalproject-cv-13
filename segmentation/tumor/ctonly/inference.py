@@ -65,8 +65,14 @@ def main():
         if not pred_file.exists():
             raise FileNotFoundError(f"Prediction not found: {pred_file}")
 
-        shutil.copy2(pred_file, args.output_dir / f"{case_id}.nii.gz")
-        print(f"[CT-only] Output: {args.output_dir / f'{case_id}.nii.gz'}")
+        import nibabel as nib
+        import numpy as np
+        img = nib.load(str(pred_file))
+        data = (img.get_fdata().astype(np.uint8) > 0).astype(np.uint8)
+        out_img = nib.Nifti1Image(data, img.affine, img.header)
+        dest = args.output_dir / f"{case_id}.nii.gz"
+        nib.save(out_img, str(dest))
+        print(f"[CT-only] Output: {dest}")
 
 
 if __name__ == "__main__":
