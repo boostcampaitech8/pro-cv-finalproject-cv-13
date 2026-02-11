@@ -8,6 +8,7 @@ to DICOM Segmentation format for display in OHIF Viewer.
 import json
 from pathlib import Path
 from typing import Dict, List, Tuple, Any, Optional
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import nibabel as nib
@@ -222,8 +223,8 @@ def nerve_json_to_nifti_masks(
     if not nerves and "estimated_paths" in results:
         nerves = results["estimated_paths"]
 
-    for nerve_data in nerves:
-        # Support both formats: "name" or "nerve"+"side"
+    def _process_single_nerve(nerve_data):
+        """Process one nerve and return (key_name, path_str) or None."""
         nerve_name = nerve_data.get("name")
         if not nerve_name:
             nerve = nerve_data.get("nerve", "unknown")
@@ -233,23 +234,20 @@ def nerve_json_to_nifti_masks(
         nerve_type = nerve_data.get("type", "pathway")
 
         if nerve_type == "danger_zone":
-            # Handle danger zone (spherical mask)
-            # Support both: "center" (world), "center_voxels" (voxel), "position" (world)
             is_voxel_coords = False
             center = nerve_data.get("center") or nerve_data.get("position")
             if center is None:
                 center = nerve_data.get("center_voxels")
-                is_voxel_coords = True  # center_voxels are in voxel coordinates
+                is_voxel_coords = True
 
             radius = nerve_data.get("radius_mm", nerve_data.get("radius", 5.0))
 
             if center is None:
                 print(f"[nerve_to_dicom] Skipping {nerve_name}: no center found")
-                continue
+                return None
 
             center = np.array(center)
 
-            # Convert voxel coordinates to world coordinates if needed
             if is_voxel_coords:
                 center_h = np.append(center, 1)
                 center = (affine @ center_h)[:3]
@@ -257,32 +255,28 @@ def nerve_json_to_nifti_masks(
             else:
                 print(f"[nerve_to_dicom] Processing danger zone {nerve_name}: center in world coords")
 
-            # Create spherical mask
             zone_mask = create_spherical_mask(shape, affine, center, radius)
 
             zone_filename = f"{nerve_name}.nii.gz"
             zone_path = output_dir / zone_filename
             zone_nii = nib.Nifti1Image(zone_mask, affine)
             nib.save(zone_nii, str(zone_path))
-            output_files[nerve_name] = str(zone_path)
             print(f"[nerve_to_dicom] Saved danger zone: {zone_path}")
+            return (nerve_name, str(zone_path))
 
         else:
-            # Handle pathway (cylindrical mask) - default behavior
-            # Support both: "path" (world), "points" (world), "pathway_voxels" (voxel)
             is_voxel_coords = False
             path_points = nerve_data.get("path") or nerve_data.get("points")
             if not path_points:
                 path_points = nerve_data.get("pathway_voxels", [])
-                is_voxel_coords = True  # pathway_voxels are in voxel coordinates
+                is_voxel_coords = True
 
             if not path_points:
                 print(f"[nerve_to_dicom] Skipping {nerve_name}: no path points found")
-                continue
+                return None
 
             path_points = np.array(path_points)
 
-            # Convert voxel coordinates to world coordinates if needed
             if is_voxel_coords:
                 ones = np.ones((len(path_points), 1))
                 path_h = np.hstack([path_points, ones])
@@ -293,7 +287,6 @@ def nerve_json_to_nifti_masks(
 
             spline_path = create_spline_path(path_points, num_samples=500)
 
-            # Create uncertainty zone mask (full cylinder covering the nerve's possible location)
             uncertainty_mm = nerve_data.get(
                 "uncertainty_mm",
                 nerve_data.get("uncertainty", 5.0)
@@ -310,8 +303,15 @@ def nerve_json_to_nifti_masks(
             uncertainty_path = output_dir / uncertainty_filename
             uncertainty_nii = nib.Nifti1Image(uncertainty_mask, affine)
             nib.save(uncertainty_nii, str(uncertainty_path))
-            output_files[f"{nerve_name}_uncertainty"] = str(uncertainty_path)
             print(f"[nerve_to_dicom] Saved uncertainty mask: {uncertainty_path} (radius={uncertainty_radius}mm)")
+            return (f"{nerve_name}_uncertainty", str(uncertainty_path))
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = [executor.submit(_process_single_nerve, nd) for nd in nerves]
+        for future in futures:
+            result = future.result()
+            if result:
+                output_files[result[0]] = result[1]
 
     # Process explicit danger zones
     danger_zones = results.get("danger_zones", [])

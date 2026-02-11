@@ -853,7 +853,7 @@ def predict_entry_point_modelfolder():
     predictor = nnUNetPredictor(tile_step_size=args.step_size,
                                 use_gaussian=True,
                                 use_mirroring=not args.disable_tta,
-                                perform_everything_on_device=True,
+                                perform_everything_on_device=False,
                                 device=device,
                                 verbose=args.verbose,
                                 allow_tqdm=not args.disable_progress_bar,

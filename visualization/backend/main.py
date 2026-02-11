@@ -1638,23 +1638,25 @@ async def upload_ct_and_segment(
             "tumor": tumor_result,
         }
 
-        # Step 4: Risk calculation (needs both tumor + nerve results)
-        step4_start = time_module.time()
-        if tumor_result and tumor_result.get("status") == "success":
-            tumor_dir = tumor_result.get("output_dir", str(session_dir / "tumor"))
-            nerve_pipeline.mask_loader.set_tumor_dir(tumor_dir)
-            nerve_pipeline.calculate_risk()
-            # 2nd save: overwrite with risk data included
-            nerve_pipeline.save_results(str(nerve_output_dir))
-        step4_time = time_module.time() - step4_start
-        results["timing"]["risk_calc"] = round(step4_time, 2)
-        logger.info(f"[{session_id}] Step 4 (Risk calc): {step4_time:.2f}s")
+        # Step 4+5: Risk calc ∥ Finalize (parallel)
+        import copy
+        step45_start = time_module.time()
 
-        # Step 5: RTSS || Labelmap -> Upload (finalize_pipeline)
-        step5_start = time_module.time()
-        logger.info(f"[{session_id}] Step 5 (RTSS+Labelmap+Upload) 시작...")
-        try:
-            pipeline_results = finalize_pipeline(
+        # Deep copy nerve results BEFORE risk calc modifies them
+        nerve_results_snapshot = copy.deepcopy(nerve_pipeline.get_results())
+
+        def _do_risk_calc():
+            t0 = time_module.time()
+            if tumor_result and tumor_result.get("status") == "success":
+                tumor_dir = tumor_result.get("output_dir", str(session_dir / "tumor"))
+                nerve_pipeline.mask_loader.set_tumor_dir(tumor_dir)
+                nerve_pipeline.calculate_risk()
+                nerve_pipeline.save_results(str(nerve_output_dir))
+            return time_module.time() - t0
+
+        def _do_finalize():
+            t0 = time_module.time()
+            result = finalize_pipeline(
                 ct_path=str(ct_path),
                 segmentation_dir=segmentation_dir,
                 output_dir=str(output_dir),
@@ -1665,21 +1667,36 @@ async def upload_ct_and_segment(
                 patient_name=patient_name,
                 orthanc_url=ORTHANC_URL,
                 ohif_url=OHIF_URL,
-                nerve_results=nerve_pipeline.get_results(),
+                nerve_results=nerve_results_snapshot,
             )
+            return result, time_module.time() - t0
+
+        try:
+            with _ThreadPoolExecutor(max_workers=2) as executor:
+                risk_future = executor.submit(_do_risk_calc)
+                finalize_future = executor.submit(_do_finalize)
+
+                # Risk calc failure is non-fatal
+                try:
+                    risk_time = risk_future.result()
+                except Exception as e:
+                    logger.warning(f"[{session_id}] Risk calc failed: {e}")
+                    risk_time = time_module.time() - step45_start
+
+                pipeline_results, finalize_time = finalize_future.result()
+
+            results["timing"]["risk_calc"] = round(risk_time, 2)
+            results["timing"]["finalize"] = round(finalize_time, 2)
+            logger.info(f"[{session_id}] Step 4+5 parallel: risk={risk_time:.1f}s finalize={finalize_time:.1f}s wall={time_module.time()-step45_start:.1f}s")
+
             results["steps"]["pipeline"] = pipeline_results
             results["study_uid"] = study_uid
             results["ohif_url"] = pipeline_results.get("ohif_url")
             results["status"] = pipeline_results.get("status", "success")
-            step5_time = time_module.time() - step5_start
-            results["timing"]["finalize"] = round(step5_time, 2)
-            logger.info(f"[{session_id}] Step 5 (RTSS+Labelmap+Upload): {step5_time:.2f}s")
 
-            # Save study_uid -> segmentation_dir mapping
             if study_uid and segmentation_dir:
                 save_segmentation_mapping(study_uid, segmentation_dir)
 
-            # Save labelmap mapping (for polySeg rendering)
             labelmap_result = pipeline_results.get("labelmap_result")
             if labelmap_result and labelmap_result.get("labelmap_path"):
                 labelmap_dir = str(Path(labelmap_result["labelmap_path"]).parent)
