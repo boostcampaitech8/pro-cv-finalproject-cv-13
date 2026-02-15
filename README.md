@@ -16,8 +16,7 @@ CT/PET 영상에서 두경부 신경 경로를 추정하고, 종양과의 근접
 - 수술 전 위험 영역을 직관적으로 파악할 수 있는 도구의 부재
 - 분할 결과를 실제 임상 워크플로우에서 활용하기 어려운 구조
 
-이를 해결하기 위해 **AI 기반 자동 분할 + 신경 경로 추정 + 위험도 평가 + 웹 시각화**를  
-하나의 end-to-end 파이프라인으로 통합했습니다.
+이를 해결하기 위해 **AI 기반 자동 분할 + 신경 경로 추정 + 위험도 평가 + 웹 시각화**를 하나의 end-to-end 파이프라인으로 통합했습니다.
 
 ---
 
@@ -26,11 +25,11 @@ CT/PET 영상에서 두경부 신경 경로를 추정하고, 종양과의 근접
 
 | Name | Role | GitHub |
 |---|---|---|
-| 박진웅 | 프로젝트 제안, 신경 추정 및 위험도 로직, 서비스 아키텍처 설계, 웹 시각화 파이프라인 구축, 데이터 라벨링 | [Link](https://github.com/pjw6173) |
-| 이다현 | Total Segmentator v2 옵션 테스트 및 정상 구조물 분할 모델 파이프라인 설계, ResEnc 적용, Custom Generalized Surface Loss 활용 nnU-Net 성능 개선 | [Link](https://github.com/dahyun22) |
-| 정대현 | nnU-Net 기반 정상 구조물 분할 모델링, Generalized Surface Loss를 활용한 모델 훈련, NifTi 파일 분석 | [Link](https://github.com/jdmunkres23) |
-| 최재민 | PET-CT 기반 전처리 및 병변 분할 모델링, Docker compose를 활용한 추론 파이프라인 구축, 이미지 후처리 | [Link](https://github.com/jaeminld) |
-| 한승범 | CT 기반 ResEnc U-Net 병변 분할 모델링, GCS, GCE 활용, 이미지 후처리 | [Link](https://github.com/nalimeitb) |
+| `박진웅`| 프로젝트 제안, 신경 추정 및 위험도 로직, 서비스 아키텍처 설계, 웹 시각화 파이프라인 구축, 데이터 라벨링 | [Link](https://github.com/pjw6173) |
+| `이다현` | Total Segmentator v2 옵션 테스트 및 정상 구조물 분할 모델 파이프라인 설계, ResEnc 적용, Custom Generalized Surface Loss 활용 nnU-Net 성능 개선 | [Link](https://github.com/dahyun22) |
+| `정대현` | nnU-Net 기반 정상 구조물 분할 모델링, Generalized Surface Loss를 활용한 모델 훈련, NifTi 파일 분석 | [Link](https://github.com/jdmunkres23) |
+| `최재민` | PET-CT 기반 전처리 및 병변 분할 모델링, Docker compose를 활용한 추론 파이프라인 구축, 이미지 후처리 | [Link](https://github.com/jaeminld) |
+| `한승범` | CT 기반 ResEnc U-Net 병변 분할 모델링, GCS, GCE 활용, 이미지 후처리 | [Link](https://github.com/nalimeitb) |
 ---
 
 ## 3. Project Timeline
