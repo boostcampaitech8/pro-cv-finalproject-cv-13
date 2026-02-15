@@ -1,0 +1,27 @@
+{
+  "name": "@ohif/mode-nerve-assessment",
+  "version": "3.11.0",
+  "description": "Nerve Risk Assessment Mode for OHIF - Upload CT and view risk analysis with CONTOUR support",
+  "author": "OHIF",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "engines": {
+    "node": ">=18",
+    "npm": ">=6",
+    "yarn": ">=1.16.0"
+  },
+  "keywords": [
+    "ohif-mode"
+  ],
+  "peerDependencies": {
+    "@ohif/core": "^3.0.0",
+    "@ohif/extension-cornerstone": "^3.0.0",
+    "@ohif/extension-cornerstone-dicom-rt": "^3.0.0",
+    "@ohif/extension-cornerstone-dicom-seg": "^3.0.0",
+    "@ohif/extension-default": "^3.0.0",
+    "@ohif/extension-nerve-assessment": "^3.11.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.20.13"
+  }
+}

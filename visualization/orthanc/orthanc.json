@@ -1,0 +1,50 @@
+{
+  "Name": "Orthanc DICOM Server",
+  "StorageDirectory": "/var/lib/orthanc/db",
+  "IndexDirectory": "/var/lib/orthanc/db",
+  "StorageCompression": false,
+  "MaximumStorageSize": 0,
+  "MaximumPatientCount": 0,
+  "LuaScripts": [],
+  "Plugins": [
+    "/usr/share/orthanc/plugins"
+  ],
+  "ConcurrentJobs": 2,
+
+  "UserMetadata": {
+    "SegmentationDir": 1024,
+    "LabelmapDir": 1025
+  },
+
+  "HttpServerEnabled": true,
+  "HttpPort": 8042,
+  "HttpDescribeErrors": true,
+  "HttpCompressionEnabled": true,
+
+  "DicomServerEnabled": true,
+  "DicomAet": "ORTHANC",
+  "DicomCheckCalledAet": false,
+  "DicomPort": 4242,
+
+  "RemoteAccessAllowed": true,
+  "AuthenticationEnabled": false,
+
+  "DicomWeb": {
+    "Enable": true,
+    "Root": "/dicom-web/",
+    "EnableWado": true,
+    "WadoRoot": "/wado",
+    "Ssl": false,
+    "QidoCaseSensitive": false,
+    "StudiesMetadata": "Full",
+    "SeriesMetadata": "Full"
+  },
+
+  "Worklists": {
+    "Enable": false
+  },
+
+  "OverwriteInstances": true,
+  "MediaArchiveSize": 1,
+  "StorageAccessOnFind": "Always"
+}
